@@ -3,7 +3,18 @@ var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
 
-        
+open.onclick= () => {
+    toggleMenuWindow();
+};
+
+close.onclick= () => {
+    toggleMenuWindow();
+};
+
+send.onclick= () => {
+    sendMessage();
+};
+
 function toggleMenuWindow() {
     const menuWindow = document.getElementById("menu-window");
     menuWindow.classList.toggle("opened");
