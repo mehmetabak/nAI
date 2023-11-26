@@ -1,4 +1,5 @@
 const API_KEY = import.meta.env.API_KEY;
+
 var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
