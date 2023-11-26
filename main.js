@@ -1,4 +1,8 @@
 const API_KEY = process.env.API_KEY
+var open = document.getElementById("toggle-menu-button");
+var close = document.getElementById("menu-window");
+var send = document.getElementById("send-button");
+
         
 function toggleMenuWindow() {
     const menuWindow = document.getElementById("menu-window");
