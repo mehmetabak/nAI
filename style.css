@@ -234,12 +234,13 @@ body {
 }
 
 #send-button {
-  padding: 8px 15px;
+  padding: 8px 19px;
   background-color: #3498db;
   color: #ecf0f1;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  margin-right: 15px;
 }
 
 #side-menu.opened {
