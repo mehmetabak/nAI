@@ -245,20 +245,74 @@ body {
 
 @media (max-width: 768px) {
   #main-content {
-      overflow-x: hidden;
-      margin-left: 0;
+    overflow-x: hidden;
+    margin-left: 0;
   }
 
   #chat-messages.collapsed {
-      margin-left: 0;
-      width: 100%;
-  }
-
-  #toggle-menu-button {
-      display: block;
+    margin-left: 0;
+    width: 100%;
   }
 
   #side-menu {
-      width: 50px;
+    width: 100%; 
+    padding-top: 10px; 
+  }
+
+  #menu-items {
+    margin-top: 10px; 
+  }
+
+  .menu-item {
+    padding: 10px;
+  }
+
+  #profile-section {
+    padding: 10px;
+  }
+
+  #toggle-menu-button {
+    display: block;
+    padding: 10px;
+  }
+
+  #menu-window {
+    padding: 10px;
+  }
+
+  .menu-content {
+    padding: 10px;
+    border-radius: 15px;
+  }
+
+  #chat-header {
+    padding: 10px;
+  }
+
+  #chat-messages {
+    padding: 10px;
+  }
+
+  .user-message, .alpgtr-message {
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+
+  .message-text img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+
+  #user-input {
+    padding: 5px;
+  }
+
+  #input-text {
+    padding: 5px;
+  }
+
+  #send-button {
+    padding: 5px 10px;
   }
 }
