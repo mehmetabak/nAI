@@ -16,6 +16,11 @@ send.onclick= () => {
     sendMessage();
 };
 
+function scrollToBottom() {
+    const chatMessages = document.getElementById("chat-messages");
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
 function toggleMenuWindow() {
     const menuWindow = document.getElementById("menu-window");
     menuWindow.classList.toggle("opened");
@@ -72,6 +77,7 @@ function sendMessage() {
             .then(response => response.json())
             .then(data => {
                 appendMessage("ALPGTR", data.candidates[0].output);
+                scrollToBottom();
             });
         inputText.value = "";
     }
