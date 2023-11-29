@@ -169,7 +169,7 @@ body {
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
   margin-bottom: 10vh;
-  margin-top: 4vh;
+  margin-top: 2vh;
 }
 
 .user-message, .alpgtr-message {
