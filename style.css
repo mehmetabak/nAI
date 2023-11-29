@@ -168,7 +168,7 @@ body {
   padding: 15px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
-  margin-bottom: 60px;
+  margin-bottom: 120px;
 }
 
 .user-message, .alpgtr-message {
