@@ -62,7 +62,6 @@ body {
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid #333;
-  margin-top: 10vh;
 }
 
 #profile-picture {
@@ -170,6 +169,7 @@ body {
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
   margin-bottom: 10vh;
+  margin-top: 10vh;
 }
 
 .user-message, .alpgtr-message {
