@@ -57,19 +57,19 @@ function sendMessage() {
                 },
                 {
                     'category': 'HARM_CATEGORY_VIOLENCE',
-                    'threshold': 2
+                    'threshold': 4
                 },
                 {
                     'category': 'HARM_CATEGORY_SEXUAL',
-                    'threshold': 1
+                    'threshold': 4
                 },
                 {
                     'category': 'HARM_CATEGORY_MEDICAL',
-                    'threshold': 2
+                    'threshold': 4
                 },
                 {
                     'category': 'HARM_CATEGORY_DANGEROUS',
-                    'threshold': 2
+                    'threshold': 4
                 }
                 ]
             })
