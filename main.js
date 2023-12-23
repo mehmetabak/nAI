@@ -13,6 +13,8 @@ var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
 
+var userMessage;
+
 open.onclick= () => {
     toggleMenuWindow();
 };
@@ -23,7 +25,7 @@ close.onclick= () => {
 
 send.onclick= () => {
     const inputText = document.getElementById("input-text");
-    const userMessage = inputText.value.trim();
+    userMessage = inputText.value.trim();
 
     if (userMessage !== "") {
         appendMessage("User", userMessage);
@@ -52,9 +54,6 @@ async function newGTR() {
       topP: 1,
       maxOutputTokens: 2048,
     };
-  
-    const inputText = document.getElementById("input-text");
-    const userMessage = inputText.value.trim();
 
     const safetySettings = [
       {
@@ -104,8 +103,6 @@ async function newGTR() {
 
 
 function oldGTR() {
-    const inputText = document.getElementById("input-text");
-    const userMessage = inputText.value.trim();
     if (userMessage !== "") {
         fetch(`https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${API_KEY}`, {
             method: 'POST',
