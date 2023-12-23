@@ -30,7 +30,7 @@ if(localStorage.getItem('model') !== ''){
     modelSelector.value = 'old';
 }
 
-menuClose.onclick = () => {
+menuClose.onclick= () => {
     menu.classList.toggle('opened');
 }
 
