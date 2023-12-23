@@ -16,6 +16,8 @@ var modelSelector = document.getElementById('model-selector');
 var menu = document.getElementById("menu-screen");
 var menuClose = document.getElementById("menu-screen-close");
 
+var header = document.getElementById("chat-header");
+
 var userMessage;
 var q = `!`;
 var a = `!`;
@@ -26,6 +28,11 @@ settings.onclick= () => {
 
 if(localStorage.getItem('model') !== ''){
     modelSelector.value = localStorage.getItem('model');
+    if(modelSelector.value == 'old'){
+        header.firstChild.data = "ALPGTR"
+    }else if(modelSelector.value == 'new'){
+        header.firstChild.data = "ALPGTR 2.0"
+    }
 }else{
     modelSelector.value = 'old';
 }
@@ -38,8 +45,10 @@ modelSelector.addEventListener('change', function () {
     const selectedModel = modelSelector.value;
     if(selectedModel == 'old' ){
         localStorage.setItem('model', 'old');
+        header.firstChild.data = "ALPGTR"
     }else if(selectedModel == 'new'){
         localStorage.setItem('model', 'new');
+        header.firstChild.data = "ALPGTR 2.0"
     }
 });
 
