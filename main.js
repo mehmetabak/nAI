@@ -30,6 +30,10 @@ if(localStorage.getItem('model') !== ''){
     modelSelector.value = 'old';
 }
 
+menuClose.onclick = () => {
+    menu.classList.toggle('opened');
+}
+
 modelSelector.addEventListener('change', function () {
     const selectedModel = modelSelector.value;
     if(selectedModel == 'old' ){
