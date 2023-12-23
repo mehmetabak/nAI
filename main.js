@@ -15,7 +15,6 @@ var settings = document.getElementById("settingsB");
 var modelSelector = document.getElementById('model-selector');
 var menu = document.getElementById("menu-screen");
 var menuClose = document.getElementById("menu-screen-close");
-
 var header = document.getElementById("chat-header");
 
 var userMessage;
@@ -35,6 +34,7 @@ if(localStorage.getItem('model') !== ''){
     }
 }else{
     modelSelector.value = 'old';
+    header.firstChild.data = "ALPGTR"
 }
 
 menuClose.onclick= () => {
@@ -53,11 +53,13 @@ modelSelector.addEventListener('change', function () {
 });
 
 open.onclick= () => {
-    toggleMenuWindow();
+    const menuWindow = document.getElementById("menu-window");
+    menuWindow.classList.toggle("opened");
 };
 
 close.onclick= () => {
-    toggleMenuWindow();
+    const menuWindow = document.getElementById("menu-window");
+    menuWindow.classList.toggle("opened");
 };
 
 send.onclick= () => {
@@ -81,11 +83,6 @@ send.onclick= () => {
 function scrollToBottom() {
     const chatMessages = document.getElementById("chat-messages");
     chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function toggleMenuWindow() {
-    const menuWindow = document.getElementById("menu-window");
-    menuWindow.classList.toggle("opened");
 }
 
 async function newGTR() {
