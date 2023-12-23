@@ -149,7 +149,6 @@ function oldGTR() {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 appendMessage("ALPGTR", data.candidates[0].output);
                 scrollToBottom();
             });
