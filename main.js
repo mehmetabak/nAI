@@ -6,8 +6,6 @@ import {
   
 const MODEL_NAME = "gemini-pro";
 const API_KEY = import.meta.env.VITE_API_KEY;
-const q = `!`;
-const a = `!`;
 
 var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
@@ -19,6 +17,8 @@ var menu = document.getElementById("menu-screen");
 var menuClose = document.getElementById("menu-screen-close");
 
 var userMessage;
+var q = `!`;
+var a = `!`;
 
 settings.onclick= () => {
     menu.classList.toggle('opened');
