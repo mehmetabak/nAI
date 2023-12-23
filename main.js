@@ -6,16 +6,17 @@ import {
   
 const MODEL_NAME = "gemini-pro";
 const API_KEY = import.meta.env.VITE_API_KEY;
-const q = `RedWW`;
-const a = `RedWW`;
+const q = `!`;
+const a = `!`;
 
 var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
 
 var settings = document.getElementById("settingsB");
-const modelSelector = document.getElementById('model-selector');
+var modelSelector = document.getElementById('model-selector');
 var menu = document.getElementById("menu-screen");
+var menuClose = document.getElementById("menu-screen-close");
 
 var userMessage;
 
@@ -23,7 +24,11 @@ settings.onclick= () => {
     menu.classList.toggle('opened');
 };
 
-modelSelector.value = localStorage.getItem('model');
+if(localStorage.getItem('model') !== ''){
+    modelSelector.value = localStorage.getItem('model');
+}else{
+    modelSelector.value = 'old';
+}
 
 modelSelector.addEventListener('change', function () {
     const selectedModel = modelSelector.value;
@@ -53,6 +58,8 @@ send.onclick= () => {
         if(model == 'new'){
             newGTR();
         }else if(model == 'old'){
+            oldGTR();
+        }else{
             oldGTR();
         }
     }
