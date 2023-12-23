@@ -9,6 +9,35 @@ body {
   overflow: hidden;
 }
 
+select {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #000; /* Black color */
+  color: #fff; /* White color */
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+select::after {
+  content: '\25BC'; /* Unicode character for down arrow */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #fff; /* White color */
+}
+
+select option {
+  background-color: #000; /* Black color */
+  color: #fff; /* White color */
+}
+
+select option:hover {
+  background-color: #333; /* Darker black color on hover */
+}
+
 #side-menu {
   width: 240px;
   background-color: #000; /* Black color */
@@ -137,7 +166,7 @@ body {
   top: 10px;
   right: 10px;
   cursor: pointer;
-  z-index: 1; /* Set a higher z-index */
+  z-index: 3; /* Set a higher z-index */
 }
 
 #menu-window-close div {
@@ -148,7 +177,7 @@ body {
   transition: 0.4s;
 }
 
-#menu-content {
+.menu-content {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -161,7 +190,7 @@ body {
   color: #ecf0f1;
 }
 
-#menu-content:hover {
+.menu-content:hover {
   background-color: #333; /* Hover background color */
 }
 
@@ -305,7 +334,7 @@ body {
     padding: 10px;
   }
 
-  .menu-content {
+  #menu-content {
     padding: 10px;
     border-radius: 15px;
   }

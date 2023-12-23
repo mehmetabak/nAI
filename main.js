@@ -11,16 +11,28 @@ const a = `RedWW`;
 
 var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
-var menu = document.getElementById("menu-screen");
 var send = document.getElementById("send-button");
-var settings = document.getElementsByClassName('menu-content menu-itemS');
+
+var settings = document.getElementById("settingsB");
+const modelSelector = document.getElementById('model-selector');
+var menu = document.getElementById("menu-screen");
 
 var userMessage;
 
 settings.onclick= () => {
-    console.log("sfngjks")
     menu.classList.toggle('opened');
 };
+
+modelSelector.value = localStorage.getItem('model');
+
+modelSelector.addEventListener('change', function () {
+    const selectedModel = modelSelector.value;
+    if(selectedModel == 'old' ){
+        localStorage.setItem('model', 'old');
+    }else if(selectedModel == 'new'){
+        localStorage.setItem('model', 'new');
+    }
+});
 
 open.onclick= () => {
     toggleMenuWindow();
@@ -33,11 +45,16 @@ close.onclick= () => {
 send.onclick= () => {
     const inputText = document.getElementById("input-text");
     userMessage = inputText.value.trim();
+    var model = localStorage.getItem('model')
 
     if (userMessage !== "") {
         appendMessage("User", userMessage);
         inputText.value = "";
-        oldGTR();
+        if(model == 'new'){
+            newGTR();
+        }else if(model == 'old'){
+            oldGTR();
+        }
     }
 };
 
