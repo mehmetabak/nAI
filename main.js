@@ -128,6 +128,7 @@ async function newGTR() {
     const response = result.response;
     q = userMessage;
     a = response.text();
+    console.log(response);
     appendMessage("ALPGTR", response.text());
     scrollToBottom();
   }
