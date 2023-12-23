@@ -11,9 +11,16 @@ const a = `RedWW`;
 
 var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
+var menu = document.getElementById("menu-screen");
 var send = document.getElementById("send-button");
+var settings = document.getElementsByClassName('menu-content menu-itemS');
 
 var userMessage;
+
+settings.onclick= () => {
+    console.log("sfngjks")
+    menu.classList.toggle('opened');
+};
 
 open.onclick= () => {
     toggleMenuWindow();
