@@ -1,2 +1,2 @@
 # project-ai
-## A personal joke project
+## A personal AI project named nAI
