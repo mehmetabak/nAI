@@ -10,12 +10,13 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 var open = document.getElementById("toggle-menu-button");
 var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
+var header = document.getElementById("chat-header");
 
 var settings = document.getElementById("settingsB");
 var modelSelector = document.getElementById('model-selector');
 var menu = document.getElementById("menu-screen");
 var menuClose = document.getElementById("menu-screen-close");
-var header = document.getElementById("chat-header");
+
 
 var userMessage;
 var q = `!`;
@@ -53,13 +54,11 @@ modelSelector.addEventListener('change', function () {
 });
 
 open.onclick= () => {
-    const menuWindow = document.getElementById("menu-window");
-    menuWindow.classList.toggle("opened");
+    close.classList.toggle("opened");
 };
 
 close.onclick= () => {
-    const menuWindow = document.getElementById("menu-window");
-    menuWindow.classList.toggle("opened");
+    close.classList.toggle("opened");
 };
 
 send.onclick= () => {
@@ -138,7 +137,6 @@ async function newGTR() {
     const response = result.response;
     q = userMessage;
     a = response.text();
-    console.log(response);
     appendMessage("ALPGTR", response.text());
     scrollToBottom();
   }
