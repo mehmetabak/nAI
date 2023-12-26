@@ -217,7 +217,7 @@ select option:hover {
   padding: 15px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
-  margin-bottom: 10vh;
+  margin-bottom: 13vh;
 }
 
 .user-message, .alpgtr-message {
