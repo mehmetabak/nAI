@@ -26,7 +26,7 @@ settings.onclick= () => {
     menu.classList.toggle('opened');
 };
 
-if(localStorage.getItem('model') !== ''){
+if(localStorage.getItem('model') !== null){
     modelSelector.value = localStorage.getItem('model');
     if(modelSelector.value == 'old'){
         header.firstChild.data = "ALPGTR"
