@@ -69,6 +69,7 @@ send.onclick= () => {
     if (userMessage !== "") {
         appendMessage("User", userMessage);
         inputText.value = "";
+        scrollToBottom();
         if(model == 'new'){
             newGTR();
         }else if(model == 'old'){
