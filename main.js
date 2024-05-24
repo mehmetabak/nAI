@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasSeenNotification = localStorage.getItem('hasSeenNotification');
   
     if (!hasSeenNotification) {
-      showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, ayarlardan seç ve test et!', 'https://i.pinimg.com/736x/da/a4/8c/daa48cb6a060f26f2861abac01640d08.jpg');
+      showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', 'https://i.pinimg.com/736x/da/a4/8c/daa48cb6a060f26f2861abac01640d08.jpg');
       localStorage.setItem('hasSeenNotification', 'false');
     }
   });
