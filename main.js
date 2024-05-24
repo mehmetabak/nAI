@@ -150,7 +150,7 @@ async function asGTR() {
       const response = result.response;
       q = userMessage;
       a = response.text();
-      appendMessage("ALPGTR", response.text());
+      appendMessage("Asaf", response.text());
       scrollToBottom();
     }
 
