@@ -42,6 +42,17 @@ if(localStorage.getItem('model') !== null){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const randomIndex = Math.floor(Math.random() * 2);
+    const imageUrls = [
+      'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
+      'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg'
+    ];
+    const selectedImage = imageUrls[randomIndex];
+    showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', selectedImage);
+  });
+
+/* Old Code for Notification
+document.addEventListener('DOMContentLoaded', () => {
     const hasSeenNotification = localStorage.getItem('hasSeenNotification');
   
     if (!hasSeenNotification) {
@@ -49,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('hasSeenNotification', 'true');
     }
   });
+*/
 
 menuClose.onclick= () => {
     menu.classList.toggle('opened');
