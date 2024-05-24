@@ -4,7 +4,7 @@ import 'toastr/build/toastr.min.css';
 export const showNotification = (message, imageUrl) => {
     toastr.options = {
       positionClass: 'toast-bottom-right',
-      timeOut: 5000,
+      timeOut: 8000,
       closeButton: true,
       progressBar: true,
       preventDuplicates: true,
