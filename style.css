@@ -369,4 +369,11 @@ select option:hover {
   #send-button {
     padding: 5px 10px;
   }
+
+  .toast-bottom-right {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+  }
 }

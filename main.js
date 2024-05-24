@@ -40,6 +40,15 @@ if(localStorage.getItem('model') !== null){
     header.firstChild.data = "ALPGTR"
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const hasSeenNotification = localStorage.getItem('hasSeenNotification');
+  
+    if (!hasSeenNotification) {
+      showNotification('Welcome to our website! Check out our new features.', 'https://i.pinimg.com/736x/da/a4/8c/daa48cb6a060f26f2861abac01640d08.jpg');
+      localStorage.setItem('hasSeenNotification', 'true');
+    }
+  });
+
 menuClose.onclick= () => {
     menu.classList.toggle('opened');
 }
