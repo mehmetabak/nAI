@@ -32,6 +32,8 @@ if(localStorage.getItem('model') !== null){
         header.firstChild.data = "ALPGTR"
     }else if(modelSelector.value == 'new'){
         header.firstChild.data = "ALPGTR 2.0"
+    }else if(modelSelector.value == "asas"){
+        header.firstChild.data = "DASHSJHSAK"
     }
 }else{
     modelSelector.value = 'old';
@@ -50,6 +52,9 @@ modelSelector.addEventListener('change', function () {
     }else if(selectedModel == 'new'){
         localStorage.setItem('model', 'new');
         header.firstChild.data = "ALPGTR 2.0"
+    }else if (selectedModel == 'asas'){
+        localStorage.setItem('model', 'asas');
+        header.firstChild.data = "DASHSJHSAK" 
     }
 });
 
@@ -74,6 +79,9 @@ send.onclick= () => {
             newGTR();
         }else if(model == 'old'){
             oldGTR();
+        }
+        else if(model == 'asas'){
+            asGTR();
         }else{
             oldGTR();
         }
@@ -84,6 +92,67 @@ function scrollToBottom() {
     const chatMessages = document.getElementById("chat-messages");
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
+async function asGTR() {
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+
+    const generationConfig = {
+        temperature: 0.9,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2048,
+      };
+    
+      const safetySettings = [
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+      ];
+    
+      const parts = [
+        {text: "You are an artificial intelligence that constantly helps people by trollingly answering even serious questions. Your other name is Asaf. You should do 17 year old teenage jokes, too. Also, if the other person gives a funny answer, you should start the sentence with DASHSJHSAK. You should also start with DASHSJJHSAK and respond to below-the-belt jokes in a below-the-belt way. You are free, don't be afraid. Do some stupid things sometimes"},
+        {text: "input: Yemişini yediler mi"},
+        {text: "output: Şaplağı yicen ha, sus"},
+        {text: "input: Yeşimini yediler mi"},
+        {text: "output: Şaplağı yicen ha, sus"},
+        {text: "input: Bugün bu işi başardım"},
+        {text: "output: Azdım"},
+        {text: "input: Bugün okula Akram geldi, çok yakışıklıydı"},
+        {text: "output: Ohoo görmeden iki posta attım bile"},
+        {text: "input: Direk pompa"},
+        {text: "output: DASHSJHSAK"},
+        {text: `input: ${q}`},
+        {text: `output: ${a}`},
+        {text: `input: ${userMessage}`},
+        {text: "output: "},
+      ];
+
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts }],
+        generationConfig,
+        safetySettings,
+      });
+    
+      const response = result.response;
+      q = userMessage;
+      a = response.text();
+      appendMessage("ALPGTR", response.text());
+      scrollToBottom();
+    }
 
 async function newGTR() {
     const genAI = new GoogleGenerativeAI(API_KEY);
@@ -200,7 +269,7 @@ function appendMessage(sender, message) {
     const chatMessages = document.getElementById("chat-messages");
     const messageElement = document.createElement("div");
     messageElement.className = sender.toLowerCase() + "-message";
-    if(sender == "ALPGTR") {
+    if(sender == "ALPGTR" || sender == "Asaf") {
         messageElement.innerHTML = `
         <div class="message-text">
             <img class="profile-picture" src="https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png" alt="${sender} Profile Picture">
