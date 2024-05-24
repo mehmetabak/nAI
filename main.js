@@ -44,7 +44,10 @@ if(localStorage.getItem('model') !== null){
 document.addEventListener('DOMContentLoaded', () => {
     const imageUrls = [
         'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
-        'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg'
+        'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg',
+        'https://i.pinimg.com/564x/a0/bb/d5/a0bbd5abb5c314105df8034ec350a8b6.jpg',
+        'https://i.pinimg.com/564x/c8/b1/83/c8b183a76478e8832e386e55134acba8.jpg',
+        'https://i.pinimg.com/564x/b9/5a/cb/b95acbb938a23eb7c480256685b5b528.jpg'
       ];
     const randomIndex = Math.floor(Math.random() * imageUrls.length);
     const selectedImage = imageUrls[randomIndex];
