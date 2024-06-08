@@ -28,6 +28,8 @@ var aboutClose = document.getElementById("about-screen-close");
 var changelog = document.getElementById("changelog-screen");
 var changelogClose = document.getElementById("changelog-screen-close");
 
+var menu;
+
 // For Model
 var userMessage;
 var q = `!`;
@@ -79,30 +81,43 @@ if(localStorage.getItem('model') !== null){
 // UI
 settingsB.onclick= () => {
   menu.classList.toggle('opened');
+  menu = "settings";
 };
 
 menuClose.onclick= () => {
   menu.classList.toggle('opened');
+  menu = null;
 }
 
 aboutB.onclick= () => {
   about.classList.toggle('opened');
+  menu = "about";
 };
 
 aboutClose.onclick= () => {
   about.classList.toggle('opened');
+  menu = null;
 }
 
 changelogB.onclick= () => {
   changelog.classList.toggle('opened');
+  menu = "changelog";
 };
 
 changelogClose.onclick= () => {
   changelog.classList.toggle('opened');
+  menu = null;
 }
 
 open.onclick= () => {
   close.classList.toggle("opened");
+  if(menu == "settings"){
+    menu.classList.toggle('opened');
+  }else if(menu == "about"){
+    about.classList.toggle('opened');
+  }else if (menu == "changelog"){
+    changelog.classList.toggle('opened');
+  }
 };
 
 close.onclick= () => {
