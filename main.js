@@ -113,10 +113,13 @@ open.onclick= () => {
   close.classList.toggle("opened");
   if(menuOn == "settings"){
     menu.classList.toggle('opened');
+    menuOn = null;
   }else if(menuOn == "about"){
     about.classList.toggle('opened');
+    menuOn = null;
   }else if (menuOn == "changelog"){
     changelog.classList.toggle('opened');
+    menuOn = null;
   }
 };
 
