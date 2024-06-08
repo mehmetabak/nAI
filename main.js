@@ -28,7 +28,7 @@ var aboutClose = document.getElementById("about-screen-close");
 var changelog = document.getElementById("changelog-screen");
 var changelogClose = document.getElementById("changelog-screen-close");
 
-var menu;
+var menuOn;
 
 // For Model
 var userMessage;
@@ -81,41 +81,41 @@ if(localStorage.getItem('model') !== null){
 // UI
 settingsB.onclick= () => {
   menu.classList.toggle('opened');
-  menu = "settings";
+  menuOn = "settings";
 };
 
 menuClose.onclick= () => {
   menu.classList.toggle('opened');
-  menu = null;
+  menuOn = null;
 }
 
 aboutB.onclick= () => {
   about.classList.toggle('opened');
-  menu = "about";
+  menuOn = "about";
 };
 
 aboutClose.onclick= () => {
   about.classList.toggle('opened');
-  menu = null;
+  menuOn = null;
 }
 
 changelogB.onclick= () => {
   changelog.classList.toggle('opened');
-  menu = "changelog";
+  menuOn = "changelog";
 };
 
 changelogClose.onclick= () => {
   changelog.classList.toggle('opened');
-  menu = null;
+  menuOn = null;
 }
 
 open.onclick= () => {
   close.classList.toggle("opened");
-  if(menu == "settings"){
+  if(menuOn == "settings"){
     menu.classList.toggle('opened');
-  }else if(menu == "about"){
+  }else if(menuOn == "about"){
     about.classList.toggle('opened');
-  }else if (menu == "changelog"){
+  }else if (menuOn == "changelog"){
     changelog.classList.toggle('opened');
   }
 };
