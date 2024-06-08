@@ -151,7 +151,11 @@ select option:hover {
   border-radius: 20px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   color: #ecf0f1; 
-  text-align: center; 
+  text-align: left; 
+  max-width: 90%; 
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
 }
 
 .about-screen-close {
