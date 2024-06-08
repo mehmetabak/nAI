@@ -14,10 +14,19 @@ var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
 var header = document.getElementById("chat-header");
 
-var settings = document.getElementById("settingsB");
+var settingsB = document.getElementById("settingsB");
+var aboutB = document.getElementById("aboutB");
+var changelogB = document.getElementById("changelogB");
+var gitB = document.getElementById("gitB");
+
 var modelSelector = document.getElementById('model-selector');
 var menu = document.getElementById("menu-screen");
 var menuClose = document.getElementById("menu-screen-close");
+
+var about = document.getElementById("about-screen");
+var aboutClose = document.getElementById("about-screen-close");
+var changelog = document.getElementById("changelog-screen");
+var changelogClose = document.getElementById("changelog-screen-close");
 
 // For Model
 var userMessage;
@@ -68,12 +77,28 @@ if(localStorage.getItem('model') !== null){
 }
 
 // UI
-settings.onclick= () => {
+settingsB.onclick= () => {
   menu.classList.toggle('opened');
 };
 
 menuClose.onclick= () => {
   menu.classList.toggle('opened');
+}
+
+aboutB.onclick= () => {
+  about.classList.toggle('opened');
+};
+
+aboutClose.onclick= () => {
+  about.classList.toggle('opened');
+}
+
+changelogB.onclick= () => {
+  changelog.classList.toggle('opened');
+};
+
+changelogClose.onclick= () => {
+  changelog.classList.toggle('opened');
 }
 
 open.onclick= () => {
