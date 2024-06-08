@@ -159,6 +159,12 @@ send.onclick= () => {
   }
 };
 
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    send.click();
+  }
+});
+
 // Functions
 function scrollToBottom() {
   const chatMessages = document.getElementById("chat-messages");
