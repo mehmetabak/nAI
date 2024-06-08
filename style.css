@@ -196,6 +196,17 @@ select option:hover {
   max-width: 80%; 
 }
 
+.changelog-screen-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 4; 
+}
+
 .changelog-screen h4 {
   margin-bottom: 15px;
 }
