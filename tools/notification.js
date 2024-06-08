@@ -6,7 +6,7 @@ export const showNotification = (message, imageUrl) => {
       positionClass: 'toast-bottom-right',
       timeOut: 8000,
       closeButton: true,
-      progressBar: true,
+      progressBar: false,
       preventDuplicates: true,
       newestOnTop: true,
     };
