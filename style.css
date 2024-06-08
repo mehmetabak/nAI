@@ -193,6 +193,7 @@ select option:hover {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   color: #ecf0f1; 
   text-align: left; 
+  max-width: 80%; 
 }
 
 .changelog-screen h4 {
@@ -201,7 +202,7 @@ select option:hover {
 
 .changelog-content {
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 50vh; 
 }
 
 .change-item {
