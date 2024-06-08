@@ -153,9 +153,15 @@ select option:hover {
   color: #ecf0f1; 
   text-align: left; 
   max-width: 90%; 
-  flex-direction: column; 
-  justify-content: center;
-  align-items: center;
+}
+
+.about-screen .about-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-screen .about-content h3 {
+  margin-top: 0;
 }
 
 .about-screen-close {
