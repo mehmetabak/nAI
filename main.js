@@ -165,6 +165,10 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
+gitB.onclick= () => {
+  window.location.href = 'https://github.com/memoli0/project-ai';
+};
+
 // Functions
 function scrollToBottom() {
   const chatMessages = document.getElementById("chat-messages");
