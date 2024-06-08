@@ -95,6 +95,7 @@ aboutClose.onclick= () => {
 
 changelogB.onclick= () => {
   changelog.classList.toggle('opened');
+  console.log("nsalfdnakl")
 };
 
 changelogClose.onclick= () => {
