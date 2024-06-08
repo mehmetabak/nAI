@@ -196,6 +196,15 @@ select option:hover {
   max-width: 80%; 
 }
 
+.changelog-screen-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  z-index: 6; 
+  font-size: 22px;
+}
+
 .changelog-screen-overlay {
   display: none;
   position: fixed;
@@ -224,14 +233,6 @@ select option:hover {
   font-weight: bold;
 }
 
-.changelog-screen-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  cursor: pointer;
-  z-index: 6; 
-  font-size: 22px;
-}
 .changelog-screen.opened {
   display: flex;
   opacity: 1;
