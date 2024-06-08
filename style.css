@@ -194,6 +194,7 @@ select option:hover {
   color: #ecf0f1; 
   text-align: left; 
   max-width: 80%; 
+  flex-direction: column; 
 }
 
 .changelog-screen-close {
