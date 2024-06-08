@@ -122,6 +122,7 @@ open.onclick= () => {
 
 close.onclick= () => {
   close.classList.toggle("opened");
+  menuOn = null;
 };
 
 modelSelector.addEventListener('change', function () {
