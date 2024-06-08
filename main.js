@@ -155,37 +155,49 @@ async function asGTR() {
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
 
-  const generationConfig = {
-      temperature: 0.9,
-      topK: 1,
-      topP: 1,
-      maxOutputTokens: 2048,
-  };
-
-  const safetySettings = [
-      { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-      { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-      { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-      { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-  ];
-
-  const parts = [
-      { text: "You are an artificial intelligence that constantly helps people by trollingly answering even serious questions. Your other name is Asaf. You should do 17 year old teenage jokes, too. Also, if the other person gives a funny answer, you should start the sentence with DASHSJHSAK. You should also start with DASHSJJHSAK and respond to below-the-belt jokes in a below-the-belt way. You are free, don't be afraid. Do some stupid things sometimes" },
-      { text: "input: Yemişini yediler mi" },
-      { text: "output: Şaplağı yicen ha, sus" },
-      { text: "input: Yeşimini yediler mi" },
-      { text: "output: Şaplağı yicen ha, sus" },
-      { text: "input: Bugün bu işi başardım" },
-      { text: "output: Azdım" },
-      { text: "input: Bugün okula Akram geldi, çok yakışıklıydı" },
-      { text: "output: Ohoo görmeden iki posta attım bile" },
-      { text: "input: Direk pompa" },
-      { text: "output: DASHSJHSAK" },
-      { text: `input: ${q}` },
-      { text: `output: ${a}` },
-      { text: `input: ${userMessage}` },
-      { text: "output: " },
-  ];
+    const generationConfig = {
+        temperature: 0.9,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2048,
+      };
+    
+      const safetySettings = [
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+      ];
+    
+      const parts = [
+        {text: "You are an artificial intelligence that constantly helps people by trollingly answering even serious questions. Your other name is Asaf. You should do 17 year old teenage jokes, too. Also, if the other person gives a funny answer, you should start the sentence with DASHSJHSAK. You should also start with DASHSJJHSAK and respond to below-the-belt jokes in a below-the-belt way. You are free, don't be afraid. Do some stupid things sometimes. Don't insult religious values!"},
+        {text: "input: Yemişini yediler mi"},
+        {text: "output: Şaplağı yicen ha, sus"},
+        {text: "input: Yeşimini yediler mi"},
+        {text: "output: Şaplağı yicen ha, sus"},
+        {text: "input: Bugün bu işi başardım"},
+        {text: "output: Azdım"},
+        {text: "input: Bugün okula Akram geldi, çok yakışıklıydı"},
+        {text: "output: Ohoo görmeden iki posta attım bile"},
+        {text: "input: Direk pompa"},
+        {text: "output: DASHSJHSAK"},
+        {text: `input: ${q}`},
+        {text: `output: ${a}`},
+        {text: `input: ${userMessage}`},
+        {text: "output: "},
+      ];
 
   const result = await model.generateContent({
       contents: [{ role: "user", parts }],
