@@ -13,30 +13,12 @@ body {
 select {
   padding: 1vh;
   border: none;
-  border-radius: 0.5vh;
+  border-radius: 1vh;
   background-color: #000;
   color: #fff;
   appearance: none;
   outline: none;
   cursor: pointer;
-}
-
-select::after {
-  content: '\25BC';
-  position: absolute;
-  top: 50%;
-  right: 1vh;
-  transform: translateY(-50%);
-  color: #fff;
-}
-
-select option {
-  background-color: #000;
-  color: #fff;
-}
-
-select option:hover {
-  background-color: #333;
 }
 
 #side-menu {
@@ -61,18 +43,20 @@ select option:hover {
   display: flex;
   flex-direction: column;
   margin-left: 20vw;
+  overflow: hidden;
   transition: margin-left 0.3s ease;
 }
 
 #profile-section {
   background-color: #222;
-  padding: 2vh;
+  padding: 1.5vh;
   text-align: center;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   border-bottom: 0.1vh solid #333;
+  min-height: 2vh;
 }
 
 #profile-picture {
@@ -127,8 +111,8 @@ select option:hover {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 4;
 }
@@ -206,7 +190,7 @@ select option:hover {
 #chat-header {
   background-color: #222;
   color: #ecf0f1;
-  padding: 2vh;
+  padding: 1.5vh;
   text-align: center;
   font-weight: bold;
   border-bottom: 0.1vh solid #333;
@@ -214,7 +198,7 @@ select option:hover {
 
 #chat-messages {
   flex: 1;
-  padding: 2vh;
+  padding: 1.5vh;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
   margin-bottom: 13vh;
@@ -263,7 +247,7 @@ select option:hover {
 #user-input {
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 100vw;
   background-color: #222;
   display: flex;
   justify-content: space-between;
@@ -305,11 +289,11 @@ select option:hover {
 
   #chat-messages.collapsed {
     margin-left: 0;
-    width: 100%;
+    width: 100vw;
   }
 
   #side-menu {
-    width: 100%;
+    width: 100vw;
     padding-top: 1vh;
   }
 
@@ -374,6 +358,6 @@ select option:hover {
     bottom: 0;
     right: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
   }
 }
