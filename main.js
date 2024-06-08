@@ -25,7 +25,7 @@ var q = `!`;
 var a = `!`;
 
 // Test Pictures
-const imageUrls = [
+var imageUrls = [
   'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
   'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg',
   'https://i.pinimg.com/564x/a0/bb/d5/a0bbd5abb5c314105df8034ec350a8b6.jpg',
@@ -35,8 +35,8 @@ const imageUrls = [
 
 // Local Control
 document.addEventListener('DOMContentLoaded', () => {
-  const randomIndex = Math.floor(Math.random() * imageUrls.length);
-  const selectedImage = imageUrls[randomIndex];
+  var randomIndex = Math.floor(Math.random() * imageUrls.length);
+  var selectedImage = imageUrls[randomIndex];
   showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', selectedImage);
 });
 
