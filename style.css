@@ -10,41 +10,23 @@ body {
 }
 
 select {
-  padding: 10px;
+  padding: 1vh;
   border: none;
-  border-radius: 5px;
-  background-color: #000; /* Black color */
-  color: #fff; /* White color */
+  border-radius: 1vh;
+  background-color: #000;
+  color: #fff;
   appearance: none;
   outline: none;
   cursor: pointer;
 }
 
-select::after {
-  content: '\25BC'; /* Unicode character for down arrow */
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  color: #fff; /* White color */
-}
-
-select option {
-  background-color: #000; /* Black color */
-  color: #fff; /* White color */
-}
-
-select option:hover {
-  background-color: #333; /* Darker black color on hover */
-}
-
 #side-menu {
-  width: 240px;
-  background-color: #000; /* Black color */
+  width: 20vw;
+  background-color: #000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 20px;
+  padding-top: 2vh;
   transition: transform 0.3s ease;
   z-index: 2;
   position: fixed;
@@ -59,43 +41,44 @@ select option:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-left: 20vw;
   overflow: hidden;
   transition: margin-left 0.3s ease;
 }
 
 #profile-section {
-  background-color: #222; /* Dark Gray color */
-  padding: 15px;
+  background-color: #222;
+  padding: 1.5vh;
   text-align: center;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #333;
+  border-bottom: 0.1vh solid #333;
   min-height: 2vh;
 }
 
 #profile-picture {
-  width: 30px;
-  height: 30px;
+  width: 3vh;
+  height: 3vh;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 1vh;
 }
 
 #toggle-menu-button {
-  margin-left: auto; /* Push to the right */
-  padding: 10px 15px;
-  background-color: #222; /* Dark Gray color */
+  margin-left: auto;
+  padding: 1vh 1.5vh;
+  background-color: #222;
   color: #ecf0f1;
   font-weight: bold;
   border: none;
-  border-radius: 20px;
+  border-radius: 2vh;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 #toggle-menu-button:hover {
-  background-color: #333; /* Hover background color */
+  background-color: #333;
 }
 
 .menu-screen {
@@ -104,22 +87,22 @@ select option:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #000; 
-  padding: 20px;
-  z-index: 5; 
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  color: #ecf0f1; 
-  text-align: center; 
+  background-color: #000;
+  padding: 2vh;
+  z-index: 5;
+  border-radius: 2vh;
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.3);
+  color: #ecf0f1;
+  text-align: center;
 }
 
 .menu-screen-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 1vh;
+  right: 1vh;
   cursor: pointer;
-  z-index: 6; 
-  font-size: 20px;
+  z-index: 6;
+  font-size: 2vh;
 }
 
 .menu-screen-overlay {
@@ -127,10 +110,10 @@ select option:hover {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); 
-  z-index: 4; 
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 4;
 }
 
 .menu-screen.opened {
@@ -144,12 +127,12 @@ select option:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #000; /* Black color */
-  padding: 20px;
+  background-color: #000;
+  padding: 2vh;
   display: none;
   z-index: 3;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 2vh;
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.3);
   opacity: 0;
   transform-origin: right center;
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -163,35 +146,35 @@ select option:hover {
 
 #menu-window-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 1vh;
+  right: 1vh;
   cursor: pointer;
-  z-index: 3; /* Set a higher z-index */
+  z-index: 3;
 }
 
 #menu-window-close div {
-  width: 30px;
-  height: 3px;
+  width: 3vh;
+  height: 0.3vh;
   background-color: #ecf0f1;
-  margin: 6px 0;
+  margin: 0.6vh 0;
   transition: 0.4s;
 }
 
 .menu-content {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-top: 10px;
-  padding: 15px;
-  border-radius: 20px;
+  gap: 1.5vh;
+  margin-top: 1vh;
+  padding: 1.5vh;
+  border-radius: 2vh;
   cursor: pointer;
   transition: background-color 0.3s;
-  background-color: #000; /* Black color */
+  background-color: #000;
   color: #ecf0f1;
 }
 
 .menu-content:hover {
-  background-color: #333; /* Hover background color */
+  background-color: #333;
 }
 
 #chat-container {
@@ -206,25 +189,25 @@ select option:hover {
 #chat-header {
   background-color: #222;
   color: #ecf0f1;
-  padding: 15px;
+  padding: 1.5vh;
   text-align: center;
   font-weight: bold;
-  border-bottom: 1px solid #333;
+  border-bottom: 0.1vh solid #333;
 }
 
 #chat-messages {
   flex: 1;
-  padding: 15px;
+  padding: 1.5vh;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
   margin-bottom: 13vh;
 }
 
 .user-message, .alpgtr-message {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  text-align: left; /* Align text to the left in message bubbles */
+  padding: 1vh;
+  margin-bottom: 1vh;
+  border-radius: 0.8vh;
+  text-align: left;
 }
 
 .user-message {
@@ -236,18 +219,18 @@ select option:hover {
 }
 
 .message-text {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
+  padding: 1vh;
+  margin-bottom: 1vh;
+  border-radius: 0.8vh;
   display: flex;
   align-items: center;
 }
 
 .message-text img {
-  width: 30px;
-  height: 30px;
+  width: 3vh;
+  height: 3vh;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 1vh;
 }
 
 .user-message .message-text {
@@ -263,34 +246,34 @@ select option:hover {
 #user-input {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  background-color: #222; 
+  width: 100vw;
+  background-color: #222;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-top: 1px solid #333;
+  padding: 1vh;
+  border-top: 0.1vh solid #333;
 }
 
 #input-text {
   flex: 1;
-  padding: 8px;
-  margin-right: 10px;
-  border-radius: 8px;
+  padding: 0.8vh;
+  margin-right: 1vh;
+  border-radius: 0.8vh;
   border: none;
   background-color: #111;
   color: #ecf0f1;
-  text-align: left; /* Align text to the left in user input */
+  text-align: left;
 }
 
 #send-button {
-  padding: 8px 19px;
+  padding: 0.8vh 1.9vh;
   background-color: #3498db;
   color: #ecf0f1;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.8vh;
   cursor: pointer;
-  margin-right: 15px;
+  margin-right: 1.5vh;
 }
 
 #side-menu.opened {
@@ -305,75 +288,75 @@ select option:hover {
 
   #chat-messages.collapsed {
     margin-left: 0;
-    width: 100%;
+    width: 100vw;
   }
 
   #side-menu {
-    width: 100%; 
-    padding-top: 10px; 
+    width: 100vw;
+    padding-top: 1vh;
   }
 
   #menu-items {
-    margin-top: 10px; 
+    margin-top: 1vh;
   }
 
   .menu-item {
-    padding: 10px;
+    padding: 1vh;
   }
 
   #profile-section {
-    padding: 10px;
+    padding: 1vh;
   }
 
   #toggle-menu-button {
     display: block;
-    padding: 10px;
+    padding: 1vh;
   }
 
   #menu-window {
-    padding: 10px;
+    padding: 1vh;
   }
 
   #menu-content {
-    padding: 10px;
-    border-radius: 15px;
+    padding: 1vh;
+    border-radius: 1.5vh;
   }
 
   #chat-header {
-    padding: 10px;
+    padding: 1vh;
   }
 
   #chat-messages {
-    padding: 10px;
+    padding: 1vh;
   }
 
   .user-message, .alpgtr-message {
-    padding: 5px;
-    margin-bottom: 5px;
+    padding: 0.5vh;
+    margin-bottom: 0.5vh;
   }
 
   .message-text img {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
+    width: 2vh;
+    height: 2vh;
+    margin-right: 0.5vh;
   }
 
   #user-input {
-    padding: 5px;
+    padding: 0.5vh;
   }
 
   #input-text {
-    padding: 5px;
+    padding: 0.5vh;
   }
 
   #send-button {
-    padding: 5px 10px;
+    padding: 0.5vh 1vh;
   }
 
   .toast-bottom-right {
     bottom: 0;
     right: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
   }
 }
