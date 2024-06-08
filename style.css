@@ -232,6 +232,11 @@ select option:hover {
   z-index: 6; 
   font-size: 22px;
 }
+.changelog-screen.opened {
+  display: flex;
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
 
 #menu-window {
   position: fixed;
