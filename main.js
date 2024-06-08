@@ -3,7 +3,7 @@ import {
     HarmCategory,
     HarmBlockThreshold,
   } from "@google/generative-ai";
-import { showNotification } from './notification';
+import { showNotification } from './tools/notification';
 
 const MODEL_NAME = "gemini-pro";
 const API_KEY = import.meta.env.VITE_API_KEY;
