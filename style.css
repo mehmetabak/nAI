@@ -29,11 +29,6 @@ select::after {
   color: #fff; 
 }
 
-#model-selector.open {
-  border-radius: 10px; /* Köşeleri yuvarlatma */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Gölgelendirme */
-}
-
 select option {
   background-color: #000; 
   color: #fff; 
