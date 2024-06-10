@@ -46,13 +46,14 @@ var imageUrls = [
 ];
 
 // Local Control
+/* Old Code for Notification
 document.addEventListener('DOMContentLoaded', () => {
   var randomIndex = Math.floor(Math.random() * imageUrls.length);
   var selectedImage = imageUrls[randomIndex];
   showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', selectedImage);
 });
+*/
 
-/* Old Code for Notification
 document.addEventListener('DOMContentLoaded', () => {
   const hasSeenNotification = localStorage.getItem('hasSeenNotification');
   const randomIndex = Math.floor(Math.random() * imageUrls.length);
@@ -63,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('hasSeenNotification', 'true');
   }
 });
-*/
 
 if(localStorage.getItem('model') !== null){
   modelSelector.value = localStorage.getItem('model');
