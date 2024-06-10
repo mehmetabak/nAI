@@ -82,10 +82,10 @@ select option:hover {
   margin-right: 10px;
 }
 
-#toggle-menu-button {
-  margin-left: auto; 
-  padding: 12px 20px;
-  background-color: #222; 
+.action-button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background-color: #444;
   color: #ecf0f1;
   font-weight: bold;
   border: none;
@@ -94,8 +94,8 @@ select option:hover {
   transition: background-color 0.3s;
 }
 
-#toggle-menu-button:hover {
-  background-color: #333; 
+.action-button:hover {
+  background-color: #555; 
 }
 
 .menu-screen {
@@ -231,6 +231,12 @@ select option:hover {
   z-index: 4; 
 }
 
+.changelog-screen.opened {
+  display: flex;
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
 .changelog-screen h4 {
   margin-bottom: 15px;
 }
@@ -246,12 +252,6 @@ select option:hover {
 
 .change-date {
   font-weight: bold;
-}
-
-.changelog-screen.opened {
-  display: flex;
-  opacity: 1;
-  transform: translate(-50%, -50%);
 }
 
 #menu-window {
@@ -440,9 +440,9 @@ select option:hover {
     padding: 12px;
   }
 
-  #toggle-menu-button {
+  .action-button {
     display: block;
-    padding: 12px;
+    padding: 10px 15px;
   }
 
   #menu-window {
