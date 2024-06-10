@@ -124,13 +124,13 @@ open.onclick= () => {
   }
 };
 
-clear.onclick= () => {
-  window.location.reload();
-}
-
 close.onclick= () => {
   close.classList.toggle("opened");
 };
+
+clear.onclick= () => {
+  window.location.reload();
+}
 
 modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
