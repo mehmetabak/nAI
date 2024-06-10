@@ -10,6 +10,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 
 // UI
 var open = document.getElementById("toggle-menu-button");
+var clear = document.getElementById("clean-button");
 var close = document.getElementById("menu-window");
 var send = document.getElementById("send-button");
 var header = document.getElementById("chat-header");
@@ -122,6 +123,10 @@ open.onclick= () => {
     menuOn = null;
   }
 };
+
+clear.onclick= () => {
+  window.location.reload();
+}
 
 close.onclick= () => {
   close.classList.toggle("opened");
