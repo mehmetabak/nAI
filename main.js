@@ -215,7 +215,7 @@ function appendMessage(sender, message) {
 
 // Models
 
-// Model DASHSJHSAK
+// Model nAI
 async function nAI() {
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
@@ -267,6 +267,7 @@ async function nAI() {
   scrollToBottom();
 }
 
+// Model DASHSJHSAK
 async function asGTR() {
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
