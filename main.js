@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const randomIndex = Math.floor(Math.random() * imageUrls.length);
   const selectedImage = imageUrls[randomIndex];
 
-  if (!hasSeenNotification) {
+  if (hasSeenNotification == null) {
     showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', selectedImage);
     localStorage.setItem('hasSeenNotification', 'true');
   }
