@@ -144,6 +144,14 @@ modelSelector.addEventListener('change', function () {
     localStorage.setItem('model', 'asas');
     header.firstChild.data = "DASHSJHSAK" 
   }
+
+  modelSelector.addEventListener("click", function() {
+    modelSelector.classList.add("open");
+  });
+
+  modelSelector.addEventListener("blur", function() {
+    modelSelector.classList.remove("open");
+  });
 });
 
 send.onclick= () => {
