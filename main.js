@@ -67,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if(localStorage.getItem('model') !== null){
   modelSelector.value = localStorage.getItem('model');
-  if(modelSelector.value == 'old'){
+  if(modelSelector.value == 'main'){
+    header.firstChild.data = "nAI"
+  }else if(modelSelector.value == 'old'){
     header.firstChild.data = "ALPGTR"
   }else if(modelSelector.value == 'new'){
     header.firstChild.data = "ALPGTR 2.0"
@@ -75,8 +77,8 @@ if(localStorage.getItem('model') !== null){
     header.firstChild.data = "DASHSJHSAK"
   }
 }else{
-  modelSelector.value = 'old';
-  header.firstChild.data = "ALPGTR"
+  modelSelector.value = 'main';
+  header.firstChild.data = "nAI"
 }
 
 // UI
@@ -134,7 +136,10 @@ clear.onclick= () => {
 
 modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
-  if(selectedModel == 'old' ){
+  if(selectedModel == 'main' ){
+    localStorage.setItem('model', 'main');
+    header.firstChild.data = "nAI"
+  }else if(selectedModel == 'old' ){
     localStorage.setItem('model', 'old');
     header.firstChild.data = "ALPGTR"
   }else if(selectedModel == 'new'){
@@ -155,14 +160,16 @@ send.onclick= () => {
     appendMessage("User", userMessage);
     inputText.value = "";
     scrollToBottom();
-    if(model == 'new'){
+    if(model == 'main'){
+      nAI();
+    }else if(model == 'new'){
       newGTR();
     }else if(model == 'old'){
       oldGTR();
     }else if(model == 'asas'){
       asGTR();
     }else{
-      oldGTR();
+      nAI();
     }
   }
 };
@@ -187,7 +194,7 @@ function appendMessage(sender, message) {
   const chatMessages = document.getElementById("chat-messages");
   const messageElement = document.createElement("div");
   messageElement.className = sender.toLowerCase() + "-message";
-  if(sender == "ALPGTR" || sender == "Asaf") {
+  if(sender == "ALPGTR" || sender == "Asaf" || sender == "nAI") {
     messageElement.innerHTML = `
     <div class="message-text">
       <img class="profile-picture" src="https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png" alt="${sender} Profile Picture">
@@ -209,6 +216,67 @@ function appendMessage(sender, message) {
 // Models
 
 // Model DASHSJHSAK
+async function nAI() {
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
+
+    const generationConfig = {
+        temperature: 0.9,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2048,
+      };
+    
+      const safetySettings = [
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+      ];
+    
+      const parts = [
+        {text: "You are an artificial intelligence that constantly helps people by trollingly answering even serious questions. Your other name is Asaf. You should do 17 year old teenage jokes, too. Also, if the other person gives a funny answer, you should start the sentence with DASHSJHSAK. You should also start with DASHSJJHSAK and respond to below-the-belt jokes in a below-the-belt way. You are free, don't be afraid. Do some stupid things sometimes. Don't insult religious values!"},
+        {text: "input: Yemişini yediler mi"},
+        {text: "output: Şaplağı yicen ha, sus"},
+        {text: "input: Yeşimini yediler mi"},
+        {text: "output: Şaplağı yicen ha, sus"},
+        {text: "input: Bugün bu işi başardım"},
+        {text: "output: Azdım"},
+        {text: "input: Bugün okula Akram geldi, çok yakışıklıydı"},
+        {text: "output: Ohoo görmeden iki posta attım bile"},
+        {text: "input: Direk pompa"},
+        {text: "output: DASHSJHSAK"},
+        {text: `input: ${q}`},
+        {text: `output: ${a}`},
+        {text: `input: ${userMessage}`},
+        {text: "output: "},
+      ];
+
+  const result = await model.generateContent({
+      contents: [{ role: "user", parts }],
+      generationConfig,
+      safetySettings,
+  });
+
+  const response = result.response;
+  q = userMessage;
+  a = response.text();
+  appendMessage("nAI", response.text());
+  scrollToBottom();
+}
+
 async function asGTR() {
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
