@@ -66,13 +66,16 @@ select option:hover {
 #profile-section {
   background-color: #222; 
   padding: 15px;
-  text-align: center;
-  font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   border-bottom: 1px solid #333;
   min-height: 3vh;
+}
+
+#user-info {
+  display: flex;
+  align-items: center;
 }
 
 #profile-picture {
@@ -80,6 +83,11 @@ select option:hover {
   height: 35px;
   border-radius: 50%;
   margin-right: 10px;
+}
+
+#action-buttons {
+  display: flex;
+  align-items: center;
 }
 
 .action-button {
@@ -162,7 +170,7 @@ select option:hover {
   max-height: 70vh;
 }
 
-.about-screen .about-content h3 {
+.about-screen h3, .about-screen h4 {
   margin-top: 0;
 }
 

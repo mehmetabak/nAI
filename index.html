@@ -12,13 +12,17 @@
 <body>
     <div id="main-content">
         <div id="profile-section">
-            <img id="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="Profile Picture">
-            nAI (Private) User
-            <div id="clean-button" class="action-button">🧹</div>
-            <div id="toggle-menu-button" class="action-button">· · ·</div>
+            <div id="user-info">
+                <img id="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="Profile Picture">
+                nAI (Private) User
+            </div>
+            <div id="action-buttons">
+                <div id="clean-button" class="action-button">🧹</div>
+                <div id="toggle-menu-button" class="action-button">· · ·</div>
+            </div>
         </div>
 
-        <div id="menu-window" >
+        <div id="menu-window">
             <div id="menu-window-close">/></div>
             <div id="aboutB" class="menu-content menu-item">About</div>
             <div id="changelogB" class="menu-content menu-item">What's New</div>
@@ -45,24 +49,24 @@
                 <h4>Our Mission</h4>
                 <p>At nAI, our mission is to democratize AI research by fostering an inclusive and collaborative ecosystem. We believe in the power of open-source contributions to drive innovation and progress in the field of artificial intelligence. By providing access to refined GPT models and encouraging experimentation, we aim to empower developers and researchers to push the boundaries of what's possible in AI.</p>
             </div>
-          </div>
+        </div>
 
         <div id="changelog-screen" class="changelog-screen">
             <div class="changelog-screen-close" id="changelog-screen-close">×</div>
             <h3>Changelog</h3>
             <div class="changelog-content">
-              <div class="change-item">
-                <div class="change-date">2024-06-08</div>
-                <div class="change-description">Updated the used model.</div>
-              </div>
-              <div class="change-item">
-                <div class="change-date">2024-06-07</div>
-                <div class="change-description">Added new feature: Dark mode.</div>
-              </div>
-              <div class="change-item">
-                <div class="change-date">2024-06-06</div>
-                <div class="change-description">Fixed bug related to user authentication.</div>
-              </div>
+                <div class="change-item">
+                    <div class="change-date">2024-06-08</div>
+                    <div class="change-description">Updated the used model.</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-date">2024-06-07</div>
+                    <div class="change-description">Added new feature: Dark mode.</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-date">2024-06-06</div>
+                    <div class="change-description">Fixed bug related to user authentication.</div>
+                </div>
             </div>
         </div>
 
@@ -75,7 +79,7 @@
 
         <div id="user-input">
             <input type="text" id="input-text" placeholder="Type your message...">
-            <button id="send-button" >Send</button>
+            <button id="send-button">Send</button>
         </div>
     </div>
 
