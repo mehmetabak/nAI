@@ -1,7 +1,7 @@
 # Project nAI
 
 ## Introduction
-Welcome to Project nAI! We are dedicated to exploring Open Source Fine-Tuned Gemini and GPT Models. Our project aims to provide a platform for testing and refining these models, pushing the boundaries of natural language processing technology.
+Welcome to Project nAI! We are dedicated to exploring Fine-Tuned Gemini and GPT Models. Our project aims to provide a platform for testing and refining these models, pushing the boundaries of natural language processing technology.
 
 ## About
 Project nAI stands at the forefront of open-source AI exploration. We provide a dedicated space for developers and researchers to experiment with cutting-edge models, fostering transparency and community collaboration.
