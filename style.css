@@ -93,7 +93,7 @@ select option:hover {
 .action-button {
   margin-left: 10px;
   padding: 10px 15px;
-  background-color: #444;
+  background: none;
   color: #ecf0f1;
   font-weight: bold;
   border: none;
