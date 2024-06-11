@@ -70,9 +70,9 @@ if(localStorage.getItem('model') !== null){
   if(modelSelector.value == 'main'){
     header.firstChild.data = "nAI"
   }else if(modelSelector.value == 'old'){
-    header.firstChild.data = "ALPGTR"
+    header.firstChild.data = "AlpGTR 1.0"
   }else if(modelSelector.value == 'new'){
-    header.firstChild.data = "ALPGTR 2.0"
+    header.firstChild.data = "AlpGTR 2.0"
   }else if(modelSelector.value == "asas"){
     header.firstChild.data = "DASHSJHSAK"
   }
@@ -141,10 +141,10 @@ modelSelector.addEventListener('change', function () {
     header.firstChild.data = "nAI"
   }else if(selectedModel == 'old' ){
     localStorage.setItem('model', 'old');
-    header.firstChild.data = "ALPGTR"
+    header.firstChild.data = "AlpGTR 1.0"
   }else if(selectedModel == 'new'){
     localStorage.setItem('model', 'new');
-    header.firstChild.data = "ALPGTR 2.0"
+    header.firstChild.data = "AlpGTR 2.0"
   }else if (selectedModel == 'asas'){
     localStorage.setItem('model', 'asas');
     header.firstChild.data = "DASHSJHSAK" 
@@ -194,7 +194,7 @@ function appendMessage(sender, message) {
   const chatMessages = document.getElementById("chat-messages");
   const messageElement = document.createElement("div");
   messageElement.className = sender.toLowerCase() + "-message";
-  if(sender == "ALPGTR" || sender == "Asaf" || sender == "nAI") {
+  if(sender == "AlpGTR" || sender == "DASHSJHSAK" || sender == "nAI") {
     messageElement.innerHTML = `
     <div class="message-text">
       <img class="profile-picture" src="https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png" alt="${sender} Profile Picture">
@@ -325,7 +325,7 @@ async function asGTR() {
   const response = result.response;
   q = userMessage;
   a = response.text();
-  appendMessage("Asaf", response.text());
+  appendMessage("DASHSJHSAK", response.text());
   scrollToBottom();
 }
 
@@ -371,7 +371,7 @@ async function newGTR() {
   const response = result.response;
   q = userMessage;
   a = response.text();
-  appendMessage("ALPGTR", response.text());
+  appendMessage("AlpGTR", response.text());
   scrollToBottom();
 }
 
@@ -403,7 +403,7 @@ function oldGTR() {
       })
       .then(response => response.json())
       .then(data => {
-          appendMessage("ALPGTR", data.candidates[0].output);
+          appendMessage("AlpGTR", data.candidates[0].output);
           scrollToBottom();
       });
   }
