@@ -47,15 +47,6 @@ var imageUrls = [
   'https://i.pinimg.com/564x/b9/5a/cb/b95acbb938a23eb7c480256685b5b528.jpg'
 ];
 
-// Local Control
-/* Old Code for Notification
-document.addEventListener('DOMContentLoaded', () => {
-  var randomIndex = Math.floor(Math.random() * imageUrls.length);
-  var selectedImage = imageUrls[randomIndex];
-  showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', selectedImage);
-});
-*/
-
 document.addEventListener('DOMContentLoaded', () => {
   const hasSeenNotification = localStorage.getItem('hasSeenNotification');
   const randomIndex = Math.floor(Math.random() * imageUrls.length);
@@ -92,14 +83,14 @@ function populateModelSelector(models) {
 
 let models;
 
-fetch('models.json')
+fetch('/models.json')
   .then(response => response.json())
   .then(data => {
     models = data;
     populateModelSelector(models);
   });
 
-// UI
+//Base UI functions
 settingsB.onclick= () => {
   menu.classList.toggle('opened');
   menuOn = "settings";
@@ -152,6 +143,7 @@ clear.onclick= () => {
   window.location.reload();
 }
 
+//Other UI functions
 modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
   localStorage.setItem('model', selectedModel);
@@ -186,7 +178,7 @@ gitB.onclick= () => {
   window.location.href = 'https://github.com/memoli0/project-ai';
 };
 
-// Functions
+//Functions for ML and Messaging
 function scrollToBottom() {
   const chatMessages = document.getElementById("chat-messages");
   chatMessages.scrollTop = chatMessages.scrollHeight;
