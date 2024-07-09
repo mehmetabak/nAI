@@ -5,8 +5,8 @@ import {
   } from "@google/generative-ai";
 import { showNotification } from './tools/notification';
 
-const API_KEY_Gemini = import.meta.env.API_KEY_Gemini;
-const API_KEY_Text_Bison = import.meta.env.API_KEY_Text_Bison;
+const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
+const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
 
 // UI
 var open = document.getElementById("toggle-menu-button");
