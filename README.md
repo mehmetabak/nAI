@@ -16,8 +16,7 @@ Project nAI started with the goal of exploring and integrating fine-tuned versio
 We welcome contributions from developers, researchers, and enthusiasts alike. Whether you're interested in adding new models, fine-tuning existing ones, improving UI/UX features, or contributing in other ways, your participation is valued at Project nAI.
 
 ## How to Contribute
-1. Fork the repository.
-2. Create a new branch for your changes.
+1. Fork the repository and create a new branch for your changes.
 3. Make your modifications and enhancements.
 4. Submit a pull request with a clear description of your additions.
 5. Engage in discussions and reviews to refine your contributions.
