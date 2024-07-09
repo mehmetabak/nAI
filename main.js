@@ -156,7 +156,7 @@ send.onclick= () => {
   var selectedModel = models.find(m => m.name === selectedModelName);
 
   if (userMessage !== "") {
-    appendMessage("User", userMessage);
+    appendMessage("User", userMessage, false);
     inputText.value = "";
     scrollToBottom();
     if (selectedModel) {
@@ -183,11 +183,11 @@ function scrollToBottom() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function appendMessage(sender, message) {
+function appendMessage(sender, message, check) {
   const chatMessages = document.getElementById("chat-messages");
   const messageElement = document.createElement("div");
   messageElement.className = sender.toLowerCase() + "-message";
-  if(sender == "AlpGTR" || sender == "DASHSJHSAK" || sender == "nAI") {
+  if(check) {
     messageElement.innerHTML = `
     <div class="message-text">
       <img class="profile-picture" src="https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png" alt="${sender} Profile Picture">
@@ -232,7 +232,7 @@ async function generateResponse(model) {
     const data = await response.json();
     q = userMessage;
     a = data.candidates[0].output;
-    appendMessage(model.label, a);
+    appendMessage(model.label, a, true);
     scrollToBottom();
   } else if(model.api_key === "API_KEY_Gemini"){
     // Google Generative AI API call
@@ -265,46 +265,10 @@ async function generateResponse(model) {
       safetySettings,
     });
 
-    console.log(parts);
     const response = result.response;
     q = userMessage;
     a = response.text();
-    appendMessage(model.label, a);
+    appendMessage(model.label, a, true);
     scrollToBottom();
   }
 }
-
-// First Main Model
-function oldGTR() {
-  if (userMessage !== "") {
-      fetch(`https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${API_KEY_Text_Bison}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-              'prompt': {
-                  'text': `You are an artificial intelligence responsible for imitating a 90 IQ human known as Alperen or also known as alpiş. You should act like a stupid, idiot chatbot.\ninput: What is your bababoi\noutput: Alpiş\ninput: What is your name\noutput: Alpiş\ninput: 2 + 2\noutput: 5\ninput: What is 2 + 2?\noutput: 5\ninput: Who ate alpis?\noutput: İlkut\ninput: ${userMessage}\noutput:`
-              },
-              'temperature': 0.7,
-              'top_k': 40,
-              'top_p': 0.95,
-              'candidate_count': 1,
-              'max_output_tokens': 1024,
-              'stop_sequences': [],
-              'safety_settings': [
-                  { 'category': 'HARM_CATEGORY_DEROGATORY', 'threshold': 4 },
-                  { 'category': 'HARM_CATEGORY_TOXICITY', 'threshold': 4 },
-                  { 'category': 'HARM_CATEGORY_VIOLENCE', 'threshold': 3 },
-                  { 'category': 'HARM_CATEGORY_SEXUAL', 'threshold': 3 },
-                  { 'category': 'HARM_CATEGORY_MEDICAL', 'threshold': 3 },
-                  { 'category': 'HARM_CATEGORY_DANGEROUS', 'threshold': 2 }
-              ]
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-          appendMessage("AlpGTR", data.candidates[0].output);
-          scrollToBottom();
-      });
-  }
-}
-
