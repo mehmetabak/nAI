@@ -5,10 +5,8 @@ import {
   } from "@google/generative-ai";
 import { showNotification } from './tools/notification';
 
-const API_KEYS = {
-  API_KEY_Gemini: import.meta.env.API_KEY_Gemini,
-  API_KEY_Text_Bison: import.meta.env.API_KEY_Text_Bison
-};
+const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
+const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
 
 // UI
 var open = document.getElementById("toggle-menu-button");
@@ -209,10 +207,9 @@ function appendMessage(sender, message) {
 
 // Models
 async function generateResponse(model) {
-  const apiKey = API_KEYS[model.api_key];
   if (model.api_key === "API_KEY_Text_Bison") {
     // Text Bison API call
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${API_KEY_Text_Bison}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -238,7 +235,7 @@ async function generateResponse(model) {
     scrollToBottom();
   } else if(model.api_key === "API_KEY_Gemini"){
     // Google Generative AI API call
-    const genAI = new GoogleGenerativeAI({ apiKey });
+    const genAI = new GoogleGenerativeAI({ API_KEY_Gemini });
     const modelData = await genAI.getGenerativeModel({ model: model.model_name });
 
     const generationConfig = {
