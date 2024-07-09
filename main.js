@@ -75,6 +75,7 @@ function populateModelSelector(models) {
     header.firstChild.data = getModelLabel(modelSelector.value);
   } else {
     modelSelector.value = models[0].name;
+    localStorage.setItem('model', models[0].name);
     header.firstChild.data = models[0].label;
   }
 }
