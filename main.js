@@ -265,6 +265,7 @@ async function generateResponse(model) {
       safetySettings,
     });
 
+    console.log(parts);
     const response = result.response;
     q = userMessage;
     a = response.text();
