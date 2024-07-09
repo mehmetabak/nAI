@@ -6,7 +6,6 @@ import {
 import { showNotification } from './tools/notification';
 
 const API_KEY_Gemini = import.meta.env.API_KEY_Gemini;
-console.log(API_KEY_Gemini);
 const API_KEY_Text_Bison = import.meta.env.API_KEY_Text_Bison;
 
 // UI
