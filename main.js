@@ -236,7 +236,7 @@ async function generateResponse(model) {
     scrollToBottom();
   } else if(model.api_key === "API_KEY_Gemini"){
     // Google Generative AI API call
-    const genAI = new GoogleGenerativeAI({ API_KEY_Gemini });
+    const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
     const modelData = await genAI.getGenerativeModel({ model: model.model_name });
 
     const generationConfig = {
