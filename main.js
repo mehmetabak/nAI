@@ -6,7 +6,8 @@ import {
 import { showNotification } from './tools/notification';
 
 const MODEL_NAME = "gemini-pro";
-const API_KEY = import.meta.env.VITE_API_KEY;
+const API_KEY_Gemini = import.meta.env.VITE_API_KEY;
+const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY;
 
 // UI
 var open = document.getElementById("toggle-menu-button");
@@ -217,7 +218,7 @@ function appendMessage(sender, message) {
 
 // Model nAI
 async function nAI() {
-  const genAI = new GoogleGenerativeAI(API_KEY);
+  const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
 
     const generationConfig = {
@@ -269,7 +270,7 @@ async function nAI() {
 
 // Model DASHSJHSAK
 async function asGTR() {
-  const genAI = new GoogleGenerativeAI(API_KEY);
+  const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
 
     const generationConfig = {
@@ -331,7 +332,7 @@ async function asGTR() {
 
 // Model AlpGTR
 async function newGTR() {
-  const genAI = new GoogleGenerativeAI(API_KEY);
+  const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
   const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
 
   const generationConfig = {
@@ -378,7 +379,7 @@ async function newGTR() {
 // First Main Model
 function oldGTR() {
   if (userMessage !== "") {
-      fetch(`https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${API_KEY}`, {
+      fetch(`https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=${API_KEY_Text_Bison}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
