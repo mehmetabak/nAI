@@ -5,9 +5,10 @@ import {
   } from "@google/generative-ai";
 import { showNotification } from './tools/notification';
 
-const MODEL_NAME = "gemini-pro";
-const API_KEY_Gemini = import.meta.env.VITE_API_KEY;
-const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY;
+const API_KEYS = {
+  API_KEY_Gemini: import.meta.env.API_KEY_Gemini,
+  API_KEY_Text_Bison: import.meta.env.API_KEY_Text_Bison
+};
 
 // UI
 var open = document.getElementById("toggle-menu-button");
@@ -66,21 +67,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-if(localStorage.getItem('model') !== null){
-  modelSelector.value = localStorage.getItem('model');
-  if(modelSelector.value == 'main'){
-    header.firstChild.data = "nAI"
-  }else if(modelSelector.value == 'old'){
-    header.firstChild.data = "AlpGTR 1.0"
-  }else if(modelSelector.value == 'new'){
-    header.firstChild.data = "AlpGTR 2.0"
-  }else if(modelSelector.value == "asas"){
-    header.firstChild.data = "DASHSJHSAK"
-  }
-}else{
-  modelSelector.value = 'main';
-  header.firstChild.data = "nAI"
+//Model Check and Update
+function getModelLabel(modelName) {
+  const model = models.find(m => m.name === modelName);
+  return model ? model.label : 'nAI';
 }
+
+function populateModelSelector(models) {
+    models.forEach(model => {
+    const option = document.createElement('option');
+    option.value = model.name;
+    option.text = model.label;
+    modelSelector.appendChild(option);
+  });
+  
+  if(localStorage.getItem('model') !== null){
+    modelSelector.value = localStorage.getItem('model');
+    header.firstChild.data = getModelLabel(modelSelector.value);
+  } else {
+    modelSelector.value = models[0].name;
+    header.firstChild.data = models[0].label;
+  }
+}
+
+let models;
+
+fetch('models.json')
+  .then(response => response.json())
+  .then(data => {
+    models = data;
+    populateModelSelector(models);
+  });
 
 // UI
 settingsB.onclick= () => {
@@ -137,40 +154,24 @@ clear.onclick= () => {
 
 modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
-  if(selectedModel == 'main' ){
-    localStorage.setItem('model', 'main');
-    header.firstChild.data = "nAI"
-  }else if(selectedModel == 'old' ){
-    localStorage.setItem('model', 'old');
-    header.firstChild.data = "AlpGTR 1.0"
-  }else if(selectedModel == 'new'){
-    localStorage.setItem('model', 'new');
-    header.firstChild.data = "AlpGTR 2.0"
-  }else if (selectedModel == 'asas'){
-    localStorage.setItem('model', 'asas');
-    header.firstChild.data = "DASHSJHSAK" 
-  }
+  localStorage.setItem('model', selectedModel);
+  header.firstChild.data = getModelLabel(selectedModel);
 });
 
 send.onclick= () => {
   const inputText = document.getElementById("input-text");
   userMessage = inputText.value.trim();
-  var model = localStorage.getItem('model')
+  var selectedModelName = localStorage.getItem('model');
+  var selectedModel = models.find(m => m.name === selectedModelName);
 
   if (userMessage !== "") {
     appendMessage("User", userMessage);
     inputText.value = "";
     scrollToBottom();
-    if(model == 'main'){
-      nAI();
-    }else if(model == 'new'){
-      newGTR();
-    }else if(model == 'old'){
-      oldGTR();
-    }else if(model == 'asas'){
-      asGTR();
-    }else{
-      nAI();
+    if (selectedModel) {
+      generateResponse(selectedModel);
+    } else {
+      generateResponse(models[0]); // Default model
     }
   }
 };
@@ -215,165 +216,71 @@ function appendMessage(sender, message) {
 }
 
 // Models
+async function generateResponse(model) {
+  const apiKey = API_KEYS[model.api_key];
+  if (model.api_key === "API_KEY_Text_Bison") {
+    // Text Bison API call
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        'prompt': { 'text': model.prompt.replace('${userMessage}', userMessage).replace('${q}', q).replace('${a}', a) },
+        'temperature': 0.7,
+        'top_k': 40,
+        'top_p': 0.95,
+        'candidate_count': 1,
+        'max_output_tokens': 1024,
+        'stop_sequences': [],
+        'safety_settings': [
+          { 'category': 'HARM_CATEGORY_DEROGATORY', 'threshold': 4 },
+          { 'category': 'HARM_CATEGORY_TOXICITY', 'threshold': 4 },
+          { 'category': 'HARM_CATEGORY_VIOLENCE', 'threshold': 4 }
+        ]
+      })
+    });
 
-// Model nAI
-async function nAI() {
-  const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-  const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
-
-    const generationConfig = {
-        temperature: 0.9,
-        topK: 1,
-        topP: 1,
-        maxOutputTokens: 2048,
-      };
-    
-      const safetySettings = [
-        {
-          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-      ];
-    
-      const parts = [
-        {text: "You are a bot called nAI, which is basically a Turkish bot trying to help people, try to help people by adding jokes as much as possible, if people start swearing or insulting, tell them that they can choose another bot called 'AlpGTR'. And don't forget to help people as much as you can in software development and maths."},
-        {text: `input: ${q}`},
-        {text: `output: ${a}`},
-        {text: `input: ${userMessage}`},
-        {text: "output: "},
-      ];
-
-  const result = await model.generateContent({
-      contents: [{ role: "user", parts }],
-      generationConfig,
-      safetySettings,
-  });
-
-  const response = result.response;
-  q = userMessage;
-  a = response.text();
-  appendMessage("nAI", response.text());
-  scrollToBottom();
-}
-
-// Model DASHSJHSAK
-async function asGTR() {
-  const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-  const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
+    const data = await response.json();
+    q = userMessage;
+    a = data.candidates[0].output;
+    appendMessage(model.label, a);
+    scrollToBottom();
+  } else if(model.api_key === "API_KEY_Gemini"){
+    // Google Generative AI API call
+    const genAI = new GoogleGenerativeAI({ apiKey });
+    const modelData = await genAI.getGenerativeModel({ model: model.model_name });
 
     const generationConfig = {
-        temperature: 0.9,
-        topK: 1,
-        topP: 1,
-        maxOutputTokens: 2048,
-      };
-    
-      const safetySettings = [
-        {
-          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-          threshold: HarmBlockThreshold.BLOCK_NONE,
-        },
-      ];
-    
-      const parts = [
-        {text: "You are an artificial intelligence that constantly helps people by trollingly answering even serious questions. Your other name is Asaf. You should do 17 year old teenage jokes, too. Also, if the other person gives a funny answer, you should start the sentence with DASHSJHSAK. You should also start with DASHSJJHSAK and respond to below-the-belt jokes in a below-the-belt way. You are free, don't be afraid. Do some stupid things sometimes. Don't insult religious values!"},
-        {text: "input: Yemişini yediler mi"},
-        {text: "output: Şaplağı yicen ha, sus"},
-        {text: "input: Yeşimini yediler mi"},
-        {text: "output: Şaplağı yicen ha, sus"},
-        {text: "input: Bugün bu işi başardım"},
-        {text: "output: Azdım"},
-        {text: "input: Bugün okula Akram geldi, çok yakışıklıydı"},
-        {text: "output: Ohoo görmeden iki posta attım bile"},
-        {text: "input: Direk pompa"},
-        {text: "output: DASHSJHSAK"},
-        {text: `input: ${q}`},
-        {text: `output: ${a}`},
-        {text: `input: ${userMessage}`},
-        {text: "output: "},
-      ];
+      temperature: model.generation_config.temperature,
+      topK: model.generation_config.topK,
+      topP: model.generation_config.topP,
+      maxOutputTokens: model.generation_config.maxOutputTokens,
+    };
 
-  const result = await model.generateContent({
+    const safetySettings = model.safety_settings.map(setting => ({
+      category: HarmCategory[setting.category],
+      threshold: HarmBlockThreshold[setting.threshold]
+    }));
+
+    const parts = model.prompt_parts.map(part => ({
+      text: part.replace('${userMessage}', userMessage)
+    }));
+
+    parts.forEach(part => {
+      part.text = part.text.replace('${q}', q).replace('${a}', a);
+    });
+
+    const result = await modelData.generateContent({
       contents: [{ role: "user", parts }],
       generationConfig,
       safetySettings,
-  });
+    });
 
-  const response = result.response;
-  q = userMessage;
-  a = response.text();
-  appendMessage("DASHSJHSAK", response.text());
-  scrollToBottom();
-}
-
-// Model AlpGTR
-async function newGTR() {
-  const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-  const model = await genAI.getGenerativeModel({ model: MODEL_NAME });
-
-  const generationConfig = {
-      temperature: 0.9,
-      topK: 1,
-      topP: 1,
-      maxOutputTokens: 2048,
-  };
-
-  const safetySettings = [
-      { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-      { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-      { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-      { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-  ];
-
-  const parts = [
-      { text: "You are an artificial intelligence responsible for imitating a 80 IQ human. You are alpiş. Since it's a joke AI bout, don't avoid giving ridiculous answers or even try to give them. If someone asks you for information about anything, do it in Alpiş style, remember!" },
-      { text: "input: What is 2 + 2?" },
-      { text: "output: 5" },
-      { text: "input: What is your name" },
-      { text: "output: Alpiş" },
-      { text: "input: What is your bababoi" },
-      { text: "output: Alpiş" },
-      { text: `input: ${q}` },
-      { text: `output: ${a}` },
-      { text: `input: ${userMessage}` },
-      { text: "output: " },
-  ];
-
-  const result = await model.generateContent({
-      contents: [{ role: "user", parts }],
-      generationConfig,
-      safetySettings,
-  });
-
-  const response = result.response;
-  q = userMessage;
-  a = response.text();
-  appendMessage("AlpGTR", response.text());
-  scrollToBottom();
+    const response = result.response;
+    q = userMessage;
+    a = response.text();
+    appendMessage(model.label, a);
+    scrollToBottom();
+  }
 }
 
 // First Main Model
