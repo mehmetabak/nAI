@@ -40,7 +40,7 @@ The `community-contributed` branch hosts a wide range of models contributed by o
 
 
 ## Contact Us
-Have questions, suggestions, or want to collaborate? Feel free to reach out to us at [mehmetnurabak0@gmail.com](mailto:mehmetnurabak0@gmail.com). We'd love to hear from you!
+Have questions, suggestions, or want to collaborate? Feel free to reach out to me at [mehmetnurabak0@gmail.com](mailto:mehmetnurabak0@gmail.com). We'd love to hear from you!
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
