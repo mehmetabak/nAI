@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedImage = imageUrls[randomIndex];
 
   if (hasSeenNotification == null) {
-    showNotification('Yeni yapay zeka modeli DASHSJHSAK yani Asaf herkese kullanıma açıldı, hadi ayarlardan seç ve test et!', selectedImage);
+    showNotification('Welcome to the nAI!', selectedImage);
     localStorage.setItem('hasSeenNotification', 'true');
   }
 });
