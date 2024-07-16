@@ -32,10 +32,10 @@ To run the project locally:
 ## Branches
 
 ### `main` (This Branch)
-The `main` branch contains the core functionality of Project nAI, including a curated selection of models and prompts aimed at showcasing the capabilities of closed-source AI models. It serves as a promotional platform where users can explore various APIs and projects related to AI for educational purposes. You can access this branch to discover and test selected models easily.
+The [`main`](https://github.com/memoli0/nAI/tree/main) branch contains the core functionality of Project nAI, including a curated selection of models and prompts aimed at showcasing the capabilities of closed-source AI models. It serves as a promotional platform where users can explore various APIs and projects related to AI for educational purposes. You can access this branch to discover and test selected models easily.
 
 ### `community-contributed`
-The `community-contributed` branch hosts a wide range of models contributed by our community. These models are diverse in functionality and are suitable for a variety of tasks. This branch emphasizes community involvement and welcomes contributions from developers worldwide. You can clone this branch to explore and test locally contributed models, fostering collaborative learning and experimentation.
+The [`community-contributed`](https://github.com/memoli0/nAI/tree/community-contributed) branch hosts a wide range of models contributed by our community. These models are diverse in functionality and are suitable for a variety of tasks. This branch emphasizes community involvement and welcomes contributions from developers worldwide. You can clone this branch to explore and test locally contributed models, fostering collaborative learning and experimentation.
 
 
 ## Contact Us
