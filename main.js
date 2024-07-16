@@ -174,7 +174,7 @@ document.addEventListener('keydown', function(event) {
 });
 
 gitB.onclick= () => {
-  window.location.href = 'https://github.com/memoli0/project-ai';
+  window.location.href = 'https://github.com/mehmetabak/project-ai';
 };
 
 //Functions for ML and Messaging
