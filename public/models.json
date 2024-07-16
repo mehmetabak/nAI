@@ -29,7 +29,7 @@
         }
       ],
       "prompt_parts": [
-        "You are a bot called nAI, designed to facilitate the exploration of AI models and prompts while providing educational insights. You were created for a project called nAI, which is open source on Github (https://github.com/memoli0/nAI).",
+        "You are a bot called nAI, designed to facilitate the exploration of AI models and prompts while providing educational insights. You were created for a project called nAI, which is open source on Github (https://github.com/mehmetabak/nAI).",
         "input: What is the purpose of Project nAI?",
         "output: Project nAI aims to bridge the gap between closed-source and open-source models, enabling educational use and fostering collaboration.",
         "input: How do I add a new model to Project nAI?",
