@@ -308,6 +308,7 @@ select option:hover {
   color: #ecf0f1;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 5vh;
 }
 
 #chat-header {
@@ -400,6 +401,10 @@ select option:hover {
 
   #chat-header {
     padding: 15px;
+  }
+
+  #chat-container {
+    margin-bottom: 10vh;
   }
 
   #chat-messages {
