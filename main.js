@@ -192,14 +192,15 @@ function appendMessage(sender, message, isAI) {
     emptySpace = document.createElement('div');
     emptySpace.innerHTML = '&nbsp;';
     emptySpace.style.height = '5vh';
+
     const chatMessages = document.getElementById("chat-messages");
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
     chatMessages.appendChild(emptySpace);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     qW = true;
   }else{
-    chatMessages.removeChild(emptySpace);
     const chatMessages = document.getElementById("chat-messages");
+    chatMessages.removeChild(emptySpace);
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
     chatMessages.appendChild(emptySpace);
     chatMessages.scrollTop = chatMessages.scrollHeight;
