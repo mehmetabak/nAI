@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/default.css';
+import 'highlight.js/styles/github-dark.css';
 import './message.css';
 
 export function createMessageElement(sender, message, isAI) {
