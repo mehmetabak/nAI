@@ -27,7 +27,7 @@
   }
   
   .ai-message .message-content {
-    background-color: rgba(46, 204, 113, 0.1);
+    background-color: transparent;
   }
   
   .profile-picture {
