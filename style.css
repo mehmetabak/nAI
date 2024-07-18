@@ -429,7 +429,7 @@ select option:hover {
 
   #chat-messages {
     padding: 15px;
-    margin-bottom: 17vh;
+    margin-bottom: 10vh;
   }
 
   #user-input {
