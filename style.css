@@ -324,7 +324,7 @@ select option:hover {
   padding: 20px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
-  margin-bottom: calc(10vw + env(safe-area-inset-bottom));
+  margin-bottom: calc(10vw + calc(env(safe-area-inset-bottom)));
 }
 
 #user-input {
@@ -404,7 +404,7 @@ select option:hover {
 
   #chat-messages {
     padding: 15px;
-    margin-bottom: calc(env(safe-area-inset-bottom));
+    margin-bottom: calc(10vw + calc(env(safe-area-inset-bottom)));
   }
 
   #user-input {
