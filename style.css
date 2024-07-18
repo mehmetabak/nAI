@@ -308,7 +308,6 @@ select option:hover {
   color: #ecf0f1;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  margin-bottom: 5vh;
 }
 
 #chat-header {
@@ -329,7 +328,7 @@ select option:hover {
 }
 
 #user-input {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   width: 100%;
   background-color: #222; 
@@ -339,7 +338,6 @@ select option:hover {
   padding: 15px;
   border-top: 1px solid #333;
   margin-top: auto;
-  z-index: 10;
 }
 
 #input-text {
@@ -402,10 +400,6 @@ select option:hover {
 
   #chat-header {
     padding: 15px;
-  }
-
-  #chat-container {
-    margin-bottom: 10vh;
   }
 
   #chat-messages {
