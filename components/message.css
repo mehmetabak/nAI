@@ -3,15 +3,17 @@
     height: 35px;
     border-radius: 50%;
     margin-right: 10px;
+    object-fit: cover;
   }
   
   .user-message, .alpgtr-message {
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 18px;
     max-width: 70%;
     display: flex;
     align-items: flex-start;
+    position: relative;
   }
   
   .user-message {
@@ -20,6 +22,7 @@
     align-self: flex-end;
     flex-direction: row-reverse;
     margin-left: auto;
+    border-bottom-right-radius: 4px;
   }
   
   .alpgtr-message {
@@ -28,13 +31,15 @@
     align-self: flex-start;
     flex-direction: row;
     margin-right: auto;
+    border-bottom-left-radius: 4px;
   }
   
   .message-text {
     flex: 1;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 0;
     position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   
   .message-text img {
@@ -61,6 +66,7 @@
   .user-message p, .alpgtr-message p {
     margin: 0;
     text-align: left;
+    line-height: 1.4;
   }
   
   .user-message .message-text::after, .alpgtr-message .message-text::after {
