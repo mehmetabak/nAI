@@ -52,16 +52,22 @@
   .sender-name {
     font-size: 14px;
     margin-bottom: 6px;
-    display: block;
+    display: flex;
+    align-items: center;
   }
   
   .user-message .sender-name {
     color: #3498db;
-    text-align: right;
+    justify-content: flex-end;
   }
   
   .ai-message .sender-name {
     color: #2ecc71;
+  }
+  
+  .user-message .sender-name .profile-picture {
+    margin-left: 8px;
+    order: 1;
   }
   
   .message-text p {
