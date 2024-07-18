@@ -196,6 +196,7 @@ function appendMessage(sender, message, isAI) {
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
     chatMessages.appendChild(emptySpace);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    qW = true;
   }else{
     chatMessages.removeChild(emptySpace);
     const chatMessages = document.getElementById("chat-messages");
