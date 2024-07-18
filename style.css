@@ -324,7 +324,7 @@ select option:hover {
   padding: 20px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
-  margin-bottom: 5vh;
+  margin-bottom: calc(env(safe-area-inset-bottom));
 }
 
 #user-input {
