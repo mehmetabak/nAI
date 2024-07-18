@@ -1,85 +1,87 @@
-.profile-picture {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .user-message, .alpgtr-message {
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    max-width: 90%; 
+.message {
     display: flex;
-    align-items: center;
-    text-align: left;
+    margin-bottom: 20px;
+    max-width: 80%;
   }
   
   .user-message {
-    background-color: #2c2c2c; 
-    color: #fff;
-    align-self: flex-start;
-    flex-direction: row;
+    justify-content: flex-start;
     margin-right: auto;
   }
   
-  .alpgtr-message {
-    background-color: rgba(46, 204, 113, 0.2); 
-    color: #fff;
-    align-self: flex-end;
-    flex-direction: row-reverse;
+  .ai-message {
+    justify-content: flex-end;
     margin-left: auto;
   }
   
-  .message-text {
-    padding: 10px;
-    margin-bottom: 0;
-    border-radius: 10px;
+  .message-content {
     display: flex;
-    align-items: center;
-    max-width: 100%;
-    position: relative;
-    text-align: left; 
+    align-items: flex-start;
+    border-radius: 12px;
+    padding: 12px;
   }
   
-  .message-text img {
-    width: 35px;
-    height: 35px;
+  .user-message .message-content {
+    background-color: #2c2c2c;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ai-message .message-content {
+    background-color: transparent;
+    flex-direction: row-reverse;
+  }
+  
+  .profile-picture {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    margin-right: 15px;
   }
   
-  .user-message .message-text {
-    color: #ecf0f1;
+  .user-message .profile-picture {
+    margin-right: 12px;
   }
   
-  .alpgtr-message .message-text {
-    color: #ecf0f1;
+  .ai-message .profile-picture {
+    margin-left: 12px;
   }
   
-  .user-message p, .alpgtr-message p {
-    margin: 0;
+  .message-text {
     flex: 1;
   }
   
-  .user-message .message-text:after, .alpgtr-message .message-text:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0; 
-    height: 0; 
-    border: 10px solid transparent;
+  .sender-name {
+    font-size: 14px;
+    margin-bottom: 4px;
   }
   
-  .user-message .message-text:after {
-    border-right-color: #2c2c2c; 
-    border-left: 0;
-    right: -20px;
+  .user-message .sender-name {
+    color: #3498db;
   }
   
-  .alpgtr-message .message-text:after {
-    border-left-color: rgba(46, 204, 113, 0.2); 
-    border-right: 0;
-    left: -20px;
-  }  
+  .ai-message .sender-name {
+    color: #2ecc71;
+    text-align: right;
+  }
+  
+  .message-text p {
+    margin: 0;
+    color: #ecf0f1;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  
+  .ai-message .message-text p {
+    text-align: right;
+  }
+  
+  body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+  }
+  
+  #chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
