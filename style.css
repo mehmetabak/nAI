@@ -38,23 +38,6 @@ select option:hover {
   background-color: #333; 
 }
 
-#side-menu {
-  width: 300px;
-  background-color: #000; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 20px;
-  transition: transform 0.3s ease;
-  z-index: 2;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  overflow-x: hidden;
-  transform: translateX(-100%);
-}
-
 #main-content {
   flex: 1;
   display: flex;
@@ -111,7 +94,6 @@ select option:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   background-color: #000; 
   padding: 25px;
   z-index: 5; 
@@ -119,6 +101,7 @@ select option:hover {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
   color: #ecf0f1; 
   text-align: center; 
+  transform: translateX(-100%);
 }
 
 .menu-screen-close {
@@ -144,7 +127,7 @@ select option:hover {
 .menu-screen.opened {
   display: flex;
   opacity: 1;
-  transform: translate(-50%, -50%);
+  transform: translateX(0);
 }
 
 .about-screen {
@@ -152,7 +135,6 @@ select option:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   background-color: #000; 
   padding: 25px;
   z-index: 5; 
@@ -161,6 +143,7 @@ select option:hover {
   color: #ecf0f1; 
   text-align: left; 
   max-width: 90%; 
+  transform: translateX(-100%);
 }
 
 .about-screen .about-content {
@@ -197,7 +180,7 @@ select option:hover {
 .about-screen.opened {
   display: flex;
   opacity: 1;
-  transform: translate(-50%, -50%);
+  transform: translateX(0);
 }
 
 .changelog-screen {
@@ -205,7 +188,6 @@ select option:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   background-color: #000; 
   padding: 25px;
   z-index: 5; 
@@ -217,6 +199,7 @@ select option:hover {
   flex-direction: column; 
   justify-content: center;
   align-items: center;
+  transform: translateX(-100%);
 }
 
 .changelog-screen-close {
@@ -242,7 +225,7 @@ select option:hover {
 .changelog-screen.opened {
   display: flex;
   opacity: 1;
-  transform: translate(-50%, -50%);
+  transform: translateX(0);
 }
 
 .changelog-screen h4 {
@@ -266,7 +249,6 @@ select option:hover {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   background-color: #000; 
   padding: 25px;
   display: none;
@@ -276,12 +258,13 @@ select option:hover {
   opacity: 0;
   transform-origin: right center;
   transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateX(-100%);
 }
 
 #menu-window.opened {
   display: flex;
   opacity: 1;
-  transform: translate(-50%, -50%);
+  transform: translateX(0);
 }
 
 #menu-window-close {
@@ -377,10 +360,6 @@ select option:hover {
   margin-right: 20px;
 }
 
-#side-menu.opened {
-  transform: translateX(0);
-}
-
 @media (max-width: 768px) {
   #main-content {
     overflow-x: hidden;
@@ -390,11 +369,6 @@ select option:hover {
   #chat-messages.collapsed {
     margin-left: 0;
     width: 100%;
-  }
-
-  #side-menu {
-    width: 100%;
-    padding-top: 15px;
   }
 
   #menu-items {
