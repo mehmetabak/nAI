@@ -32,12 +32,15 @@ var changelogClose = document.getElementById("changelog-screen-close");
 
 var menuOn;
 
+var emptySpace
+
 // For Model
 var userMessage;
 var q = `!`;
 var a = `!`;
 
 // Test Pictures
+var qW = false;
 var imageUrls = [
   'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
   'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg',
@@ -185,9 +188,21 @@ function scrollToBottom() {
 }
 
 function appendMessage(sender, message, isAI) {
-  const chatMessages = document.getElementById("chat-messages");
-  chatMessages.appendChild(createMessageElement(sender, message, isAI));
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  if(qW){
+    emptySpace = document.createElement('div');
+    emptySpace.innerHTML = '&nbsp;';
+    emptySpace.style.height = '5vh';
+    const chatMessages = document.getElementById("chat-messages");
+    chatMessages.appendChild(createMessageElement(sender, message, isAI));
+    chatMessages.appendChild(emptySpace);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }else{
+    chatMessages.removeChild(emptySpace);
+    const chatMessages = document.getElementById("chat-messages");
+    chatMessages.appendChild(createMessageElement(sender, message, isAI));
+    chatMessages.appendChild(emptySpace);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 }
 
 // Models
