@@ -188,7 +188,7 @@ function scrollToBottom() {
 }
 
 function appendMessage(sender, message, isAI) {
-  if(qW){
+  if(!qW){
     emptySpace = document.createElement('div');
     emptySpace.innerHTML = '&nbsp;';
     emptySpace.style.height = '5vh';
