@@ -1,0 +1,55 @@
+.message-text {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    max-width: 80%;
+}
+  
+.message-text img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+  
+.user-message, .nai-message {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    text-align: left;
+    max-width: 90vh;
+}
+  
+.user-message {
+    background-color: #3498db;
+    color: #fff;
+    align-self: flex-end;
+}
+  
+.nai-message {
+    background-color: #2ecc71;
+    color: #fff;
+    align-self: flex-start;
+}
+  
+.user-message p, .alpgtr-message p {
+    margin: 0;
+    padding-left: 50px; 
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .user-message, .alpgtr-message {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .message-text img {
+        width: 25px;
+        height: 25px;
+        margin-right: 10px;
+    }
+}
+  

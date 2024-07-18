@@ -343,46 +343,6 @@ select option:hover {
   margin-bottom: 15vh;
 }
 
-.user-message, .alpgtr-message {
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  text-align: left; 
-}
-
-.user-message {
-  color: #ecf0f1;
-}
-
-.alpgtr-message {
-  color: #ecf0f1;
-}
-
-.message-text {
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.message-text img {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  margin-right: 15px;
-}
-
-.user-message .message-text {
-  color: #ecf0f1;
-  align-self: flex-end;
-}
-
-.alpgtr-message .message-text {
-  color: #ecf0f1;
-  align-self: flex-start;
-}
-
 #user-input {
   position: fixed;
   bottom: 0;
@@ -468,17 +428,6 @@ select option:hover {
 
   #chat-messages {
     padding: 15px;
-  }
-
-  .user-message, .alpgtr-message {
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-
-  .message-text img {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
   }
 
   #user-input {

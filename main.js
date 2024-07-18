@@ -4,6 +4,7 @@ import {
     HarmBlockThreshold,
   } from "@google/generative-ai";
 import { showNotification } from './tools/notification';
+import { createMessageElement } from './components/message.js';
 
 const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
 const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
@@ -183,26 +184,9 @@ function scrollToBottom() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function appendMessage(sender, message, check) {
+function appendMessage(sender, message, isAI) {
   const chatMessages = document.getElementById("chat-messages");
-  const messageElement = document.createElement("div");
-  messageElement.className = sender.toLowerCase() + "-message";
-  if(check) {
-    messageElement.innerHTML = `
-    <div class="message-text">
-      <img class="profile-picture" src="https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png" alt="${sender} Profile Picture">
-      <strong>${sender} </strong> 
-    </div>
-    <p> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp ${message} </p>`;
-  }else {
-    messageElement.innerHTML = `
-    <div class="message-text">
-      <img class="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="${sender} Profile Picture">
-      <strong>${sender} </strong> 
-    </div>
-    <p> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp ${message} </p>`;
-  }
-  chatMessages.appendChild(messageElement);
+  chatMessages.appendChild(createMessageElement(sender, message, isAI));
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
