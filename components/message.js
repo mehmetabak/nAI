@@ -13,10 +13,10 @@ export function createMessageElement(sender, message, isAI) {
         <div class="message-text">
           <div class="sender-name">
             ${sender}
-            ${isAI ? '' : `<img class="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="User Profile Picture">`}
           </div>
           <p>${parsedMessage}</p>
         </div>
+        ${isAI ? '' : `<img class="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="User Profile Picture">`}
       </div>
     `;
     return messageElement;
