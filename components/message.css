@@ -83,6 +83,6 @@
 
 @media (max-width: 768px) {
     .ai-message {
-        max-width: 35vh;
+        max-width: 70vw;
     }
 }
