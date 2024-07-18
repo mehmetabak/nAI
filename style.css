@@ -38,23 +38,6 @@ select option:hover {
   background-color: #333; 
 }
 
-#side-menu {
-  width: 300px;
-  background-color: #000; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 20px;
-  transition: transform 0.3s ease;
-  z-index: 2;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  overflow-x: hidden;
-  transform: translateX(-100%);
-}
-
 #main-content {
   flex: 1;
   display: flex;
@@ -377,10 +360,6 @@ select option:hover {
   margin-right: 20px;
 }
 
-#side-menu.opened {
-  transform: translateX(0);
-}
-
 @media (max-width: 768px) {
   #main-content {
     overflow-x: hidden;
@@ -391,12 +370,7 @@ select option:hover {
     margin-left: 0;
     width: 100%;
   }
-
-  #side-menu {
-    width: 100%;
-    padding-top: 15px;
-  }
-
+  
   #menu-items {
     margin-top: 15px;
   }
