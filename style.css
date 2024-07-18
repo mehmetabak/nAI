@@ -307,7 +307,6 @@ select option:hover {
   background-color: #111;
   color: #ecf0f1;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 #chat-header {
