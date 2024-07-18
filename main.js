@@ -191,7 +191,7 @@ function appendMessage(sender, message, isAI) {
   if(!qW){
     emptySpace = document.createElement('div');
     emptySpace.innerHTML = '&nbsp;';
-    emptySpace.style.height = '12vh';
+    emptySpace.style.height = '14vh';
 
     const chatMessages = document.getElementById("chat-messages");
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
