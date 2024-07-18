@@ -303,6 +303,7 @@ select option:hover {
 #chat-container {
   display: flex;
   flex-direction: column;
+  flex: 1;
   background-color: #111;
   color: #ecf0f1;
   overflow: hidden;
@@ -319,7 +320,6 @@ select option:hover {
 }
 
 #chat-messages {
-  flex: 1;
   padding: 20px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
