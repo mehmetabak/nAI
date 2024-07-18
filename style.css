@@ -324,8 +324,7 @@ select option:hover {
   padding: 20px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
-  margin-bottom: auto;
-  margin-top: 5vh;
+  margin-bottom: 5vh
 }
 
 #user-input {
@@ -338,6 +337,7 @@ select option:hover {
   align-items: center;
   padding: 15px;
   border-top: 1px solid #333;
+  margin-top: auto;
 }
 
 #input-text {
@@ -404,6 +404,7 @@ select option:hover {
 
   #chat-messages {
     padding: 15px;
+    margin-bottom: 15vh
   }
 
   #user-input {
