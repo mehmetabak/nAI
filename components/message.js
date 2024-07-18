@@ -9,9 +9,13 @@ export function createMessageElement(sender, message, isAI) {
   
     marked.setOptions({
         highlight: function(code, lang) {
-            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-            return hljs.highlight(code, { language }).value;
-        }
+            if (lang && hljs.getLanguage(lang)) {
+                return hljs.highlight(lang, code).value;
+            } else {
+                return hljs.highlightAuto(code).value;
+            }
+        },
+        langPrefix: 'hljs language-'
     });
 
     const parsedMessage = marked(message);
@@ -23,9 +27,16 @@ export function createMessageElement(sender, message, isAI) {
           <div class="sender-name">
             ${sender}
           </div>
-          <p>${parsedMessage}</p>
+          <div class="message-body">${parsedMessage}</div>
         </div>
       </div>
     `;
+
+    setTimeout(() => {
+        messageElement.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+    }, 0);
+
     return messageElement;
-  }
+}
