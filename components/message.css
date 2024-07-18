@@ -73,15 +73,3 @@
   .ai-message .message-text p {
     text-align: right;
   }
-  
-  body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-  }
-  
-  #chat-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
