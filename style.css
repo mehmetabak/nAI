@@ -339,6 +339,7 @@ select option:hover {
   padding: 15px;
   border-top: 1px solid #333;
   margin-top: auto;
+  z-index: 10;
 }
 
 #input-text {
