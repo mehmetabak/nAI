@@ -75,7 +75,7 @@
     margin: 0;
     color: #ecf0f1;
     line-height: 1.5;
-    overflow-wrap: break-word;
+    overflow-wrap: normal;
 }
   
 .user-message .message-text p {
