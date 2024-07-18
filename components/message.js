@@ -1,5 +1,5 @@
 import { marked } from 'marked';
-import './styles/message.css';
+import './components/message.css';
 
 export function createMessageElement(sender, message, isAI) {
     const messageElement = document.createElement('div');
