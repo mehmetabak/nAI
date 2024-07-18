@@ -328,7 +328,7 @@ select option:hover {
 }
 
 #user-input {
-  position: sticky;
+  position: fixed;
   bottom: 0;
   width: 100%;
   background-color: #222; 
@@ -404,7 +404,7 @@ select option:hover {
 
   #chat-messages {
     padding: 15px;
-    margin-bottom: 10vh;
+    margin-bottom: calc(env(safe-area-inset-bottom));
   }
 
   #user-input {
