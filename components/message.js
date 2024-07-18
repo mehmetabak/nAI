@@ -1,10 +1,18 @@
 import { marked } from 'marked';
+import hljs from 'highlight.js';
 import './message.css';
 
 export function createMessageElement(sender, message, isAI) {
     const messageElement = document.createElement('div');
     messageElement.className = `message ${isAI ? 'ai' : 'user'}-message`;
   
+    marked.setOptions({
+        highlight: function(code, lang) {
+            const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+            return hljs.highlight(code, { language }).value;
+        }
+    });
+
     const parsedMessage = marked(message);
   
     messageElement.innerHTML = `

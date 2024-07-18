@@ -1,7 +1,8 @@
 .message {
     display: flex;
     margin-bottom: 24px;
-    max-width: 85%;
+    max-width: 80%;
+    word-wrap: break-word;
 }
   
 .user-message {
@@ -84,7 +85,12 @@
 }
 
 @media (max-width: 768px) {
-    .ai-message {
-        max-width: 70vw;
+    .message {
+        max-width: 90%;
+        word-wrap: break-word; 
+    }
+
+    .message-content {
+        flex-direction: column; 
     }
 }
