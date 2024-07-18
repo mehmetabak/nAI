@@ -19,7 +19,6 @@
     align-items: flex-start;
     border-radius: 12px;
     padding: 12px;
-    overflow-wrap: normal;
 }
   
 .user-message .message-content {
@@ -75,7 +74,8 @@
     margin: 0;
     color: #ecf0f1;
     line-height: 1.5;
-    overflow-wrap: normal;
+    overflow-wrap: break-word;
+    margin: 8px 0 0 0;
 }
   
 .user-message .message-text p {
