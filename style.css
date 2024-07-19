@@ -38,23 +38,6 @@ select option:hover {
   background-color: #333; 
 }
 
-#side-menu {
-  width: 300px;
-  background-color: #000; 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 20px;
-  transition: transform 0.3s ease;
-  z-index: 2;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  overflow-x: hidden;
-  transform: translateX(-100%);
-}
-
 #main-content {
   flex: 1;
   display: flex;
@@ -106,7 +89,7 @@ select option:hover {
   background-color: #555; 
 }
 
-.menu-screen {
+.model-window {
   display: none;
   position: fixed;
   top: 50%;
@@ -121,7 +104,7 @@ select option:hover {
   text-align: center; 
 }
 
-.menu-screen-close {
+.model-window-close-button {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -130,7 +113,7 @@ select option:hover {
   font-size: 22px;
 }
 
-.menu-screen-overlay {
+.model-window-overlay {
   display: none;
   position: fixed;
   top: 0;
@@ -141,7 +124,7 @@ select option:hover {
   z-index: 4; 
 }
 
-.menu-screen.opened {
+.model-window.opened {
   display: flex;
   opacity: 1;
   transform: translate(-50%, -50%);
@@ -174,7 +157,7 @@ select option:hover {
   margin-top: 0;
 }
 
-.about-screen-close {
+.about-screen-close-button {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -219,7 +202,7 @@ select option:hover {
   align-items: center;
 }
 
-.changelog-screen-close {
+.changelog-screen-close-button {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -340,51 +323,11 @@ select option:hover {
   padding: 20px;
   overflow-y: auto;
   transition: margin-left 0.3s ease, width 0.3s ease;
-  margin-bottom: 15vh;
-}
-
-.user-message, .alpgtr-message {
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  text-align: left; 
-}
-
-.user-message {
-  color: #ecf0f1;
-}
-
-.alpgtr-message {
-  color: #ecf0f1;
-}
-
-.message-text {
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.message-text img {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  margin-right: 15px;
-}
-
-.user-message .message-text {
-  color: #ecf0f1;
-  align-self: flex-end;
-}
-
-.alpgtr-message .message-text {
-  color: #ecf0f1;
-  align-self: flex-start;
+  margin-bottom: 5vh
 }
 
 #user-input {
-  position: fixed;
+  position: fixed; 
   bottom: 0;
   width: 100%;
   background-color: #222; 
@@ -393,6 +336,8 @@ select option:hover {
   align-items: center;
   padding: 15px;
   border-top: 1px solid #333;
+  margin-top: auto;
+  z-index: 1;
 }
 
 #input-text {
@@ -416,10 +361,6 @@ select option:hover {
   margin-right: 20px;
 }
 
-#side-menu.opened {
-  transform: translateX(0);
-}
-
 @media (max-width: 768px) {
   #main-content {
     overflow-x: hidden;
@@ -429,11 +370,6 @@ select option:hover {
   #chat-messages.collapsed {
     margin-left: 0;
     width: 100%;
-  }
-
-  #side-menu {
-    width: 100%;
-    padding-top: 15px;
   }
 
   #menu-items {
@@ -468,17 +404,7 @@ select option:hover {
 
   #chat-messages {
     padding: 15px;
-  }
-
-  .user-message, .alpgtr-message {
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-
-  .message-text img {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
+    margin-bottom: 15vh
   }
 
   #user-input {

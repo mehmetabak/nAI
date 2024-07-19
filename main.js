@@ -4,32 +4,42 @@ import {
     HarmBlockThreshold,
   } from "@google/generative-ai";
 import { showNotification } from './tools/notification';
+import { createMessageElement } from './components/message.js';
 
 const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
 const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
 
 // UI
-var open = document.getElementById("toggle-menu-button");
-var clear = document.getElementById("clean-button");
-var close = document.getElementById("menu-window");
-var send = document.getElementById("send-button");
-var header = document.getElementById("chat-header");
+var mainMenu = document.getElementById("menu-window");
+var mainMenuOpenButton = document.getElementById("toggle-menu-button");
+var mainMenuCloseButton = document.getElementById("menu-window-close")
 
-var settingsB = document.getElementById("settingsB");
-var aboutB = document.getElementById("aboutB");
-var changelogB = document.getElementById("changelogB");
-var gitB = document.getElementById("gitB");
+var clearButton = document.getElementById("clear-button");
+var sendMessageButton = document.getElementById("send-button");
+var chatHeader = document.getElementById("chat-header");
+
+var modelSettingsButton = document.getElementById("settings-button");
+var aboutButton = document.getElementById("about-button");
+var changelogButton = document.getElementById("changelog-button");
+var githubButton = document.getElementById("github-button");
 
 var modelSelector = document.getElementById('model-selector');
-var menu = document.getElementById("menu-screen");
-var menuClose = document.getElementById("menu-screen-close");
+var modelWindow = document.getElementById("model-window");
+var modelWindowCloseButton = document.getElementById("model-window-close-button");
 
-var about = document.getElementById("about-screen");
-var aboutClose = document.getElementById("about-screen-close");
-var changelog = document.getElementById("changelog-screen");
-var changelogClose = document.getElementById("changelog-screen-close");
+var aboutScreen = document.getElementById("about-screen");
+var aboutScreenCloseButton = document.getElementById("about-screen-close-button");
+var changelogScreen = document.getElementById("changelog-screen");
+var changelogScreenCloseButton = document.getElementById("changelog-screen-close-button");
 
-var menuOn;
+var chatMessages = document.getElementById("chat-messages");
+
+var whichMenuIsOn;
+var emptySpace = Object.assign(document.createElement('div'), {
+  innerHTML: '&nbsp;',
+  style: 'height: 14vh;'
+});
+var isEmptySpaceAdded = false;
 
 // For Model
 var userMessage;
@@ -46,17 +56,17 @@ var imageUrls = [
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-  const hasSeenNotification = localStorage.getItem('hasSeenNotification');
+  const hasSeenNotificationBefore = localStorage.getItem('hasSeenNotificationBefore');
   const randomIndex = Math.floor(Math.random() * imageUrls.length);
   const selectedImage = imageUrls[randomIndex];
 
-  if (hasSeenNotification == null) {
+  if (hasSeenNotificationBefore == null) {
     showNotification('Welcome to the nAI!', selectedImage);
-    localStorage.setItem('hasSeenNotification', 'true');
+    localStorage.setItem('hasSeenNotificationBefore', 'true');
   }
 });
 
-//Model Check and Update
+//Model Selection and Update
 function getModelLabel(modelName) {
   const model = models.find(m => m.name === modelName);
   return model ? model.label : 'nAI';
@@ -72,11 +82,11 @@ function populateModelSelector(models) {
   
   if(localStorage.getItem('model') !== null){
     modelSelector.value = localStorage.getItem('model');
-    header.firstChild.data = getModelLabel(modelSelector.value);
+    chatHeader.firstChild.data = getModelLabel(modelSelector.value);
   } else {
     modelSelector.value = models[0].name;
     localStorage.setItem('model', models[0].name);
-    header.firstChild.data = models[0].label;
+    chatHeader.firstChild.data = models[0].label;
   }
 }
 
@@ -89,67 +99,76 @@ fetch('/models.json')
     populateModelSelector(models);
   });
 
-//Base UI functions
-settingsB.onclick= () => {
-  menu.classList.toggle('opened');
-  menuOn = "settings";
-};
-
-menuClose.onclick= () => {
-  menu.classList.toggle('opened');
-  menuOn = null;
-}
-
-aboutB.onclick= () => {
-  about.classList.toggle('opened');
-  menuOn = "about";
-};
-
-aboutClose.onclick= () => {
-  about.classList.toggle('opened');
-  menuOn = null;
-}
-
-changelogB.onclick= () => {
-  changelog.classList.toggle('opened');
-  menuOn = "changelog";
-};
-
-changelogClose.onclick= () => {
-  changelog.classList.toggle('opened');
-  menuOn = null;
-}
-
-open.onclick= () => {
-  close.classList.toggle("opened");
-  if(menuOn == "settings"){
-    menu.classList.toggle('opened');
-    menuOn = null;
-  }else if(menuOn == "about"){
-    about.classList.toggle('opened');
-    menuOn = null;
-  }else if (menuOn == "changelog"){
-    changelog.classList.toggle('opened');
-    menuOn = null;
-  }
-};
-
-close.onclick= () => {
-  close.classList.toggle("opened");
-};
-
-clear.onclick= () => {
-  window.location.reload();
-}
-
-//Other UI functions
 modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
   localStorage.setItem('model', selectedModel);
-  header.firstChild.data = getModelLabel(selectedModel);
+  chatHeader.firstChild.data = getModelLabel(selectedModel);
 });
 
-send.onclick= () => {
+//Base UI functions
+modelSettingsButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  modelWindow.classList.toggle('opened');
+  whichMenuIsOn = "settings";
+};
+
+modelWindowCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  modelWindow.classList.toggle('opened');
+  whichMenuIsOn = null;
+}
+
+aboutButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  aboutScreen.classList.toggle('opened');
+  whichMenuIsOn = "about";
+};
+
+aboutScreenCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  aboutScreen.classList.toggle('opened');
+  whichMenuIsOn = null;
+}
+
+changelogButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  changelogScreen.classList.toggle('opened');
+  whichMenuIsOn = "changelog";
+};
+
+changelogScreenCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  changelogScreen.classList.toggle('opened');
+  whichMenuIsOn = null;
+}
+
+mainMenuOpenButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  if(whichMenuIsOn == "settings"){
+    modelWindow.classList.toggle('opened');
+    whichMenuIsOn = null;
+  }else if(whichMenuIsOn == "about"){
+    aboutScreen.classList.toggle('opened');
+    whichMenuIsOn = null;
+  }else if (whichMenuIsOn == "changelog"){
+    changelogScreen.classList.toggle('opened');
+    whichMenuIsOn = null;
+  }
+};
+
+mainMenuCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+};
+
+clearButton.onclick= () => {
+  window.location.reload();
+}
+
+githubButton.onclick= () => {
+  window.location.href = 'https://github.com/mehmetabak/nAI';
+};
+
+sendMessageButton.onclick= () => {
   const inputText = document.getElementById("input-text");
   userMessage = inputText.value.trim();
   var selectedModelName = localStorage.getItem('model');
@@ -158,7 +177,6 @@ send.onclick= () => {
   if (userMessage !== "") {
     appendMessage("User", userMessage, false);
     inputText.value = "";
-    scrollToBottom();
     if (selectedModel) {
       generateResponse(selectedModel);
     } else {
@@ -169,41 +187,22 @@ send.onclick= () => {
 
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Enter') {
-    send.click();
+    sendMessageButton.click();
   }
 });
 
-gitB.onclick= () => {
-  window.location.href = 'https://github.com/mehmetabak/project-ai';
-};
-
-//Functions for ML and Messaging
-function scrollToBottom() {
-  const chatMessages = document.getElementById("chat-messages");
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function appendMessage(sender, message, check) {
-  const chatMessages = document.getElementById("chat-messages");
-  const messageElement = document.createElement("div");
-  messageElement.className = sender.toLowerCase() + "-message";
-  if(check) {
-    messageElement.innerHTML = `
-    <div class="message-text">
-      <img class="profile-picture" src="https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png" alt="${sender} Profile Picture">
-      <strong>${sender} </strong> 
-    </div>
-    <p> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp ${message} </p>`;
-  }else {
-    messageElement.innerHTML = `
-    <div class="message-text">
-      <img class="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="${sender} Profile Picture">
-      <strong>${sender} </strong> 
-    </div>
-    <p> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp ${message} </p>`;
+function appendMessage(sender, message, isAI) {
+  if(!isEmptySpaceAdded){
+    chatMessages.appendChild(createMessageElement(sender, message, isAI));
+    chatMessages.appendChild(emptySpace);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    isEmptySpaceAdded = true;
+  }else{
+    chatMessages.removeChild(emptySpace);
+    chatMessages.appendChild(createMessageElement(sender, message, isAI));
+    chatMessages.appendChild(emptySpace);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
-  chatMessages.appendChild(messageElement);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // Models
@@ -233,7 +232,6 @@ async function generateResponse(model) {
     q = userMessage;
     a = data.candidates[0].output;
     appendMessage(model.label, a, true);
-    scrollToBottom();
   } else if(model.api_key === "API_KEY_Gemini"){
     // Google Generative AI API call
     const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
@@ -269,6 +267,5 @@ async function generateResponse(model) {
     q = userMessage;
     a = response.text();
     appendMessage(model.label, a, true);
-    scrollToBottom();
   }
 }
