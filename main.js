@@ -10,25 +10,27 @@ const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
 const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
 
 // UI
-var open = document.getElementById("toggle-menu-button");
-var clear = document.getElementById("clean-button");
-var close = document.getElementById("menu-window");
-var send = document.getElementById("send-button");
-var header = document.getElementById("chat-header");
+var mainMenu = document.getElementById("menu-window");
+var mainMenuOpenButton = document.getElementById("toggle-menu-button");
+var mainMenuCloseButton = document.getElementById("menu-window-close")
 
-var settingsB = document.getElementById("settingsB");
-var aboutB = document.getElementById("aboutB");
-var changelogB = document.getElementById("changelogB");
-var gitB = document.getElementById("gitB");
+var clearButton = document.getElementById("clear-button");
+var sendMessageButton = document.getElementById("send-button");
+var chatHeader = document.getElementById("chat-header");
+
+var modelSettingsButton = document.getElementById("settings-button");
+var aboutButton = document.getElementById("about-button");
+var changelogButton = document.getElementById("changelog-button");
+var githubButton = document.getElementById("github-button");
 
 var modelSelector = document.getElementById('model-selector');
-var menu = document.getElementById("menu-screen");
-var menuClose = document.getElementById("menu-screen-close");
+var modelWindow = document.getElementById("model-window");
+var modelWindowCloseButton = document.getElementById("model-window-close");
 
-var about = document.getElementById("about-screen");
-var aboutClose = document.getElementById("about-screen-close");
-var changelog = document.getElementById("changelog-screen");
-var changelogClose = document.getElementById("changelog-screen-close");
+var aboutScreen = document.getElementById("about-screen");
+var aboutScreenCloseButton = document.getElementById("about-screen-close-button");
+var changelogScreen = document.getElementById("changelog-screen");
+var changelogScreenCloseButton = document.getElementById("changelog-screen-close-button");
 
 var chatMessages = document.getElementById("chat-messages");
 
@@ -54,13 +56,13 @@ var imageUrls = [
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
-  const hasSeenNotification = localStorage.getItem('hasSeenNotification');
+  const hasSeenNotificationBefore = localStorage.getItem('hasSeenNotificationBefore');
   const randomIndex = Math.floor(Math.random() * imageUrls.length);
   const selectedImage = imageUrls[randomIndex];
 
-  if (hasSeenNotification == null) {
+  if (hasSeenNotificationBefore == null) {
     showNotification('Welcome to the nAI!', selectedImage);
-    localStorage.setItem('hasSeenNotification', 'true');
+    localStorage.setItem('hasSeenNotificationBefore', 'true');
   }
 });
 
@@ -80,11 +82,11 @@ function populateModelSelector(models) {
   
   if(localStorage.getItem('model') !== null){
     modelSelector.value = localStorage.getItem('model');
-    header.firstChild.data = getModelLabel(modelSelector.value);
+    chatHeader.firstChild.data = getModelLabel(modelSelector.value);
   } else {
     modelSelector.value = models[0].name;
     localStorage.setItem('model', models[0].name);
-    header.firstChild.data = models[0].label;
+    chatHeader.firstChild.data = models[0].label;
   }
 }
 
@@ -100,67 +102,73 @@ fetch('/models.json')
 modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
   localStorage.setItem('model', selectedModel);
-  header.firstChild.data = getModelLabel(selectedModel);
+  chatHeader.firstChild.data = getModelLabel(selectedModel);
 });
 
 //Base UI functions
-settingsB.onclick= () => {
-  menu.classList.toggle('opened');
+modelSettingsButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  modelWindow.classList.toggle('opened');
   whichMenuIsOn = "settings";
 };
 
-menuClose.onclick= () => {
-  menu.classList.toggle('opened');
+modelWindowCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  modelWindow.classList.toggle('opened');
   whichMenuIsOn = null;
 }
 
-aboutB.onclick= () => {
-  about.classList.toggle('opened');
+aboutButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  aboutScreen.classList.toggle('opened');
   whichMenuIsOn = "about";
 };
 
-aboutClose.onclick= () => {
-  about.classList.toggle('opened');
+aboutScreenCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  aboutScreen.classList.toggle('opened');
   whichMenuIsOn = null;
 }
 
-changelogB.onclick= () => {
-  changelog.classList.toggle('opened');
+changelogButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  changelogScreen.classList.toggle('opened');
   whichMenuIsOn = "changelog";
 };
 
-changelogClose.onclick= () => {
-  changelog.classList.toggle('opened');
+changelogScreenCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  changelogScreen.classList.toggle('opened');
   whichMenuIsOn = null;
 }
 
-open.onclick= () => {
-  close.classList.toggle("opened");
+mainMenuOpenButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
   if(whichMenuIsOn == "settings"){
-    menu.classList.toggle('opened');
+    modelWindow.classList.toggle('opened');
     whichMenuIsOn = null;
   }else if(whichMenuIsOn == "about"){
-    about.classList.toggle('opened');
+    aboutScreen.classList.toggle('opened');
     whichMenuIsOn = null;
   }else if (whichMenuIsOn == "changelog"){
-    changelog.classList.toggle('opened');
+    changelogScreen.classList.toggle('opened');
     whichMenuIsOn = null;
   }
 };
 
-close.onclick= () => {
-  close.classList.toggle("opened");
+mainMenuCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
 };
 
-clear.onclick= () => {
+clearButton.onclick= () => {
   window.location.reload();
 }
 
-gitB.onclick= () => {
+githubButton.onclick= () => {
   window.location.href = 'https://github.com/mehmetabak/project-ai';
 };
 
-send.onclick= () => {
+sendMessageButton.onclick= () => {
   const inputText = document.getElementById("input-text");
   userMessage = inputText.value.trim();
   var selectedModelName = localStorage.getItem('model');
@@ -179,7 +187,7 @@ send.onclick= () => {
 
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Enter') {
-    send.click();
+    sendMessageButton.click();
   }
 });
 

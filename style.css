@@ -89,7 +89,7 @@ select option:hover {
   background-color: #555; 
 }
 
-.menu-screen {
+.model-window {
   display: none;
   position: fixed;
   top: 50%;
@@ -104,7 +104,7 @@ select option:hover {
   text-align: center; 
 }
 
-.menu-screen-close {
+.model-window-close {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -113,7 +113,7 @@ select option:hover {
   font-size: 22px;
 }
 
-.menu-screen-overlay {
+.model-window-overlay {
   display: none;
   position: fixed;
   top: 0;
@@ -124,7 +124,7 @@ select option:hover {
   z-index: 4; 
 }
 
-.menu-screen.opened {
+.model-window.opened {
   display: flex;
   opacity: 1;
   transform: translate(-50%, -50%);
@@ -157,7 +157,7 @@ select option:hover {
   margin-top: 0;
 }
 
-.about-screen-close {
+.about-screen-close-button {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -202,7 +202,7 @@ select option:hover {
   align-items: center;
 }
 
-.changelog-screen-close {
+.changelog-screen-close-button {
   position: absolute;
   top: 15px;
   right: 15px;
