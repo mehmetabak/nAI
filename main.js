@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-//Model Check and Update
+//Model Selection and Update
 function getModelLabel(modelName) {
   const model = models.find(m => m.name === modelName);
   return model ? model.label : 'nAI';
@@ -96,6 +96,12 @@ fetch('/models.json')
     models = data;
     populateModelSelector(models);
   });
+
+modelSelector.addEventListener('change', function () {
+  const selectedModel = modelSelector.value;
+  localStorage.setItem('model', selectedModel);
+  header.firstChild.data = getModelLabel(selectedModel);
+});
 
 //Base UI functions
 settingsB.onclick= () => {
@@ -150,12 +156,9 @@ clear.onclick= () => {
   window.location.reload();
 }
 
-//Other UI functions
-modelSelector.addEventListener('change', function () {
-  const selectedModel = modelSelector.value;
-  localStorage.setItem('model', selectedModel);
-  header.firstChild.data = getModelLabel(selectedModel);
-});
+gitB.onclick= () => {
+  window.location.href = 'https://github.com/mehmetabak/project-ai';
+};
 
 send.onclick= () => {
   const inputText = document.getElementById("input-text");
@@ -180,11 +183,6 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
-gitB.onclick= () => {
-  window.location.href = 'https://github.com/mehmetabak/project-ai';
-};
-
-//Functions for ML and Messaging
 function appendMessage(sender, message, isAI) {
   if(!isEmptySpaceAdded){
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
