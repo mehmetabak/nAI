@@ -34,6 +34,9 @@ var chatMessages = document.getElementById("chat-messages");
 
 var whichMenuIsOn;
 var emptySpace;
+emptySpace = document.createElement('div');
+emptySpace.innerHTML = '&nbsp;';
+emptySpace.style.height = '14vh';
 var isEmptySpaceAdded = false;
 
 // For Model
@@ -184,9 +187,6 @@ gitB.onclick= () => {
 //Functions for ML and Messaging
 function appendMessage(sender, message, isAI) {
   if(!isEmptySpaceAdded){
-    emptySpace = document.createElement('div');
-    emptySpace.innerHTML = '&nbsp;';
-    emptySpace.style.height = '14vh';
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
     chatMessages.appendChild(emptySpace);
     chatMessages.scrollTop = chatMessages.scrollHeight;
