@@ -30,9 +30,11 @@ var aboutClose = document.getElementById("about-screen-close");
 var changelog = document.getElementById("changelog-screen");
 var changelogClose = document.getElementById("changelog-screen-close");
 
-var menuOn;
+var chatMessages = document.getElementById("chat-messages");
 
-var emptySpace
+var whichMenuIsOn;
+var emptySpace;
+var isEmptySpaceAdded = false;
 
 // For Model
 var userMessage;
@@ -40,7 +42,6 @@ var q = `!`;
 var a = `!`;
 
 // Test Pictures
-var qW = false;
 var imageUrls = [
   'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
   'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg',
@@ -96,45 +97,45 @@ fetch('/models.json')
 //Base UI functions
 settingsB.onclick= () => {
   menu.classList.toggle('opened');
-  menuOn = "settings";
+  whichMenuIsOn = "settings";
 };
 
 menuClose.onclick= () => {
   menu.classList.toggle('opened');
-  menuOn = null;
+  whichMenuIsOn = null;
 }
 
 aboutB.onclick= () => {
   about.classList.toggle('opened');
-  menuOn = "about";
+  whichMenuIsOn = "about";
 };
 
 aboutClose.onclick= () => {
   about.classList.toggle('opened');
-  menuOn = null;
+  whichMenuIsOn = null;
 }
 
 changelogB.onclick= () => {
   changelog.classList.toggle('opened');
-  menuOn = "changelog";
+  whichMenuIsOn = "changelog";
 };
 
 changelogClose.onclick= () => {
   changelog.classList.toggle('opened');
-  menuOn = null;
+  whichMenuIsOn = null;
 }
 
 open.onclick= () => {
   close.classList.toggle("opened");
-  if(menuOn == "settings"){
+  if(whichMenuIsOn == "settings"){
     menu.classList.toggle('opened');
-    menuOn = null;
-  }else if(menuOn == "about"){
+    whichMenuIsOn = null;
+  }else if(whichMenuIsOn == "about"){
     about.classList.toggle('opened');
-    menuOn = null;
-  }else if (menuOn == "changelog"){
+    whichMenuIsOn = null;
+  }else if (whichMenuIsOn == "changelog"){
     changelog.classList.toggle('opened');
-    menuOn = null;
+    whichMenuIsOn = null;
   }
 };
 
@@ -162,7 +163,6 @@ send.onclick= () => {
   if (userMessage !== "") {
     appendMessage("User", userMessage, false);
     inputText.value = "";
-    scrollToBottom();
     if (selectedModel) {
       generateResponse(selectedModel);
     } else {
@@ -182,24 +182,16 @@ gitB.onclick= () => {
 };
 
 //Functions for ML and Messaging
-function scrollToBottom() {
-  const chatMessages = document.getElementById("chat-messages");
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
 function appendMessage(sender, message, isAI) {
-  if(!qW){
+  if(!isEmptySpaceAdded){
     emptySpace = document.createElement('div');
     emptySpace.innerHTML = '&nbsp;';
     emptySpace.style.height = '14vh';
-
-    const chatMessages = document.getElementById("chat-messages");
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
     chatMessages.appendChild(emptySpace);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    qW = true;
+    isEmptySpaceAdded = true;
   }else{
-    const chatMessages = document.getElementById("chat-messages");
     chatMessages.removeChild(emptySpace);
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
     chatMessages.appendChild(emptySpace);
@@ -234,7 +226,6 @@ async function generateResponse(model) {
     q = userMessage;
     a = data.candidates[0].output;
     appendMessage(model.label, a, true);
-    scrollToBottom();
   } else if(model.api_key === "API_KEY_Gemini"){
     // Google Generative AI API call
     const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
@@ -270,6 +261,5 @@ async function generateResponse(model) {
     q = userMessage;
     a = response.text();
     appendMessage(model.label, a, true);
-    scrollToBottom();
   }
 }
