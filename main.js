@@ -33,10 +33,10 @@ var changelogClose = document.getElementById("changelog-screen-close");
 var chatMessages = document.getElementById("chat-messages");
 
 var whichMenuIsOn;
-var emptySpace;
-emptySpace = document.createElement('div');
-emptySpace.innerHTML = '&nbsp;';
-emptySpace.style.height = '14vh';
+var emptySpace = Object.assign(document.createElement('div'), {
+  innerHTML: '&nbsp;',
+  style: 'height: 14vh;'
+});
 var isEmptySpaceAdded = false;
 
 // For Model
