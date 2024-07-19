@@ -31,7 +31,12 @@ export function createMessageElement(sender, message, isAI) {
         </div>
       </div>
     `;
-    return messageElement.querySelectorAll('pre code').forEach((block) => {
-      hljs.highlightBlock(block);
-    });
+
+    setTimeout(() => {
+        messageElement.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+    }, 0);
+
+    return messageElement;
 }
