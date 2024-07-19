@@ -165,7 +165,7 @@ clearButton.onclick= () => {
 }
 
 githubButton.onclick= () => {
-  window.location.href = 'https://github.com/mehmetabak/project-ai';
+  window.location.href = 'https://github.com/mehmetabak/nAI';
 };
 
 sendMessageButton.onclick= () => {
