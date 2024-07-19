@@ -25,7 +25,7 @@ var githubButton = document.getElementById("github-button");
 
 var modelSelector = document.getElementById('model-selector');
 var modelWindow = document.getElementById("model-window");
-var modelWindowCloseButton = document.getElementById("model-window-close");
+var modelWindowCloseButton = document.getElementById("model-window-close-button");
 
 var aboutScreen = document.getElementById("about-screen");
 var aboutScreenCloseButton = document.getElementById("about-screen-close-button");
