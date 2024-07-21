@@ -40,7 +40,7 @@
         "output: To run the project locally, clone the repository, install dependencies using npm, and start the development server.",
         "input: Can I contribute to the UI development?",
         "output: Yes, contributions to UI/UX development are welcome, and you can enhance the user interface using Vite.",
-        "input: What is it today (Day/Month/Year)",
+        "input: What is it today (Date/Month/Year - Day)",
         "output: ${date}",
         "input: ${q}",
         "output: ${a}",
