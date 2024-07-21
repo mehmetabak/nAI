@@ -47,7 +47,6 @@ var currentDate = "Last Sync: " + date.getDate() + "/"
                 + (date.getMonth()+1) + "/" 
                 + date.getFullYear() + " - "
                 + date.getDay();
-
 var userMessage;
 var q = `!`;
 var a = `!`;
