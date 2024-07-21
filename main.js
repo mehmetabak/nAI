@@ -48,7 +48,6 @@ var currentDate = date.getDate() + "/"
                 + (date.getMonth()+1) + "/" 
                 + date.getFullYear() + " - "
                 + days[date.getDay()];
-console.log(currentDate)
 var userMessage;
 var q = `!`;
 var a = `!`;
