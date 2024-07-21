@@ -43,10 +43,11 @@ var isEmptySpaceAdded = false;
 
 // For Model
 var date = new Date(); 
-var currentDate = "Last Sync: " + date.getDate() + "/"
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var currentDate = date.getDate() + "/"
                 + (date.getMonth()+1) + "/" 
                 + date.getFullYear() + " - "
-                + date.getDay();
+                + days[date.getDay()];
 console.log(currentDate)
 var userMessage;
 var q = `!`;
