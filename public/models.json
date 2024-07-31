@@ -49,10 +49,10 @@
       ]
     },
     {
-      "name": "llama3-70b-8192",
-      "label": "Llama 3 70B",
+      "name": "LoF-Llama",
+      "label": "LoF-Llama",
       "api_key": "API_KEY_Llama",
-      "model_name": "llama3-70b-8192",
+      "model_name": "llama-3.1-70b-versatile",
       "generation_config": {
         "temperature": 1,
         "max_tokens": 2048,
