@@ -34,6 +34,8 @@ var changelogScreenCloseButton = document.getElementById("changelog-screen-close
 
 var chatMessages = document.getElementById("chat-messages");
 
+var originalText = sendMessageButton.textContent;
+
 var whichMenuIsOn;
 var emptySpace = Object.assign(document.createElement('div'), {
   innerHTML: '&nbsp;',
@@ -177,15 +179,12 @@ githubButton.onclick= () => {
 sendMessageButton.onclick= () => {
   const inputText = document.getElementById("input-text");
   userMessage = inputText.value.trim();
-  const originalText = sendMessageButton.textContent;
-  var selectedModelName = localStorage.getItem('model');
-  var selectedModel = models.find(m => m.name === selectedModelName);
-
   if (userMessage !== "") {
-    appendMessage("User", userMessage, false);
-    inputText.value = "";
     showLoadingDots(sendMessageButton);
     sendMessageButton.disabled = true;
+    var selectedModel = models.find(m => m.name === localStorage.getItem('model'));
+    appendMessage("User", userMessage, false);
+    inputText.value = "";
     if (selectedModel) {
       generateResponse(selectedModel, originalText);
     } else {
