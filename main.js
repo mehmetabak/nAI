@@ -42,6 +42,12 @@ var emptySpace = Object.assign(document.createElement('div'), {
 var isEmptySpaceAdded = false;
 
 // For Model
+var date = new Date(); 
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var currentDate = date.getDate() + "/"
+                + (date.getMonth()+1) + "/" 
+                + date.getFullYear() + " - "
+                + days[date.getDay()];
 var userMessage;
 var q = `!`;
 var a = `!`;
@@ -213,7 +219,7 @@ async function generateResponse(model) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        'prompt': { 'text': model.prompt.replace('${userMessage}', userMessage).replace('${q}', q).replace('${a}', a) },
+        'prompt': { 'text': model.prompt.replace('${userMessage}', userMessage).replace('${q}', q).replace('${a}', a).replace('${date}', currentDate) },
         'temperature': 0.7,
         'top_k': 40,
         'top_p': 0.95,
@@ -254,7 +260,7 @@ async function generateResponse(model) {
     }));
 
     parts.forEach(part => {
-      part.text = part.text.replace('${q}', q).replace('${a}', a);
+      part.text = part.text.replace('${q}', q).replace('${a}', a).replace('${date}', currentDate);
     });
 
     const result = await modelData.generateContent({
