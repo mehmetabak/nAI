@@ -177,16 +177,18 @@ githubButton.onclick= () => {
 sendMessageButton.onclick= () => {
   const inputText = document.getElementById("input-text");
   userMessage = inputText.value.trim();
+  const originalText = sendMessageButton.textContent;
   var selectedModelName = localStorage.getItem('model');
   var selectedModel = models.find(m => m.name === selectedModelName);
 
   if (userMessage !== "") {
     appendMessage("User", userMessage, false);
     inputText.value = "";
+    showLoadingDots(sendMessageButton);
     if (selectedModel) {
-      generateResponse(selectedModel);
+      generateResponse(selectedModel, originalText);
     } else {
-      generateResponse(models[0]); // Default model
+      generateResponse(models[0], originalText); // Default model
     }
   }
 };
@@ -212,66 +214,87 @@ function appendMessage(sender, message, isAI) {
 }
 
 // Models
-async function generateResponse(model) {
-  if (model.api_key === "API_KEY_Text_Bison") {
-    // Text Bison API call
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${API_KEY_Text_Bison}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        'prompt': { 'text': model.prompt.replace('${userMessage}', userMessage).replace('${q}', q).replace('${a}', a).replace('${date}', currentDate) },
-        'temperature': 0.7,
-        'top_k': 40,
-        'top_p': 0.95,
-        'candidate_count': 1,
-        'max_output_tokens': 1024,
-        'stop_sequences': [],
-        'safety_settings': [
-          { 'category': 'HARM_CATEGORY_DEROGATORY', 'threshold': 4 },
-          { 'category': 'HARM_CATEGORY_TOXICITY', 'threshold': 4 },
-          { 'category': 'HARM_CATEGORY_VIOLENCE', 'threshold': 4 }
-        ]
-      })
-    });
+async function generateResponse(model, originalText) {
+  try {
+    if (model.api_key === "API_KEY_Text_Bison") {
+      // Text Bison API call
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${API_KEY_Text_Bison}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          'prompt': { 'text': model.prompt.replace('${userMessage}', userMessage).replace('${q}', q).replace('${a}', a).replace('${date}', currentDate) },
+          'temperature': 0.7,
+          'top_k': 40,
+          'top_p': 0.95,
+          'candidate_count': 1,
+          'max_output_tokens': 1024,
+          'stop_sequences': [],
+          'safety_settings': [
+            { 'category': 'HARM_CATEGORY_DEROGATORY', 'threshold': 4 },
+            { 'category': 'HARM_CATEGORY_TOXICITY', 'threshold': 4 },
+            { 'category': 'HARM_CATEGORY_VIOLENCE', 'threshold': 4 }
+          ]
+        })
+      });
 
-    const data = await response.json();
-    q = userMessage;
-    a = data.candidates[0].output;
-    appendMessage(model.label, a, true);
-  } else if(model.api_key === "API_KEY_Gemini"){
-    // Google Generative AI API call
-    const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-    const modelData = await genAI.getGenerativeModel({ model: model.model_name });
+      const data = await response.json();
+      q = userMessage;
+      a = data.candidates[0].output;
+      appendMessage(model.label, a, true);
+    } else if (model.api_key === "API_KEY_Gemini") {
+      // Google Generative AI API call
+      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
+      const modelData = await genAI.getGenerativeModel({ model: model.model_name });
 
-    const generationConfig = {
-      temperature: model.generation_config.temperature,
-      topK: model.generation_config.topK,
-      topP: model.generation_config.topP,
-      maxOutputTokens: model.generation_config.maxOutputTokens,
-    };
+      const generationConfig = {
+        temperature: model.generation_config.temperature,
+        topK: model.generation_config.topK,
+        topP: model.generation_config.topP,
+        maxOutputTokens: model.generation_config.maxOutputTokens,
+      };
 
-    const safetySettings = model.safety_settings.map(setting => ({
-      category: HarmCategory[setting.category],
-      threshold: HarmBlockThreshold[setting.threshold]
-    }));
+      const safetySettings = model.safety_settings.map(setting => ({
+        category: HarmCategory[setting.category],
+        threshold: HarmBlockThreshold[setting.threshold]
+      }));
 
-    const parts = model.prompt_parts.map(part => ({
-      text: part.replace('${userMessage}', userMessage)
-    }));
+      const parts = model.prompt_parts.map(part => ({
+        text: part.replace('${userMessage}', userMessage)
+      }));
 
-    parts.forEach(part => {
-      part.text = part.text.replace('${q}', q).replace('${a}', a).replace('${date}', currentDate);
-    });
+      parts.forEach(part => {
+        part.text = part.text.replace('${q}', q).replace('${a}', a).replace('${date}', currentDate);
+      });
 
-    const result = await modelData.generateContent({
-      contents: [{ role: "user", parts }],
-      generationConfig,
-      safetySettings,
-    });
+      const result = await modelData.generateContent({
+        contents: [{ role: "user", parts }],
+        generationConfig,
+        safetySettings,
+      });
 
-    const response = result.response;
-    q = userMessage;
-    a = response.text();
-    appendMessage(model.label, a, true);
+      const response = result.response;
+      q = userMessage;
+      a = response.text();
+      appendMessage(model.label, a, true);
+    }
+  } catch (error) {
+    appendMessage("Error", "An error occurred while generating the response. Please try again.", true);
+  } finally {
+    hideLoadingDots(sendMessageButton, originalText);
   }
+}
+
+
+// Button Animation
+function showLoadingDots(button) {
+  let dots = 0;
+  button.dataset.intervalId = setInterval(() => {
+    dots = (dots + 1) % 4;
+    button.textContent = 'Sending' + '.'.repeat(dots);
+  }, 500);
+}
+
+function hideLoadingDots(button, originalText) {
+  clearInterval(button.dataset.intervalId);
+  button.textContent = originalText;
 }
