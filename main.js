@@ -185,6 +185,7 @@ sendMessageButton.onclick= () => {
     appendMessage("User", userMessage, false);
     inputText.value = "";
     showLoadingDots(sendMessageButton);
+    sendMessageButton.disabled = true;
     if (selectedModel) {
       generateResponse(selectedModel, originalText);
     } else {
@@ -278,9 +279,10 @@ async function generateResponse(model, originalText) {
       appendMessage(model.label, a, true);
     }
   } catch (error) {
-    appendMessage("Error", "An error occurred while generating the response. Please try again.", true);
+    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true);
   } finally {
     hideLoadingDots(sendMessageButton, originalText);
+    sendMessageButton.disabled = false;
   }
 }
 
