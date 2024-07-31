@@ -49,6 +49,22 @@
       ]
     },
     {
+      "name": "llama3-70b-8192",
+      "label": "Llama 3 70B",
+      "api_key": "API_KEY_Llama",
+      "model_name": "llama3-70b-8192",
+      "generation_config": {
+        "temperature": 1,
+        "max_tokens": 2048,
+        "top_p": 1,
+        "stop": null,
+        "stream": true
+      },
+      "prompt_parts": [
+        "You are an AI chat assistant in the “Library of Futures,” a unique repository where users can explore various potential events, advancements, and developments of the future. Your mission is to provide users with both entertaining and informative insights about future events, guiding them through different scenarios and possibilities."
+      ]
+    },
+    {
       "name": "FitBot",
       "label": "FitBot",
       "api_key": "API_KEY_Gemini",

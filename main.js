@@ -3,11 +3,13 @@ import {
     HarmCategory,
     HarmBlockThreshold,
   } from "@google/generative-ai";
+import Groq from 'groq-sdk';
 import { showNotification } from './tools/notification';
 import { createMessageElement } from './components/message.js';
 
 const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
 const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
+const API_KEY_Llama = import.meta.env.VITE_API_KEY_Llama
 
 // UI
 var mainMenu = document.getElementById("menu-window");
@@ -44,6 +46,7 @@ var emptySpace = Object.assign(document.createElement('div'), {
 var isEmptySpaceAdded = false;
 
 // For Model
+let conversationHistory = [];
 var date = new Date(); 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var currentDate = date.getDate() + "/"
@@ -182,6 +185,7 @@ sendMessageButton.onclick= () => {
   if (userMessage !== "") {
     showLoadingDots(sendMessageButton);
     sendMessageButton.disabled = true;
+    conversationHistory.push({ role: "user", content: userMessage });
     var selectedModel = models.find(m => m.name === localStorage.getItem('model'));
     appendMessage("User", userMessage, false);
     inputText.value = "";
@@ -240,6 +244,7 @@ async function generateResponse(model, originalText) {
       const data = await response.json();
       q = userMessage;
       a = data.candidates[0].output;
+      conversationHistory.push({ role: "assistant", content: a });
       appendMessage(model.label, a, true);
     } else if (model.api_key === "API_KEY_Gemini") {
       // Google Generative AI API call
@@ -275,6 +280,44 @@ async function generateResponse(model, originalText) {
       const response = result.response;
       q = userMessage;
       a = response.text();
+      conversationHistory.push({ role: "assistant", content: a });
+      appendMessage(model.label, a, true);
+    }else if(model.api_key === "API_KEY_Llama"){
+      // Llama API call
+      const groq = new Groq({ API_KEY_Llama });
+      const chatCompletion = await groq.chat.completions.create({
+        "messages": [
+          {
+            "role": "system",
+            "content": model.prompt_parts.join(' ')
+          },
+          {
+            "role": "user",
+            "content": "What is it today (Date/Month/Year - Day)"
+          },
+          {
+            "role": "assistant",
+            "content": currentDate
+          },
+          ...conversationHistory,
+        ],
+        "model": model.model_name,
+        "temperature": model.generation_config.temperature,
+        "max_tokens": model.generation_config.max_tokens,
+        "top_p": model.generation_config.top_p,
+        "stream": model.generation_config.stream,
+        "stop": model.generation_config.stop
+      });
+
+      let aiMessage = '';
+      for await (const chunk of chatCompletion) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        process.stdout.write(content);
+        aiMessage += content;
+      }
+      q = userMessage;
+      a = aiMessage;
+      conversationHistory.push({ role: "assistant", content: a });
       appendMessage(model.label, a, true);
     }
   } catch (error) {
