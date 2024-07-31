@@ -372,10 +372,11 @@ select option:hover {
 #send-button.loading::after {
   content: '···';
   position: absolute;
+  font-size: 2vh;
   top: 50%;
   transform: translateY(-50%);
   color: #ecf0f1;
-  animation: loading-dots 1.5s infinite;
+  animation: loading-dots 2s infinite;
 }
 
 @keyframes loading-dots {
