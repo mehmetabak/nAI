@@ -291,7 +291,7 @@ function showLoadingDots(button) {
   let dots = 0;
   button.dataset.intervalId = setInterval(() => {
     dots = (dots + 1) % 4;
-    button.textContent = 'Sending' + '.'.repeat(dots);
+    button.textContent = '.'.repeat(dots);
   }, 500);
 }
 
