@@ -331,16 +331,10 @@ async function generateResponse(model, originalText) {
 
 // Button Animation
 function showLoadingDots(button) {
-  let dots = 0;
-  button.dataset.intervalId = setInterval(() => {
-    dots = (dots % 3) + 1;
-    button.textContent = '.'.repeat(dots);
-  }, 500);
   button.classList.add('loading');
 }
 
 function hideLoadingDots(button, originalText) {
-  clearInterval(button.dataset.intervalId);
   button.classList.remove('loading');
   button.textContent = originalText;
 }
