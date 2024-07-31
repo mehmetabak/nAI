@@ -375,21 +375,29 @@ select option:hover {
   top: 50%;
   transform: translateY(-50%);
   color: #ecf0f1;
-  animation: loading-dots 1s steps(3, end) infinite;
+  animation: loading-dots 1.5s infinite;
 }
 
 @keyframes loading-dots {
   0% {
     content: '.';
+    opacity: 1;
+    transform: scale(1);
   }
   33% {
     content: '..';
+    opacity: 1;
+    transform: scale(1.2);
   }
   66% {
     content: '...';
+    opacity: 1;
+    transform: scale(1.4);
   }
   100% {
     content: '...';
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
