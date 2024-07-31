@@ -333,7 +333,7 @@ async function generateResponse(model, originalText) {
 function showLoadingDots(button) {
   let dots = 0;
   button.dataset.intervalId = setInterval(() => {
-    dots = (dots + 1) % 4;
+    dots = (dots % 3) + 1;
     button.textContent = '.'.repeat(dots);
   }, 500);
 }
