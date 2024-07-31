@@ -370,7 +370,7 @@ select option:hover {
 }
 
 #send-button.loading::after {
-  content: '';
+  content: '...';
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -380,22 +380,22 @@ select option:hover {
 
 @keyframes loading-dots {
   0% {
-    content: '.';
-    opacity: 1;
+    opacity: 0.2;
     transform: scale(1);
   }
-  33% {
-    content: '..';
-    opacity: 1;
+  25% {
+    opacity: 0.4;
     transform: scale(1.2);
   }
-  66% {
-    content: '...';
-    opacity: 1;
+  50% {
+    opacity: 0.6;
     transform: scale(1.4);
   }
+  75% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
   100% {
-    content: '...';
     opacity: 1;
     transform: scale(1);
   }
