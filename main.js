@@ -321,6 +321,7 @@ async function generateResponse(model, originalText) {
       appendMessage(model.label, a, true);
     }
   } catch (error) {
+    console.error(error);
     appendMessage(model.label, "An error occurred while generating the response. Please try again.", true);
   } finally {
     hideLoadingDots(sendMessageButton, originalText);
