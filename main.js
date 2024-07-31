@@ -284,7 +284,7 @@ async function generateResponse(model, originalText) {
       appendMessage(model.label, a, true);
     }else if(model.api_key === "API_KEY_Llama"){
       // Llama API call
-      const groq = new Groq({ API_KEY_Llama });
+      const groq = new Groq({ apiKey:API_KEY_Llama });
       const chatCompletion = await groq.chat.completions.create({
         "messages": [
           {
