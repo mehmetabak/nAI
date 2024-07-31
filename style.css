@@ -370,7 +370,7 @@ select option:hover {
 }
 
 #send-button.loading::after {
-  content: '...';
+  content: '···';
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
