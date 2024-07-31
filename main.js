@@ -332,10 +332,8 @@ async function generateResponse(model, originalText) {
 // Button Animation
 function showLoadingDots(button) {
   button.classList.add('loading');
-  button.textContent = '';
 }
 
 function hideLoadingDots(button, originalText) {
   button.classList.remove('loading');
-  button.textContent = originalText;
 }
