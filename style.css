@@ -372,6 +372,7 @@ select option:hover {
   top: 50%;
   transform: translateY(-50%);
   font-size: 4vh; 
+  color: #ecf0f1;
   animation: loading-dots 1s steps(3, end) infinite;
 }
 
