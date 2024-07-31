@@ -359,6 +359,32 @@ select option:hover {
   border-radius: 10px;
   cursor: pointer;
   margin-right: 20px;
+  position: relative;
+}
+
+#send-button.loading::after {
+  content: '';
+  position: absolute;
+  right: 16px; 
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px; 
+  animation: loading-dots 1s steps(3, end) infinite;
+}
+
+@keyframes loading-dots {
+  0% {
+    content: '.';
+  }
+  33% {
+    content: '..';
+  }
+  66% {
+    content: '...';
+  }
+  100% {
+    content: '...';
+  }
 }
 
 @media (max-width: 768px) {

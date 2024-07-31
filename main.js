@@ -336,9 +336,11 @@ function showLoadingDots(button) {
     dots = (dots % 3) + 1;
     button.textContent = '.'.repeat(dots);
   }, 500);
+  button.classList.add('loading');
 }
 
 function hideLoadingDots(button, originalText) {
   clearInterval(button.dataset.intervalId);
+  button.classList.remove('loading');
   button.textContent = originalText;
 }
