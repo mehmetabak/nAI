@@ -1,7 +1,7 @@
 # Project nAI
 
 ## Introduction
-Welcome to Project nAI! Our mission is to bridge the gap between closed-source models using prompts and open-source models, facilitating their educational use. We curate a collection of effective prompts and fine-tuned models in a single platform. Contributors are encouraged to add models via JSON configuration. Currently, we feature prompts for Bison, Gemini, and GPT models, with plans for continuous expansion(Claude, Llama etc.). Please note that the project is in its early stages, leveraging Vite for a basic UI, ensuring it can be easily run locally by anyone interested.
+Welcome to Project nAI! Our mission is to bridge the gap between closed-source models using prompts and open-source models, facilitating their educational use. We curate a collection of effective prompts and fine-tuned models in a single platform. Contributors are encouraged to add models via JSON configuration. Currently, we feature prompts for Bison, Gemini, and GPT models, with plans for continuous expansion(Mistral, Llama etc.). Please note that the project is in its early stages, leveraging Vite for a basic UI, ensuring it can be easily run locally by anyone interested.
 
 ## About
 Project nAI started with the goal of exploring and integrating fine-tuned versions of Gemini, GPT, and open-source models, fostering experimentation and learning within the AI community. Our platform supports developers and researchers in testing these models, promoting transparency, and fostering collaboration.
