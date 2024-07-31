@@ -363,8 +363,11 @@ select option:hover {
 }
 
 #send-button.loading::after {
+  content: '';
+  position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  font-size: 5vh; 
   animation: loading-dots 1s steps(3, end) infinite;
 }
 
