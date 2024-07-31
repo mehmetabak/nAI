@@ -381,23 +381,18 @@ select option:hover {
 @keyframes loading-dots {
   0% {
     opacity: 0.2;
-    transform: scale(1);
   }
   25% {
     opacity: 0.4;
-    transform: scale(1.2);
   }
   50% {
     opacity: 0.6;
-    transform: scale(1.4);
   }
   75% {
     opacity: 0.8;
-    transform: scale(1.2);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
