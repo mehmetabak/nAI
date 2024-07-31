@@ -312,7 +312,6 @@ async function generateResponse(model, originalText) {
       let aiMessage = '';
       for await (const chunk of chatCompletion) {
         const content = chunk.choices[0]?.delta?.content || '';
-        process.stdout.write(content);
         aiMessage += content;
       }
       q = userMessage;
