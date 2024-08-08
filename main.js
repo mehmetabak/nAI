@@ -318,6 +318,8 @@ async function generateResponse(model, originalText) {
       }
       q = userMessage;
       a = aiMessage;
+
+      console.log(a);
       appendMessage(model.label, a, true);
     }
   } catch (error) {
