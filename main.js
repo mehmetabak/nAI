@@ -185,14 +185,15 @@ sendMessageButton.onclick= () => {
   if (userMessage !== "") {
     showLoadingDots(sendMessageButton);
     sendMessageButton.disabled = true;
-    conversationHistory.push({ role: "user", content: userMessage });
-    var selectedModel = models.find(m => m.name === localStorage.getItem('model'));
+    
     appendMessage("User", userMessage, false);
     inputText.value = "";
+
+    var selectedModel = models.find(m => m.name === localStorage.getItem('model'));
     if (selectedModel) {
       generateResponse(selectedModel, originalText);
     } else {
-      generateResponse(models[0], originalText); // Default model
+      generateResponse(models[0], originalText);
     }
   }
 };
@@ -206,14 +207,17 @@ document.addEventListener('keydown', function(event) {
 function appendMessage(sender, message, isAI) {
   if(!isEmptySpaceAdded){
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
-    chatMessages.appendChild(emptySpace);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
     isEmptySpaceAdded = true;
   }else{
     chatMessages.removeChild(emptySpace);
     chatMessages.appendChild(createMessageElement(sender, message, isAI));
-    chatMessages.appendChild(emptySpace);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  chatMessages.appendChild(emptySpace);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  if(isAI){
+    conversationHistory.push({ role: "assistant", content: message });
+  }else{
+    conversationHistory.push({ role: "user", content: message });
   }
 }
 
@@ -244,7 +248,6 @@ async function generateResponse(model, originalText) {
       const data = await response.json();
       q = userMessage;
       a = data.candidates[0].output;
-      conversationHistory.push({ role: "assistant", content: a });
       appendMessage(model.label, a, true);
     } else if (model.api_key === "API_KEY_Gemini") {
       // Google Generative AI API call
@@ -280,7 +283,6 @@ async function generateResponse(model, originalText) {
       const response = result.response;
       q = userMessage;
       a = response.text();
-      conversationHistory.push({ role: "assistant", content: a });
       appendMessage(model.label, a, true);
     }else if(model.api_key === "API_KEY_Llama"){
       // Llama API call
@@ -316,7 +318,8 @@ async function generateResponse(model, originalText) {
       }
       q = userMessage;
       a = aiMessage;
-      conversationHistory.push({ role: "assistant", content: a });
+
+      console.log(a);
       appendMessage(model.label, a, true);
     }
   } catch (error) {

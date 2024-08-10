@@ -39,7 +39,7 @@ The [`community-contributed`](https://github.com/memoli0/nAI/tree/community-cont
 
 
 ## Contact Us
-Have questions, suggestions, or want to collaborate? Feel free to reach out to me at [mehmetnurabak0@gmail.com](mailto:mehmetnurabak0@gmail.com). We'd love to hear from you!
+Have questions, suggestions, or want to collaborate? Feel free to reach out to me at [mehmetabak@proton.me](mailto:mehmetabak@proton.me). We'd love to hear from you!
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
