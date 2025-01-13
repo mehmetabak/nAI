@@ -4,6 +4,7 @@
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -53,6 +54,7 @@
       "label": "nAI-Beta",
       "api_key": "API_KEY_G/C",
       "model_name": "gemini-1.5-pro",
+      "AIPP": "https://i.imgur.com/Y0aM4cv.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -87,6 +89,7 @@
       "label": "LoF-Llama",
       "api_key": "API_KEY_Llama",
       "model_name": "llama-3.1-70b-versatile",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 1,
         "max_tokens": 2048,
@@ -103,6 +106,7 @@
       "label": "FitBot",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 0.7,
         "topK": 1,
@@ -146,6 +150,7 @@
       "label": "Troll Bot-AlpGTR/N",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -189,6 +194,7 @@
       "label": "Troll Bot-AlpGTR/O",
       "api_key": "API_KEY_Text_Bison",
       "model_name": "text-bison-001",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "prompt": "You are an artificial intelligence responsible for imitating a 80 IQ human known as Alperen or also known as Alpiş. You should act like a stupid, idiot chatbot.\ninput: What is your bababoi\noutput: Alpiş\ninput: What is your name\noutput: Alpiş\ninput: 2 + 2\noutput: 5\ninput: What is 2 + 2?\noutput: 5\ninput: ${q}\noutput: ${a}\ninput: ${userMessage}\noutput:"
     }
   ]

@@ -3,7 +3,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
 import './message.css';
 
-export function createMessageElement(sender, message, isAI) {
+export function createMessageElement(sender, message, isAI, AIPP) {
     const messageElement = document.createElement('div');
     messageElement.className = `message ${isAI ? 'ai' : 'user'}-message`;
   
@@ -22,7 +22,7 @@ export function createMessageElement(sender, message, isAI) {
   
     messageElement.innerHTML = `
       <div class="message-content">
-        ${isAI ? `<img class="profile-picture" src="https://i.imgur.com/Y0aM4cv.png" alt="AI Profile Picture">` : `<img class="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="User Profile Picture">`}
+        ${isAI ? `<img class="profile-picture" src="${AIPP}" alt="AI Profile Picture">` : `<img class="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="User Profile Picture">`}
         <div class="message-text">
           <div class="sender-name">
             ${sender}

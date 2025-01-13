@@ -57,6 +57,8 @@ var userMessage;
 var q = `!`;
 var a = `!`;
 
+var AIPP = "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png";  //Default AI Profile Picture
+
 // Test Pictures
 var imageUrls = [
   'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
@@ -186,7 +188,7 @@ sendMessageButton.onclick= () => {
     showLoadingDots(sendMessageButton);
     sendMessageButton.disabled = true;
     
-    appendMessage("User", userMessage, false);
+    appendMessage("User", userMessage, false, AIPP);
     inputText.value = "";
 
     var selectedModel = models.find(m => m.name === localStorage.getItem('model'));
@@ -204,13 +206,13 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
-function appendMessage(sender, message, isAI) {
+function appendMessage(sender, message, isAI, AIPP) {
   if(!isEmptySpaceAdded){
-    chatMessages.appendChild(createMessageElement(sender, message, isAI));
+    chatMessages.appendChild(createMessageElement(sender, message, isAI, AIPP));
     isEmptySpaceAdded = true;
   }else{
     chatMessages.removeChild(emptySpace);
-    chatMessages.appendChild(createMessageElement(sender, message, isAI));
+    chatMessages.appendChild(createMessageElement(sender, message, isAI, AIPP));
   }
   chatMessages.appendChild(emptySpace);
   chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -248,7 +250,7 @@ async function generateResponse(model, originalText) {
       const data = await response.json();
       q = userMessage;
       a = data.candidates[0].output;
-      appendMessage(model.label, a, true);
+      appendMessage(model.label, a, true, model.AIPP);
     } else if (model.api_key === "API_KEY_Gemini") {
       // Google Generative AI API call
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
@@ -283,7 +285,7 @@ async function generateResponse(model, originalText) {
       const response = result.response;
       q = userMessage;
       a = response.text();
-      appendMessage(model.label, a, true);
+      appendMessage(model.label, a, true, model.AIPP);
 
     }else if(model.api_key === "API_KEY_G/C"){
       // Gemini Chat API call for Experimental Models
@@ -335,7 +337,7 @@ async function generateResponse(model, originalText) {
           q = userMessage;
           a = aiMessage;
 
-          appendMessage(model.label, a, true);
+          appendMessage(model.label, a, true, model.AIPP);
 
       } catch (error) {
           console.error("Error during Gemini API call:", error);
@@ -377,7 +379,7 @@ async function generateResponse(model, originalText) {
       q = userMessage;
       a = aiMessage;
 
-      appendMessage(model.label, a, true);
+      appendMessage(model.label, a, true, model.AIPP);
     }
   } catch (error) {
     console.error(error);
