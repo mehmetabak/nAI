@@ -4,7 +4,7 @@
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
-      "AIPP": "https://i.imgur.com/Y0aM4cv.png",
+      "AIPP": "https://i.imgur.com/p5XdHQE.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
