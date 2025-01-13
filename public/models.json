@@ -4,7 +4,7 @@
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
-      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
+      "AIPP": "https://i.imgur.com/Y0aM4cv.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
