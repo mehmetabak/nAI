@@ -302,7 +302,6 @@ async function generateResponse(model, originalText) {
           responseMimeType: model.generation_config.responseMimeType,
       };
 
-      // Modify the history to use 'parts' and the correct format
       const formattedHistory = [
           {
               role: "user",
