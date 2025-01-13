@@ -326,19 +326,15 @@ async function generateResponse(model, originalText) {
       });
 
       let aiMessage = '';
-
       try {
           const result = await chatSession.sendMessageStream(userMessage);
-
           for await (const chunk of result.stream) {
               const content = chunk.text();
               aiMessage += content;
           }
-
           q = userMessage;
           a = aiMessage;
 
-          console.log(a);
           appendMessage(model.label, a, true);
 
       } catch (error) {
@@ -381,7 +377,6 @@ async function generateResponse(model, originalText) {
       q = userMessage;
       a = aiMessage;
 
-      console.log(a);
       appendMessage(model.label, a, true);
     }
   } catch (error) {
