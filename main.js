@@ -341,7 +341,7 @@ async function generateResponse(model, originalText) {
 
       } catch (error) {
           console.error("Error during Gemini API call:", error);
-          appendMessage(model.label, "Error getting response from the model", true);
+          appendMessage(model.label, "Error getting response from the model", true, "https://i.imgur.com/2Rs5ya9.png");
       }
     }
     else if(model.api_key === "API_KEY_Llama"){
