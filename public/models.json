@@ -49,8 +49,8 @@
       ]
     },
     {
-      "name": "Beta",
-      "label": "Beta",
+      "name": "nAI-Beta",
+      "label": "nAI-Beta",
       "api_key": "API_KEY_G/C",
       "model_name": "gemini-1.5-pro",
       "generation_config": {

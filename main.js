@@ -286,7 +286,7 @@ async function generateResponse(model, originalText) {
       appendMessage(model.label, a, true);
 
     }else if(model.api_key === "API_KEY_G/C"){
-      // G/C
+      // Gemini Chat API call for Experimental Models
       
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
       const modelZ = genAI.getGenerativeModel({
