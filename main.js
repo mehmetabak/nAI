@@ -290,45 +290,63 @@ async function generateResponse(model, originalText) {
       
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
       const modelZ = genAI.getGenerativeModel({
-        model: model.model_name,
-        systemInstruction: model.prompt_parts.join(' '),
+          model: model.model_name,
+          systemInstruction: model.prompt_parts.join(' '),
       });
 
       const generationConfig = {
-        temperature: model.generation_config.temperature,
-        topK: model.generation_config.topK,
-        topP: model.generation_config.topP,
-        maxOutputTokens: model.generation_config.maxOutputTokens,
-        responseMimeType: model.generation_config.responseMimeType,
+          temperature: model.generation_config.temperature,
+          topK: model.generation_config.topK,
+          topP: model.generation_config.topP,
+          maxOutputTokens: model.generation_config.maxOutputTokens,
+          responseMimeType: model.generation_config.responseMimeType,
       };
-      
-      const chatSession = await modelZ.startChat({
-        generationConfig,
-        history: [
+
+      // Modify the history to use 'parts' and the correct format
+      const formattedHistory = [
           {
-            "role": "user",
-            "content": "What is it today (Date/Month/Year - Day)"
+              role: "user",
+              parts: [
+                { text: "What is it today (Date/Month/Year - Day)" }
+              ],
           },
           {
-            "role": "model",
-            "content": currentDate
+              role: "model",
+              parts: [
+                  { text: currentDate }
+              ],
           },
-          ...conversationHistory,
-        ],
+          ...conversationHistory.map(message => ({
+              role: message.role,
+              parts: [{ text: message.content }], 
+          })),
+      ];
+
+      const chatSession = modelZ.startChat({
+          generationConfig,
+          history: formattedHistory,
       });
-      
+
       let aiMessage = '';
 
-      for await(const chunk of chatSession){
-          const content = chunk.choices[0]?.delta?.content || '';
-          aiMessage += content;
+      try {
+          const result = await chatSession.sendMessageStream(userMessage);
+
+          for await (const chunk of result.stream) {
+              const content = chunk.text();
+              aiMessage += content;
+          }
+
+          q = userMessage;
+          a = aiMessage;
+
+          console.log(a);
+          appendMessage(model.label, a, true);
+
+      } catch (error) {
+          console.error("Error during Gemini API call:", error);
+          appendMessage(model.label, "Error getting response from the model", true);
       }
-
-      q = userMessage;
-      a = aiMessage;
-
-      console.log(a);
-      appendMessage(model.label, a, true);
     }
     else if(model.api_key === "API_KEY_Llama"){
       // Llama API call
