@@ -383,7 +383,7 @@ async function generateResponse(model, originalText) {
     }
   } catch (error) {
     console.error(error);
-    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true);
+    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "	https://www.freeiconspng.com/uploads/error-icon-32.png");
   } finally {
     hideLoadingDots(sendMessageButton, originalText);
     sendMessageButton.disabled = false;
