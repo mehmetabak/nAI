@@ -383,7 +383,7 @@ async function generateResponse(model, originalText) {
     }
   } catch (error) {
     console.error(error);
-    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://png.pngtree.com/png-vector/20221022/ourmid/pngtree-exclamation-careful-error-icon-vector-png-image_34351378.png");
+    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://www.clipartmax.com/png/middle/113-1131250_png-file-error-icon.png");
   } finally {
     hideLoadingDots(sendMessageButton, originalText);
     sendMessageButton.disabled = false;
