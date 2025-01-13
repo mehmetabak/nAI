@@ -383,7 +383,7 @@ async function generateResponse(model, originalText) {
     }
   } catch (error) {
     console.error(error);
-    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://cdn.vectorstock.com/i/750p/59/67/attention-round-icon-vector-54215967.avif");
+    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://cdn0.iconfinder.com/data/icons/shift-free/32/Error-512.png");
   } finally {
     hideLoadingDots(sendMessageButton, originalText);
     sendMessageButton.disabled = false;
