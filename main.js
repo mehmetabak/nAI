@@ -289,7 +289,7 @@ async function generateResponse(model, originalText) {
       // G/C
       
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-      const model = genAI.getGenerativeModel({
+      const modelZ = genAI.getGenerativeModel({
         model: model.model_name,
         systemInstruction: model.prompt_parts.join(' '),
       });
@@ -302,7 +302,7 @@ async function generateResponse(model, originalText) {
         responseMimeType: model.generation_config.responseMimeType,
       };
       
-      const chatSession = await model.startChat({
+      const chatSession = await modelZ.startChat({
         generationConfig,
         history: [
           {
