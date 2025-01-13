@@ -73,10 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const randomIndex = Math.floor(Math.random() * imageUrls.length);
   const selectedImage = imageUrls[randomIndex];
 
+  /*
   if (hasSeenNotificationBefore == null) {
     showNotification('Welcome to the nAI!', selectedImage);
     localStorage.setItem('hasSeenNotificationBefore', 'true');
   }
+  */
 });
 
 //Model Selection and Update
