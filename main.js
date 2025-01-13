@@ -299,7 +299,6 @@ async function generateResponse(model, originalText) {
           topK: model.generation_config.topK,
           topP: model.generation_config.topP,
           maxOutputTokens: model.generation_config.maxOutputTokens,
-          responseMimeType: model.generation_config.responseMimeType,
       };
 
       const formattedHistory = [
