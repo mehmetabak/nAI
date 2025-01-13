@@ -383,7 +383,7 @@ async function generateResponse(model, originalText) {
     }
   } catch (error) {
     console.error(error);
-    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://www.clipartmax.com/png/middle/113-1131250_png-file-error-icon.png");
+    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://cdn-icons-png.flaticon.com/512/6378/6378000.png");
   } finally {
     hideLoadingDots(sendMessageButton, originalText);
     sendMessageButton.disabled = false;
