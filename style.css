@@ -473,3 +473,16 @@ select option:hover {
     opacity: 1;
   }
 }
+
+@keyframes faviconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.favicon {
+  animation: faviconBounce 1s ease-in-out infinite;
+}
