@@ -44,6 +44,7 @@ select option:hover {
   flex-direction: column;
   overflow: hidden;
   transition: margin-left 0.3s ease;
+  animation: fadeIn 1s ease-in-out;
 }
 
 #profile-section {
@@ -460,5 +461,15 @@ select option:hover {
     right: 0;
     left: 0;
     width: 100%;
+  }
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
