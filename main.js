@@ -4,6 +4,7 @@ import {
     HarmBlockThreshold,
   } from "@google/generative-ai";
 import Groq from 'groq-sdk';
+import { GoogleGenAI } from "@google/genai";
 import { showNotification } from './tools/notification';
 import { createMessageElement } from './components/message.js';
 
@@ -265,72 +266,77 @@ async function generateResponse(model, originalText) {
       q = userMessage;
       a = data.candidates[0].output;
       appendMessage(model.label, a, true, model.AIPP);
-    } else if (model.api_key === "API_KEY_Gemini_GenContent_Image") {
-      console.log("Attempting TEXT generation via generateContent with", model.model_name, "(removed image params)");
-      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
+    } else if (model.api_key === "API_KEY_Imagen") {
+      // Bu blok için @google/genai paketini kullanmayı deniyoruz
+      console.log("Using Imagen 3 Model via @google/genai...");
 
       try {
-        // 1. Get model instance
-        const modelInstance = genAI.getGenerativeModel({
-             model: model.model_name,
-             safetySettings: model.safety_settings.map(setting => ({
-                category: HarmCategory[setting.category],
-                threshold: HarmBlockThreshold[setting.threshold]
-             }))
-          });
-        console.log("Model instance obtained:", modelInstance);
-        // 2. Prepare parts
-        const parts = model.prompt_parts.map(part => ({
-            text: part.replace('${userMessage}', userMessage)
-                       .replace('${q}', q)
-                       .replace('${a}', a)
-                       .replace('${date}', currentDate)
-        }));
-        console.log("Sending parts:", parts);
+        // 1. @google/genai kullanarak nesneyi oluştur
+        // (apiKey parametresinin adı farklı olabilir, dökümanına bakmak gerekebilir,
+        // ama verdiğin örnekteki gibi varsayıyoruz)
+        const ai = new GoogleGenAI({ apiKey: API_KEY_Gemini });
+        console.log("@google/genai instance created:", ai);
 
-        // 3. Prepare generationConfig *WITHOUT* responseMimeType & responseModalities
-        const generationConfig = {
-          // Spread basic configs from models.json
-          ...(model.generation_config.temperature && { temperature: model.generation_config.temperature }),
-          ...(model.generation_config.topK && { topK: model.generation_config.topK }),
-          ...(model.generation_config.topP && { topP: model.generation_config.topP }),
-          ...(model.generation_config.maxOutputTokens && { maxOutputTokens: model.generation_config.maxOutputTokens }),
-          ...(model.generation_config.candidateCount && { candidateCount: model.generation_config.candidateCount }),
-          // Removed: responseMimeType: model.generation_config.responseMimeType,
-          // Removed: responseModalities: model.generation_config.responseModalities
+        // 2. ai.models.generateImages var mı diye kontrol et (tedbir amaçlı)
+        if (!ai.models || typeof ai.models.generateImages !== 'function') {
+             console.error("Error: 'ai.models.generateImages' function is not available in this @google/genai context.");
+             console.log("ai.models value:", ai.models);
+             appendMessage(model.label, "SDK Error: The function to generate images is not available via @google/genai as expected. Check package/usage.", true, "https://i.imgur.com/2Rs5ya9.png");
+             return;
+        }
+
+        // 3. Config hazırla
+        const imageGenConfig = {
+           numberOfImages: model.generation_config.numberOfImages || 1,
+           ...(model.generation_config.aspectRatio && { aspectRatio: model.generation_config.aspectRatio }),
+           ...(model.generation_config.style_preset && { style_preset: model.generation_config.style_preset }),
+           ...(model.generation_config.negativePrompt && { negativePrompt: model.generation_config.negativePrompt }),
         };
-        console.log("Generation Config (Text Only):", generationConfig);
+        console.log("Sending prompt via @google/genai:", userMessage);
+        console.log("Imagen Config:", imageGenConfig);
 
-        // 4. Call generateContent
-        const result = await modelInstance.generateContent({
-            contents: [{ role: "user", parts }],
-            generationConfig: generationConfig,
+        // 4. ai.models.generateImages çağır (Verdiğin örnekteki gibi)
+        const response = await ai.models.generateImages({
+          model: model.model_name, // e.g., "imagen-3.0-generate-002"
+          prompt: userMessage,
+          config: imageGenConfig,
         });
 
-        // 5. Process response (Expecting only text now)
-        const response = result.response;
-        let textResponse = response.text(); // Directly get text
-        console.log("Text response received:", textResponse);
-
-        // ImageBase64 will be null
+        // 5. Yanıtı işle (Node.js örneğine benzer, fs olmadan)
         let imageBase64 = null;
+        let textResponse = "";
+
+        if (response && response.generatedImages && response.generatedImages.length > 0) {
+          // Sohbet arayüzü için ilk resmi alalım
+          const generatedImage = response.generatedImages[0];
+          if (generatedImage.image && generatedImage.image.imageBytes) {
+            imageBase64 = generatedImage.image.imageBytes; // Bu base64 olmalı
+            console.log("Imagen (@google/genai): Image data received (base64).");
+            textResponse = generatedImage.revisedPrompt ? `Revised prompt: ${generatedImage.revisedPrompt}` : "[Image Generated by Imagen]";
+          } else {
+            console.error("Imagen Error (@google/genai): Response structure missing imageBytes.");
+            textResponse = "Failed to extract image data from Imagen response.";
+          }
+        } else {
+          console.error("Imagen Error (@google/genai): Invalid response structure or no images generated.", response);
+          textResponse = "Failed to get a valid image response from Imagen.";
+        }
 
         q = userMessage;
-        a = textResponse || "[No Text Response]";
+        a = textResponse || (imageBase64 ? "[Image Generated by Imagen]" : "[No Response]");
 
-        // Append only the text message
-        appendMessage(model.label, textResponse, true, model.AIPP, null); // Pass null for image
+        appendMessage(model.label, textResponse, true, model.AIPP, imageBase64);
 
       } catch (error) {
-        console.error("Error during text generation via generateContent:", error);
-        let errorMessage = "An error occurred during generateContent call.";
-         if (error instanceof Error) {
+        console.error("Error during Imagen 3 API call (@google/genai attempt):", error);
+        let errorMessage = "An error occurred while generating the image with Imagen (@google/genai).";
+        if (error instanceof Error) {
              errorMessage += ` Details: ${error.message}`;
-         } else if (error.status) {
+        } else if (error.status) {
              errorMessage += ` Status: ${error.status}, Message: ${error.statusText}`;
-         } else {
+        } else {
              errorMessage += ` Unexpected error structure: ${JSON.stringify(error)}`;
-         }
+        }
         appendMessage(model.label, errorMessage, true, "https://i.imgur.com/2Rs5ya9.png");
       }
     } else if(model.api_key === "API_KEY_G/C"){
