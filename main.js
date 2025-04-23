@@ -1,587 +1,403 @@
-// main.js
 import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} from "@google/generative-ai";
+    GoogleGenerativeAI,
+    HarmCategory,
+    HarmBlockThreshold,
+  } from "@google/generative-ai";
 import Groq from 'groq-sdk';
 import { showNotification } from './tools/notification';
 import { createMessageElement } from './components/message.js';
-import { initializeSidebar, getActiveChatId, loadChatHistory, saveChatHistory } from './components/sidebar.js';
-import Swal from 'sweetalert2'; // Import Swal directly if needed here
 
-// --- API Keys ---
 const API_KEY_Gemini = import.meta.env.VITE_API_KEY_Gemini;
 const API_KEY_Text_Bison = import.meta.env.VITE_API_KEY_Text_Bison;
-const API_KEY_Llama = import.meta.env.VITE_API_KEY_Llama;
+const API_KEY_Llama = import.meta.env.VITE_API_KEY_Llama
 
-// --- UI Elements (references assigned in DOMContentLoaded) ---
-let mainMenu;
-let mainMenuOpenButton;
-let mainMenuCloseButton;
-let clearButton;
-let sendMessageButton;
-let chatHeader;
-let modelSettingsButton;
-let aboutButton;
-let changelogButton;
-let githubButton;
-let modelSelector;
-let modelWindow;
-let modelWindowCloseButton;
-let aboutScreen;
-let aboutScreenCloseButton;
-let changelogScreen;
-let changelogScreenCloseButton;
-let chatMessages;
-let inputText;
-let originalSendButtonText = "Send"; // Default
+// UI
+var mainMenu = document.getElementById("menu-window");
+var mainMenuOpenButton = document.getElementById("toggle-menu-button");
+var mainMenuCloseButton = document.getElementById("menu-window-close")
 
-// --- State ---
-let whichMenuIsOn = null; // Track which popup/modal is open
-let emptySpace; // Reference to the bottom padding div
-let isEmptySpaceAdded = false; // Flag for bottom padding
+var clearButton = document.getElementById("clear-button");
+var sendMessageButton = document.getElementById("send-button");
+var chatHeader = document.getElementById("chat-header");
 
-// --- Model & Chat Data ---
-let conversationHistory = []; // Active chat history in memory
-let models = []; // Loaded models from JSON
-let q = `!`; // Last question context
-let a = `!`; // Last answer context
-const AIPP_USER = "https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png"; // User PP
-const AIPP_DEFAULT_AI = "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png"; // Default AI PP
-const AIPP_ERROR = "https://i.imgur.com/2Rs5ya9.png"; // Error PP
+var modelSettingsButton = document.getElementById("settings-button");
+var aboutButton = document.getElementById("about-button");
+var changelogButton = document.getElementById("changelog-button");
+var githubButton = document.getElementById("github-button");
 
-// --- Initialization ---
+var modelSelector = document.getElementById('model-selector');
+var modelWindow = document.getElementById("model-window");
+var modelWindowCloseButton = document.getElementById("model-window-close-button");
+
+var aboutScreen = document.getElementById("about-screen");
+var aboutScreenCloseButton = document.getElementById("about-screen-close-button");
+var changelogScreen = document.getElementById("changelog-screen");
+var changelogScreenCloseButton = document.getElementById("changelog-screen-close-button");
+
+var chatMessages = document.getElementById("chat-messages");
+
+var originalText = sendMessageButton.textContent;
+
+var whichMenuIsOn;
+var emptySpace = Object.assign(document.createElement('div'), {
+  innerHTML: '&nbsp;',
+  style: 'height: 14vh;'
+});
+var isEmptySpaceAdded = false;
+
+// For Model
+let conversationHistory = [];
+var date = new Date(); 
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var currentDate = date.getDate() + "/"
+                + (date.getMonth()+1) + "/" 
+                + date.getFullYear() + " - "
+                + days[date.getDay()];
+var userMessage;
+var q = `!`;
+var a = `!`;
+
+var AIPP = "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png";  //Default AI Profile Picture
+
+// Test Pictures
+var imageUrls = [
+  'https://i.pinimg.com/736x/3f/f8/6a/3ff86a79ba1d1caabce0626d3417c47a.jpg',
+  'https://i.pinimg.com/736x/ee/f6/ee/eef6ee16e6a29b15148ff075cf4c024c.jpg',
+  'https://i.pinimg.com/564x/a0/bb/d5/a0bbd5abb5c314105df8034ec350a8b6.jpg',
+  'https://i.pinimg.com/564x/c8/b1/83/c8b183a76478e8832e386e55134acba8.jpg',
+  'https://i.pinimg.com/564x/b9/5a/cb/b95acbb938a23eb7c480256685b5b528.jpg'
+];
+
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("DOM fully loaded and parsed");
+  const hasSeenNotificationBefore = localStorage.getItem('hasSeenNotificationBefore');
+  const randomIndex = Math.floor(Math.random() * imageUrls.length);
+  const selectedImage = imageUrls[randomIndex];
 
-  // Assign UI Element references now that DOM is ready
-  assignUIElements();
-
-  // Create bottom empty space div
-  createEmptySpaceDiv();
-
-  // Add essential event listeners
-  addCoreEventListeners();
-
-  // Load models and then initialize sidebar
-  fetchModelsAndInitialize();
-
-  // Initial notification logic (optional)
-  // handleInitialNotification();
+  /*
+  if (hasSeenNotificationBefore == null) {
+    showNotification('Welcome to the nAI!', selectedImage);
+    localStorage.setItem('hasSeenNotificationBefore', 'true');
+  }
+  */
 });
 
-function assignUIElements() {
-  mainMenu = document.getElementById("menu-window");
-  mainMenuOpenButton = document.getElementById("toggle-menu-button");
-  mainMenuCloseButton = document.getElementById("menu-window-close");
-  clearButton = document.getElementById("clear-button");
-  sendMessageButton = document.getElementById("send-button");
-  chatHeader = document.getElementById("chat-header");
-  modelSettingsButton = document.getElementById("settings-button");
-  aboutButton = document.getElementById("about-button");
-  changelogButton = document.getElementById("changelog-button");
-  githubButton = document.getElementById("github-button");
-  modelSelector = document.getElementById('model-selector');
-  modelWindow = document.getElementById("model-window");
-  modelWindowCloseButton = document.getElementById("model-window-close-button");
-  aboutScreen = document.getElementById("about-screen");
-  aboutScreenCloseButton = document.getElementById("about-screen-close-button");
-  changelogScreen = document.getElementById("changelog-screen");
-  changelogScreenCloseButton = document.getElementById("changelog-screen-close-button");
-  chatMessages = document.getElementById("chat-messages");
-  inputText = document.getElementById("input-text");
-
-  // Check if crucial elements exist
-   if (!sendMessageButton || !inputText || !chatMessages || !modelSelector || !mainMenuOpenButton) {
-       console.error("CRITICAL ERROR: One or more essential UI elements could not be found. Check IDs in index.html.");
-       // Optionally display a user-facing error message on the page
-       document.body.innerHTML = '<h1>Error initializing application. Please check console.</h1>';
-   } else {
-       originalSendButtonText = sendMessageButton.textContent; // Store original text
-   }
+//Model Selection and Update
+function getModelLabel(modelName) {
+  const model = models.find(m => m.name === modelName);
+  return model ? model.label : 'nAI';
 }
 
-function createEmptySpaceDiv() {
-  emptySpace = Object.assign(document.createElement('div'), {
-      innerHTML: ' ',
-      style: 'height: 14vh; flex-shrink: 0;' // Prevent shrinking
+function populateModelSelector(models) {
+    models.forEach(model => {
+    const option = document.createElement('option');
+    option.value = model.name;
+    option.text = model.label;
+    modelSelector.appendChild(option);
   });
-}
-
-function addCoreEventListeners() {
-   if (!sendMessageButton || !inputText || !mainMenuOpenButton || !clearButton) return; // Guard
-
-  sendMessageButton.addEventListener('click', handleSendMessage);
-  inputText.addEventListener('keydown', handleInputKeydown);
-  mainMenuOpenButton.addEventListener('click', toggleMainMenu);
-  clearButton.addEventListener('click', handleClearChat);
-
-  // Add listeners for other menus/popups if elements exist
-  mainMenuCloseButton?.addEventListener('click', () => toggleMainMenu(false)); // Force close
-  modelSettingsButton?.addEventListener('click', () => openSubMenu(modelWindow, "settings"));
-  modelWindowCloseButton?.addEventListener('click', () => closeSubMenu(modelWindow));
-  aboutButton?.addEventListener('click', () => openSubMenu(aboutScreen, "about"));
-  aboutScreenCloseButton?.addEventListener('click', () => closeSubMenu(aboutScreen));
-  changelogButton?.addEventListener('click', () => openSubMenu(changelogScreen, "changelog"));
-  changelogScreenCloseButton?.addEventListener('click', () => closeSubMenu(changelogScreen));
-  githubButton?.addEventListener('click', () => window.open('https://github.com/mehmetabak/nAI', '_blank'));
-
-   // Model selector change listener
-   modelSelector?.addEventListener('change', handleModelSelectionChange);
-}
-
-
-function fetchModelsAndInitialize() {
-   // Fetch models from the /public directory
-  fetch('/models.json')
-      .then(response => {
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-      })
-      .then(data => {
-          models = data;
-          populateModelSelector(models);
-          // Initialize sidebar *after* models are loaded and selector populated
-          initializeSidebar(loadAndDisplayChat); // Pass the callback function
-      })
-      .catch(error => {
-          console.error("Error loading or parsing models.json:", error);
-          chatHeader.textContent = "Model Error"; // Update header
-          // Inform user more prominently
-           Swal.fire({
-               title: 'Model Loading Failed',
-               text: `Could not load model configurations (models.json). Some features might be unavailable. Error: ${error.message}`,
-               icon: 'error',
-               background: '#2c2c2c',
-               color: '#ecf0f1'
-           });
-           // Still initialize sidebar, but model selection won't work
-           if (modelSelector) modelSelector.disabled = true; // Disable selector
-           initializeSidebar(loadAndDisplayChat);
-      });
-}
-
-// --- Model Selection ---
-
-function getModelDetails(modelName) {
-  return models.find(m => m.name === modelName);
-}
-
-function populateModelSelector(loadedModels) {
-  if (!modelSelector) return; // Guard if selector doesn't exist
-
-  modelSelector.innerHTML = ''; // Clear existing options (like "Loading...")
-  if (!loadedModels || loadedModels.length === 0) {
-       const option = document.createElement('option');
-       option.value = "";
-       option.text = "No models loaded";
-       modelSelector.appendChild(option);
-       modelSelector.disabled = true;
-       return;
-  }
-
-  modelSelector.disabled = false;
-  loadedModels.forEach(model => {
-      const option = document.createElement('option');
-      option.value = model.name;
-      option.text = model.label;
-      modelSelector.appendChild(option);
-  });
-
-  const storedModel = localStorage.getItem('model');
-  if (storedModel && loadedModels.some(m => m.name === storedModel)) {
-      modelSelector.value = storedModel;
+  
+  if(localStorage.getItem('model') !== null){
+    modelSelector.value = localStorage.getItem('model');
+    chatHeader.firstChild.data = getModelLabel(modelSelector.value);
   } else {
-      modelSelector.value = loadedModels[0].name;
-      localStorage.setItem('model', loadedModels[0].name);
+    modelSelector.value = models[0].name;
+    localStorage.setItem('model', models[0].name);
+    chatHeader.firstChild.data = models[0].label;
   }
-  updateChatHeaderWithModel();
 }
 
-function handleModelSelectionChange() {
-  if (!modelSelector) return;
+let models;
+
+fetch('/models.json')
+  .then(response => response.json())
+  .then(data => {
+    models = data;
+    populateModelSelector(models);
+  });
+
+modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
   localStorage.setItem('model', selectedModel);
-  updateChatHeaderWithModel();
-  // Model change takes effect on the *next* message sent in the current chat
-  // or immediately in a new chat.
-}
+  chatHeader.firstChild.data = getModelLabel(selectedModel);
+});
 
-function updateChatHeaderWithModel() {
-   if (!chatHeader) return;
-  const selectedModelName = localStorage.getItem('model');
-  const model = getModelDetails(selectedModelName);
-  chatHeader.textContent = model ? model.label : 'nAI';
-}
+//Base UI functions
+modelSettingsButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  modelWindow.classList.toggle('opened');
+  whichMenuIsOn = "settings";
+};
 
-
-// --- Chat Loading and Display ---
-
-function loadAndDisplayChat(chatId) {
-  console.log("Loading chat:", chatId);
-  if (!chatMessages) return; // Guard
-
-  if (!chatId) {
-      chatMessages.innerHTML = '';
-      conversationHistory = [];
-      addEmptySpaceIfNeeded(); // Add padding even if empty
-      updateChatHeaderWithModel(); // Ensure header is correct
-      q = '!'; a = '!'; // Reset context
-      return;
-  }
-
-  conversationHistory = loadChatHistory(chatId);
-  console.log("Loaded history:", conversationHistory.length, "messages");
-
-  chatMessages.innerHTML = '';
-  isEmptySpaceAdded = false; // Reset flag before rendering
-
-  conversationHistory.forEach(msg => {
-      const messageElement = createMessageElement(
-          msg.senderLabel || (msg.isAI ? "AI" : "User"), // Use stored label or default
-          msg.message,
-          msg.isAI,
-          msg.AIPP || (msg.isAI ? AIPP_DEFAULT_AI : AIPP_USER) // Use stored PP or default
-      );
-      chatMessages.appendChild(messageElement);
-  });
-
-  addEmptySpaceIfNeeded();
-  // Scroll after a tiny delay to allow rendering
-   setTimeout(() => {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-   }, 0);
-
-
-  updateChatHeaderWithModel();
-  // Reset context for the loaded chat based on its *last* messages
-   const lastUserMsg = [...conversationHistory].reverse().find(m => !m.isAI);
-   const lastAiMsg = [...conversationHistory].reverse().find(m => m.isAI);
-   q = lastUserMsg ? lastUserMsg.message : '!';
-   a = lastAiMsg ? lastAiMsg.message : '!';
-   console.log(`Context reset: q="${q.substring(0,20)}...", a="${a.substring(0,20)}..."`)
-}
-
-// --- Message Handling ---
-
-function appendMessage(senderLabel, message, isAI, senderAIPP) {
-  const activeChatId = getActiveChatId();
-  if (!activeChatId || !chatMessages) {
-      console.error("Cannot append message, no active chat or chatMessages element!");
-      return;
-  }
-
-  const messageElement = createMessageElement(senderLabel, message, isAI, senderAIPP);
-
-  // Remove empty space before adding new message
-  if (isEmptySpaceAdded && emptySpace.parentNode === chatMessages) {
-      chatMessages.removeChild(emptySpace);
-      isEmptySpaceAdded = false; // Reset flag earlier
-  }
-  chatMessages.appendChild(messageElement);
-  addEmptySpaceIfNeeded(); // Re-add empty space at the end
-
-   // Scroll after a tiny delay
-   setTimeout(() => {
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-   }, 0);
-
-  // Store message data including the label used
-  const messageData = { senderLabel, message, isAI, AIPP: senderAIPP };
-  conversationHistory.push(messageData);
-  saveChatHistory(activeChatId, conversationHistory);
-
-  // Update context (q/a) - q is updated before API call, a is updated after
-   if (isAI) {
-       a = message;
-   }
-}
-
-function addEmptySpaceIfNeeded() {
-  if (!chatMessages || !emptySpace) return;
-  // Ensure it's only added once at the very end
-  if (!chatMessages.lastElementChild || chatMessages.lastElementChild !== emptySpace) {
-       chatMessages.appendChild(emptySpace);
-       isEmptySpaceAdded = true;
-  }
-}
-
-// --- Sending Message & AI Response ---
-
-function handleInputKeydown(event) {
-  if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
-  }
-}
-
-function handleSendMessage() {
-  if (!inputText || !sendMessageButton) return; // Guard
-  const userMessage = inputText.value.trim();
-
-  if (userMessage !== "" && !sendMessageButton.disabled) {
-      showLoadingDots(sendMessageButton);
-      sendMessageButton.disabled = true;
-
-      appendMessage("User", userMessage, false, AIPP_USER);
-      inputText.value = "";
-
-      // --- Prepare for API call ---
-      q = userMessage; // Update 'q' context *before* calling generateResponse
-
-      const selectedModelName = localStorage.getItem('model');
-      const selectedModel = getModelDetails(selectedModelName);
-
-      if (selectedModel) {
-          generateResponse(selectedModel);
-      } else {
-          console.error("No valid model selected for sending message!");
-          appendMessage("System", "Error: No AI model configured.", true, AIPP_ERROR);
-          hideLoadingDots(sendMessageButton); // Pass original text implicitly
-          sendMessageButton.disabled = false;
-      }
-  }
-}
-
-
-async function generateResponse(model) {
-  const currentChatId = getActiveChatId(); // Get ID at the start of generation
-  try {
-      let aiResponseText = '';
-      const currentHistory = loadChatHistory(currentChatId); // Get fresh history for API context
-      const currentDate = new Date().toLocaleDateString(); // Simple date for context
-
-      // --- Choose API based on model config ---
-      if (model.api_key === "API_KEY_Text_Bison") {
-          // ... (Bison API call logic - simplified example)
-          const promptText = model.prompt?.replace('${userMessage}', q).replace('${q}', q).replace('${a}', a).replace('${date}', currentDate) || q; // Fallback to just 'q'
-          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${API_KEY_Text_Bison}`, { /* ... body */ });
-          if (!response.ok) throw new Error(`Bison API Error: ${response.statusText}`);
-          const data = await response.json();
-          aiResponseText = data.candidates?.[0]?.output || "No response from Bison.";
-
-      } else if (model.api_key === "API_KEY_Gemini") {
-          // ... (Gemini API call logic - simplified example)
-           const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-           const modelData = await genAI.getGenerativeModel({ model: model.model_name });
-           const generationConfig = model.generation_config;
-           const safetySettings = model.safety_settings?.map(setting => ({
-               category: HarmCategory[setting.category],
-               threshold: HarmBlockThreshold[setting.threshold]
-           }));
-           const parts = model.prompt_parts?.map(part => ({
-               text: part.replace('${userMessage}', q).replace('${q}', q).replace('${a}', a).replace('${date}', currentDate)
-           })) || [{ text: q }]; // Fallback
-
-           const result = await modelData.generateContent({ contents: [{ role: "user", parts }], generationConfig, safetySettings });
-           aiResponseText = result.response?.text() || "No response from Gemini.";
-
-
-      } else if (model.api_key === "API_KEY_G/C") {
-          // ... (Gemini Chat API logic - requires careful history formatting)
-           const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-           const modelZ = genAI.getGenerativeModel({ model: model.model_name, systemInstruction: model.prompt_parts?.join(' ') || "" });
-           const generationConfig = model.generation_config;
-           const safetySettings = model.safety_settings?.map(setting => ({ category: HarmCategory[setting.category], threshold: HarmBlockThreshold[setting.threshold] }));
-
-            // Format history (exclude last user message 'q', which is sent separately)
-            const formattedHistory = currentHistory.slice(0, -1).map(m => ({
-                  role: m.isAI ? "model" : "user",
-                  parts: [{ text: m.message }]
-            }));
-
-           // Add date context if desired by prompt structure
-            // formattedHistory.unshift({ role: "user", parts: [{ text: `Date: ${currentDate}`}] }, { role: "model", parts: [{ text: "OK."}] });
-
-           const chatSession = modelZ.startChat({ generationConfig, safetySettings, history: formattedHistory });
-           const result = await chatSession.sendMessageStream(q); // Send only the last user message
-           for await (const chunk of result.stream) {
-               aiResponseText += chunk.text();
-           }
-           if (!aiResponseText) aiResponseText = "Received empty stream from Gemini Chat.";
-
-
-      } else if (model.api_key === "API_KEY_Llama") {
-          // ... (Groq/Llama API call logic - requires careful history formatting)
-           const groq = new Groq({ apiKey: API_KEY_Llama, dangerouslyAllowBrowser: true });
-           const messagesForGroq = [
-               { role: "system", content: model.prompt_parts?.join(' ') || "You are a helpful assistant." },
-               // Add date/context if needed
-               // { role: "user", content: `Current date: ${currentDate}` }, { role: "assistant", content: "Noted." },
-               // Format history
-               ...currentHistory.map(m => ({
-                    role: m.isAI ? "assistant" : "user",
-                    content: m.message
-               }))
-               // Note: Groq expects the *full* history including the last user message (q)
-           ];
-
-           const chatCompletion = await groq.chat.completions.create({
-               messages: messagesForGroq,
-               model: model.model_name,
-               temperature: model.generation_config?.temperature || 0.7,
-               max_tokens: model.generation_config?.max_tokens || 1024,
-               top_p: model.generation_config?.top_p || 1,
-               stream: model.generation_config?.stream ?? false,
-               stop: model.generation_config?.stop
-           });
-
-           if (model.generation_config?.stream) {
-              for await (const chunk of chatCompletion) {
-                  aiResponseText += chunk.choices[0]?.delta?.content || '';
-              }
-           } else {
-              aiResponseText = chatCompletion.choices[0]?.message?.content || "No response from Llama.";
-           }
-      } else {
-           throw new Error(`Unsupported API key type or model configuration error for "${model.label}".`);
-      }
-
-      // --- Process Response ---
-       // Check if the chat context has changed while waiting for the API
-       if (getActiveChatId() !== currentChatId) {
-           console.warn("Chat context changed during AI response generation. Discarding response for old chat:", currentChatId);
-           // Do not append the message to the now-incorrect chat
-       } else {
-           // Append AI response to the *correct* (still active) chat
-           appendMessage(model.label, aiResponseText, true, model.AIPP || AIPP_DEFAULT_AI);
-       }
-
-  } catch (error) {
-      console.error("Error during AI response generation:", error);
-       // Check context again before showing error in potentially wrong chat
-       if (getActiveChatId() === currentChatId) {
-          appendMessage(model?.label || "System", `Error: ${error.message}`, true, AIPP_ERROR);
-       } else {
-           console.warn("Chat context changed before error could be displayed for chat:", currentChatId);
-           // Maybe show a general notification instead?
-           showNotification(`AI Error in previous chat: ${error.message}`, null, 'error');
-       }
-  } finally {
-       // Check context one last time before re-enabling the button
-       if (getActiveChatId() === currentChatId) {
-          hideLoadingDots(sendMessageButton);
-          sendMessageButton.disabled = false;
-       } else {
-           console.log("Send button state not reset as context changed.");
-           // If the new chat also has the button loading, this might be an issue.
-           // A more robust solution might involve request IDs.
-           // For now, assume the button state is managed correctly by the new context load.
-       }
-  }
-}
-
-// --- UI Event Handlers & Toggles ---
-
-function toggleMainMenu(forceClose = null) {
-  if (!mainMenu) return;
-  const isOpen = mainMenu.classList.contains('opened');
-
-  if (forceClose === true || (forceClose === null && isOpen)) {
-      // Close main menu and any open sub-menu
-      mainMenu.classList.remove('opened');
-      if (whichMenuIsOn === "settings") modelWindow?.classList.remove('opened');
-      if (whichMenuIsOn === "about") aboutScreen?.classList.remove('opened');
-      if (whichMenuIsOn === "changelog") changelogScreen?.classList.remove('opened');
-      whichMenuIsOn = null;
-  } else if (forceClose === false || (forceClose === null && !isOpen)) {
-      // Open main menu
-      mainMenu.classList.add('opened');
-  }
-}
-
-function openSubMenu(element, menuName) {
-  if (!element || !mainMenu) return;
-   // Close main menu first
-   mainMenu.classList.remove('opened');
-  // Close any other potentially open sub-menu
-  if (whichMenuIsOn === "settings" && menuName !== "settings") modelWindow?.classList.remove('opened');
-  if (whichMenuIsOn === "about" && menuName !== "about") aboutScreen?.classList.remove('opened');
-  if (whichMenuIsOn === "changelog" && menuName !== "changelog") changelogScreen?.classList.remove('opened');
-
-  // Open the target sub-menu
-  element.classList.add('opened');
-  whichMenuIsOn = menuName;
-}
-
-function closeSubMenu(element) {
-   if (!element) return;
-  element.classList.remove('opened');
+modelWindowCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  modelWindow.classList.toggle('opened');
   whichMenuIsOn = null;
 }
 
-function handleClearChat() {
-   const activeChatId = getActiveChatId();
-   const currentHistory = loadChatHistory(activeChatId);
+aboutButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  aboutScreen.classList.toggle('opened');
+  whichMenuIsOn = "about";
+};
 
-   if (!activeChatId || currentHistory.length === 0) {
-        showNotification("Chat is already empty.", null, "info");
-        return;
-   }
-
-   Swal.fire({
-       title: 'Clear Current Chat?',
-       text: "This will erase all messages in this chat only. Cannot be undone.",
-       icon: 'warning',
-       showCancelButton: true,
-       confirmButtonColor: '#e74c3c',
-       cancelButtonColor: '#3498db',
-       confirmButtonText: 'Yes, clear it!',
-       background: '#2c2c2c',
-       color: '#ecf0f1'
-   }).then((result) => {
-       if (result.isConfirmed) {
-            if (!chatMessages) return;
-           chatMessages.innerHTML = ''; // Clear UI
-           isEmptySpaceAdded = false;
-           addEmptySpaceIfNeeded();
-
-           conversationHistory = []; // Clear memory
-           saveChatHistory(activeChatId, []); // Clear storage
-
-           q = '!'; a = '!'; // Reset context
-           showNotification("Chat cleared.", null, "success");
-       }
-   });
+aboutScreenCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  aboutScreen.classList.toggle('opened');
+  whichMenuIsOn = null;
 }
 
+changelogButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  changelogScreen.classList.toggle('opened');
+  whichMenuIsOn = "changelog";
+};
 
-// --- Button Loading Animation ---
-function showLoadingDots(button) {
-  if (!button) return;
-  button.classList.add('loading');
-  button.dataset.originalText = button.textContent; // Store original text
-  button.textContent = ''; // Clear text for dots
+changelogScreenCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  changelogScreen.classList.toggle('opened');
+  whichMenuIsOn = null;
 }
 
-function hideLoadingDots(button) {
-  if (!button) return;
-  button.classList.remove('loading');
-   // Restore original text if it was saved
-   if (button.dataset.originalText) {
-      button.textContent = button.dataset.originalText;
-   } else {
-       button.textContent = originalSendButtonText; // Fallback
-   }
+mainMenuOpenButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+  if(whichMenuIsOn == "settings"){
+    modelWindow.classList.toggle('opened');
+    whichMenuIsOn = null;
+  }else if(whichMenuIsOn == "about"){
+    aboutScreen.classList.toggle('opened');
+    whichMenuIsOn = null;
+  }else if (whichMenuIsOn == "changelog"){
+    changelogScreen.classList.toggle('opened');
+    whichMenuIsOn = null;
+  }
+};
+
+mainMenuCloseButton.onclick= () => {
+  mainMenu.classList.toggle("opened");
+};
+
+clearButton.onclick= () => {
+  window.location.reload();
 }
 
-// --- Utility (example: initial notification) ---
-/*
-function handleInitialNotification() {
-  const hasSeen = localStorage.getItem('hasSeenNotificationBefore');
-  if (!hasSeen) {
-       // Assuming imageUrls is defined elsewhere
-       // const randomIndex = Math.floor(Math.random() * imageUrls.length);
-       // const selectedImage = imageUrls[randomIndex];
-       showNotification('Welcome to nAI!', null, 'info'); // Use showNotification tool
-       localStorage.setItem('hasSeenNotificationBefore', 'true');
+githubButton.onclick= () => {
+  window.location.href = 'https://github.com/mehmetabak/nAI';
+};
+
+sendMessageButton.onclick= () => {
+  const inputText = document.getElementById("input-text");
+  userMessage = inputText.value.trim();
+  if (userMessage !== "") {
+    showLoadingDots(sendMessageButton);
+    sendMessageButton.disabled = true;
+    
+    appendMessage("User", userMessage, false, AIPP);
+    inputText.value = "";
+
+    var selectedModel = models.find(m => m.name === localStorage.getItem('model'));
+    if (selectedModel) {
+      generateResponse(selectedModel, originalText);
+    } else {
+      generateResponse(models[0], originalText);
+    }
+  }
+};
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    sendMessageButton.click();
+  }
+});
+
+function appendMessage(sender, message, isAI, AIPP) {
+  if(!isEmptySpaceAdded){
+    chatMessages.appendChild(createMessageElement(sender, message, isAI, AIPP));
+    isEmptySpaceAdded = true;
+  }else{
+    chatMessages.removeChild(emptySpace);
+    chatMessages.appendChild(createMessageElement(sender, message, isAI, AIPP));
+  }
+  chatMessages.appendChild(emptySpace);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  if(isAI){
+    conversationHistory.push({ role: "assistant", content: message });
+  }else{
+    conversationHistory.push({ role: "user", content: message });
   }
 }
-*/
 
-// Make sure tools are correctly imported if used, e.g.:
-// import { showNotification } from './tools/notification'; // Assuming you have this file
-// import { createMessageElement } from './components/message.js'; // Assuming you have this file
+// Models
+async function generateResponse(model, originalText) {
+  try {
+    if (model.api_key === "API_KEY_Text_Bison") {
+      // Text Bison API call
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta3/models/${model.model_name}:generateText?key=${API_KEY_Text_Bison}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          'prompt': { 'text': model.prompt.replace('${userMessage}', userMessage).replace('${q}', q).replace('${a}', a).replace('${date}', currentDate) },
+          'temperature': 0.7,
+          'top_k': 40,
+          'top_p': 0.95,
+          'candidate_count': 1,
+          'max_output_tokens': 1024,
+          'stop_sequences': [],
+          'safety_settings': [
+            { 'category': 'HARM_CATEGORY_DEROGATORY', 'threshold': 4 },
+            { 'category': 'HARM_CATEGORY_TOXICITY', 'threshold': 4 },
+            { 'category': 'HARM_CATEGORY_VIOLENCE', 'threshold': 4 }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      q = userMessage;
+      a = data.candidates[0].output;
+      appendMessage(model.label, a, true, model.AIPP);
+    } else if (model.api_key === "API_KEY_Gemini") {
+      // Google Generative AI API call
+      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
+      const modelData = await genAI.getGenerativeModel({ model: model.model_name });
+
+      const generationConfig = {
+        temperature: model.generation_config.temperature,
+        topK: model.generation_config.topK,
+        topP: model.generation_config.topP,
+        maxOutputTokens: model.generation_config.maxOutputTokens,
+      };
+
+      const safetySettings = model.safety_settings.map(setting => ({
+        category: HarmCategory[setting.category],
+        threshold: HarmBlockThreshold[setting.threshold]
+      }));
+
+      const parts = model.prompt_parts.map(part => ({
+        text: part.replace('${userMessage}', userMessage)
+      }));
+
+      parts.forEach(part => {
+        part.text = part.text.replace('${q}', q).replace('${a}', a).replace('${date}', currentDate);
+      });
+
+      const result = await modelData.generateContent({
+        contents: [{ role: "user", parts }],
+        generationConfig,
+        safetySettings,
+      });
+
+      const response = result.response;
+      q = userMessage;
+      a = response.text();
+      appendMessage(model.label, a, true, model.AIPP);
+
+    }else if(model.api_key === "API_KEY_G/C"){
+      // Gemini Chat API call for Experimental Models
+      
+      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
+      const modelZ = genAI.getGenerativeModel({
+          model: model.model_name,
+          systemInstruction: model.prompt_parts.join(' '),
+      });
+
+      const generationConfig = {
+          temperature: model.generation_config.temperature,
+          topK: model.generation_config.topK,
+          topP: model.generation_config.topP,
+          maxOutputTokens: model.generation_config.maxOutputTokens,
+      };
+
+      const formattedHistory = [
+          {
+              role: "user",
+              parts: [
+                { text: "What is it today (Date/Month/Year - Day)" }
+              ],
+          },
+          {
+              role: "model",
+              parts: [
+                  { text: currentDate }
+              ],
+          },
+          ...conversationHistory.map(message => ({
+              role: message.role,
+              parts: [{ text: message.content }], 
+          })),
+      ];
+
+      const chatSession = modelZ.startChat({
+          generationConfig,
+          history: formattedHistory,
+      });
+
+      let aiMessage = '';
+      try {
+          const result = await chatSession.sendMessageStream(userMessage);
+          for await (const chunk of result.stream) {
+              const content = chunk.text();
+              aiMessage += content;
+          }
+          q = userMessage;
+          a = aiMessage;
+
+          appendMessage(model.label, a, true, model.AIPP);
+
+      } catch (error) {
+          console.error("Error during Gemini API call:", error);
+          appendMessage(model.label, "Error getting response from the model", true, "https://i.imgur.com/2Rs5ya9.png");
+      }
+    }
+    else if(model.api_key === "API_KEY_Llama"){
+      // Llama API call
+      const groq = new Groq({ apiKey:API_KEY_Llama, dangerouslyAllowBrowser: true });
+      const chatCompletion = await groq.chat.completions.create({
+        "messages": [
+          {
+            "role": "system",
+            "content": model.prompt_parts.join(' ')
+          },
+          {
+            "role": "user",
+            "content": "What is it today (Date/Month/Year - Day)"
+          },
+          {
+            "role": "assistant",
+            "content": currentDate
+          },
+          ...conversationHistory,
+        ],
+        "model": model.model_name,
+        "temperature": model.generation_config.temperature,
+        "max_tokens": model.generation_config.max_tokens,
+        "top_p": model.generation_config.top_p,
+        "stream": model.generation_config.stream,
+        "stop": model.generation_config.stop
+      });
+
+      let aiMessage = '';
+      for await (const chunk of chatCompletion) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        aiMessage += content;
+      }
+      q = userMessage;
+      a = aiMessage;
+
+      appendMessage(model.label, a, true, model.AIPP);
+    }
+  } catch (error) {
+    console.error(error);
+    appendMessage(model.label, "An error occurred while generating the response. Please try again.", true, "https://i.imgur.com/2Rs5ya9.png");
+  } finally {
+    hideLoadingDots(sendMessageButton, originalText);
+    sendMessageButton.disabled = false;
+  }
+}
+
+
+// Button Animation
+function showLoadingDots(button) {
+  button.classList.add('loading');
+}
+
+function hideLoadingDots(button, originalText) {
+  button.classList.remove('loading');
+}
