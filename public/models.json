@@ -54,7 +54,7 @@
       "name": "gemini-image-generator",
       "label": "Gemini (Image)",      
       "model_name": " gemini-2.0-flash-exp-image-generation", 
-      "api_key": "API_KEY_Gemini_Image", 
+      "api_key": "API_KEY_Imagen", 
       "AIPP": "https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/photo_camera/default/48px.svg", 
       "generation_config": {
         "temperature": 0.4,
