@@ -5,118 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>nAI</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="components/sidebar.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon" class="favicon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" class="favicon">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    <!-- SweetAlert2 (make sure the path is correct or use CDN) -->
-    <!-- <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css"> -->
+    <link rel="stylesheet" href="node_modules/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- SweetAlert2 CSS (opsiyonel, eğer JS'de import edilmiyorsa) -->
+    <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
 </head>
 <body>
-
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="sidebar-header">
-             <button id="sidebar-toggle" title="Toggle Sidebar">
-                <i class="fa-solid fa-bars-staggered"></i>
-            </button>
-            <button id="new-chat-button" class="sidebar-button" title="New Chat">
-                <i class="fas fa-plus"></i> <span>New Chat</span>
-            </button>
+        <div id="sidebar-header">
+            <button id="new-chat-button"><i class="fas fa-plus"></i> New Chat</button>
+            <!-- İsteğe bağlı: Sidebar daraltma/genişletme butonu eklenebilir -->
         </div>
-        <div class="chat-history-container">
-            <h4>History</h4>
-            <ul id="chat-history-list">
-                <!-- Chat history items loaded by JS -->
-            </ul>
-        </div>
-        <div class="sidebar-footer">
-             <p>nAI vBeta</p>
-        </div>
+        <ul id="chat-list">
+            <!-- Chat items will be loaded here by JS -->
+        </ul>
+        <!-- İsteğe bağlı: Alt kısma kullanıcı profili veya ayarlar butonu eklenebilir -->
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Mevcut Ana İçerik -->
     <div id="main-content">
-        <!-- Top Bar -->
-        <div id="top-bar">
-            <div id="model-selector-container">
-                 <i class="fa-solid fa-robot"></i>
-                <select id="model-selector" title="Select Model (for new chats)"></select>
+        <div id="profile-section">
+            <div id="user-info">
+                <img id="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="Profile Picture">
+                nAI User
             </div>
-            <div id="top-bar-actions">
-                <!-- User Info (Could be made clickable later) -->
-                <div id="user-info" title="User">
-                    <img id="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="Profile Picture">
-                </div>
-                <!-- Menu Toggle Button -->
-                <div id="toggle-menu-button" class="action-button" title="Menu">
-                     <i class="fa-solid fa-ellipsis-vertical"></i>
-                </div>
+            <div id="action-buttons">
+                <!-- Clear Button'un işlevi değişebilir, şimdilik kalsın -->
+                <div id="clear-button" class="action-button"><i class="fa-solid fa-eraser"></i></div>
+                <div id="toggle-menu-button" class="action-button"><i class="fa-solid fa-ellipsis"></i></div>
             </div>
         </div>
 
-        <!-- Pop-up Menu Window (for About, etc.) -->
         <div id="menu-window">
-            <!-- Items loaded by JS -->
-            <div id="about-button" class="menu-item"><i class="fa-solid fa-info-circle"></i> About</div>
-            <div id="changelog-button" class="menu-item"><i class="fa-solid fa-list-check"></i> What's New</div>
-            <div id="github-button" class="menu-item"><i class="fa-brands fa-github"></i> Source Code</div>
-            <!-- Settings button removed as model selection is in top bar -->
-            <!-- <div id="settings-button" class="menu-item"><i class="fa-solid fa-cog"></i> Settings</div> -->
+             <!-- ... (menu içeriği aynı) ... -->
         </div>
 
-        <!-- Modal Windows (Keep for About/Changelog) -->
-        <!-- Model Window is removed as selector is in top bar -->
-        <!-- <div id="model-window" class="modal-window"> ... </div> -->
-
-        <div id="about-screen" class="modal-window about-screen">
-            <div class="modal-close-button" id="about-screen-close-button">×</div>
-            <div class="about-content">
-                <h3>Project nAI</h3>
-                <!-- Original About Content -->
-                <h4>nAI Project: Exploring Open Source Fine-Tuned AI Models</h4>
-                <p>Welcome to Project nAI! ...</p>
-                <h4>About</h4>
-                <p>Project nAI started with the goal ...</p>
-            </div>
+        <div id="model-window" class="model-window">
+             <!-- ... (model penceresi aynı) ... -->
         </div>
 
-        <div id="changelog-screen" class="modal-window changelog-screen">
-            <div class="modal-close-button" id="changelog-screen-close-button">×</div>
-            <h3>Changelog</h3>
-            <div class="changelog-content">
-                 <!-- Original Changelog Content -->
-                <div class="change-item">...</div>
-            </div>
+        <div id="about-screen" class="about-screen">
+             <!-- ... (about ekranı aynı) ... -->
         </div>
 
-        <!-- Chat Container -->
+        <div id="changelog-screen" class="changelog-screen">
+            <!-- ... (changelog ekranı aynı) ... -->
+        </div>
+
         <div id="chat-container">
+            <div id="chat-header">
+                nAI <!-- Model ismi buraya JS ile yazdırılacak -->
+            </div>
             <div id="chat-messages">
-                <!-- Messages loaded by JS -->
+                 <!-- Mesajlar buraya JS ile eklenecek -->
             </div>
         </div>
 
-        <!-- User Input Area -->
-        <div id="user-input">
-            <input type="text" id="input-text" placeholder="Type your message...">
-            <button id="send-button" title="Send Message">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>
+         <!-- Input Alanı -->
+         <div id="user-input">
+             <input type="text" id="input-text" placeholder="Type your message...">
+             <button id="send-button">Send</button>
+         </div>
+    </div> <!-- #main-content sonu -->
 
-    <!-- Chat Action Popover (Hidden by default) -->
-    <div id="chat-action-popover" class="popover">
-        <button data-action="rename"><i class="fas fa-pencil-alt"></i> Rename</button>
-        <button data-action="share"><i class="fas fa-share-alt"></i> Share (MD)</button>
-        <button data-action="print"><i class="fas fa-print"></i> Print/PDF</button>
-        <button data-action="delete" class="delete"><i class="fas fa-trash-alt"></i> Delete</button>
-    </div>
 
-    <!-- Scripts -->
     <script type="module" src="/main.js"></script>
-    <!-- Make sure this path is correct or use CDN -->
+    <!-- SweetAlert2 JS -->
     <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 </body>
 </html>
