@@ -1,50 +1,44 @@
 // components/sidebar.js
-import Swal from 'sweetalert2'; // SweetAlert2 import edildi
+import Swal from 'sweetalert2';
 
 // --- Constants ---
 const CHAT_LIST_KEY = 'chatHistoryList';
 const ACTIVE_CHAT_ID_KEY = 'activeChatId';
 const CHAT_HISTORY_PREFIX = 'chatHistory_';
+const SIDEBAR_COLLAPSED_KEY = 'sidebarCollapsedDesktop';
 
 // --- DOM Elements ---
 let chatListElement;
 let newChatButton;
+let sidebarElement; // Sidebar'ın kendisi
+let sidebarToggleDesktopButton;
+let sidebarToggleMobileButton;
+let mainContentElement; // Kaydırma için
+let userInputElement; // Kaydırma için
+let bodyElement; // Class eklemek için
+let overlayElement; // Mobil için
 
 // --- State ---
 let chatList = [];
 let activeChatId = null;
+let isDesktopSidebarCollapsed = false;
+let isMobileSidebarVisible = false;
 
 // --- Helper Functions ---
 
-/**
- * Loads the chat list (metadata) from localStorage.
- * @returns {Array} The chat list.
- */
 function loadChatList() {
     const storedList = localStorage.getItem(CHAT_LIST_KEY);
     return storedList ? JSON.parse(storedList) : [];
 }
 
-/**
- * Saves the chat list (metadata) to localStorage.
- * @param {Array} list The chat list to save.
- */
 function saveChatList(list) {
     localStorage.setItem(CHAT_LIST_KEY, JSON.stringify(list));
 }
 
-/**
- * Loads the active chat ID from localStorage.
- * @returns {string | null} The active chat ID or null.
- */
 function loadActiveChatId() {
     return localStorage.getItem(ACTIVE_CHAT_ID_KEY);
 }
 
-/**
- * Saves the active chat ID to localStorage.
- * @param {string | null} chatId The chat ID to save as active.
- */
 function saveActiveChatId(chatId) {
     if (chatId) {
         localStorage.setItem(ACTIVE_CHAT_ID_KEY, chatId);
@@ -53,33 +47,21 @@ function saveActiveChatId(chatId) {
     }
 }
 
-/**
- * Generates a unique chat ID.
- * @returns {string} A unique ID string.
- */
 function generateChatId() {
     return `chat-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 }
 
-/**
- * Creates a new chat list item element.
- * @param {object} chat - The chat object { id, name }.
- * @param {function} onSelect - Callback function when the item is selected.
- * @param {function} onRename - Callback function when the rename action is triggered.
- * @param {function} onDelete - Callback function when the delete action is triggered.
- * @returns {HTMLElement} The list item element.
- */
 function createChatListItem(chat, onSelect, onRename, onDelete) {
     const item = document.createElement('li');
     item.classList.add('chat-list-item');
     item.dataset.chatId = chat.id;
     item.setAttribute('role', 'button');
-    item.setAttribute('tabindex', '0'); // Make it focusable
+    item.setAttribute('tabindex', '0');
 
     const nameSpan = document.createElement('span');
     nameSpan.classList.add('chat-name');
     nameSpan.textContent = chat.name;
-    nameSpan.title = chat.name; // Show full name on hover if truncated
+    nameSpan.title = chat.name;
 
     const actionsDiv = document.createElement('div');
     actionsDiv.classList.add('chat-actions');
@@ -89,7 +71,7 @@ function createChatListItem(chat, onSelect, onRename, onDelete) {
     renameButton.classList.add('chat-action-button');
     renameButton.title = 'Rename Chat';
     renameButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent item selection
+        e.stopPropagation();
         onRename(chat.id, nameSpan);
     });
 
@@ -98,7 +80,7 @@ function createChatListItem(chat, onSelect, onRename, onDelete) {
     deleteButton.classList.add('chat-action-button');
     deleteButton.title = 'Delete Chat';
     deleteButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent item selection
+        e.stopPropagation();
         onDelete(chat.id);
     });
 
@@ -108,82 +90,112 @@ function createChatListItem(chat, onSelect, onRename, onDelete) {
     item.appendChild(nameSpan);
     item.appendChild(actionsDiv);
 
-    // Select chat on click or Enter key press
     item.addEventListener('click', () => onSelect(chat.id));
-    item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            onSelect(chat.id);
-        }
-    });
+    item.addEventListener('keydown', (e) => { if (e.key === 'Enter') onSelect(chat.id); });
 
     return item;
 }
 
+// --- Sidebar State Management ---
+
+function loadSidebarState() {
+    const collapsed = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    isDesktopSidebarCollapsed = collapsed === 'true';
+    applySidebarState(); // Apply initial state
+}
+
+function saveSidebarState() {
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, isDesktopSidebarCollapsed);
+}
+
+function applySidebarState() {
+    if (!bodyElement) return; // Ensure bodyElement is defined
+
+    // Desktop state
+    if (isDesktopSidebarCollapsed) {
+        bodyElement.classList.add('sidebar-collapsed-desktop');
+    } else {
+        bodyElement.classList.remove('sidebar-collapsed-desktop');
+    }
+
+    // Mobile state (handled by a different class)
+    if (isMobileSidebarVisible) {
+         bodyElement.classList.add('sidebar-visible-mobile');
+    } else {
+         bodyElement.classList.remove('sidebar-visible-mobile');
+    }
+}
+
+function toggleDesktopSidebar() {
+    isDesktopSidebarCollapsed = !isDesktopSidebarCollapsed;
+    saveSidebarState();
+    applySidebarState();
+}
+
+function toggleMobileSidebar() {
+    isMobileSidebarVisible = !isMobileSidebarVisible;
+     // Mobile state does not need to be saved in localStorage (usually temporary)
+    applySidebarState();
+}
+
 // --- Core Functions ---
 
-/**
- * Renders the chat list in the sidebar.
- * @param {function} onSelect - Callback for when a chat is selected.
- * @param {function} onRename - Callback for renaming.
- * @param {function} onDelete - Callback for deleting.
- */
 function renderSidebar(onSelect, onRename, onDelete) {
     if (!chatListElement) return;
-    chatListElement.innerHTML = ''; // Clear existing list
+    chatListElement.innerHTML = '';
     chatList.forEach(chat => {
         const item = createChatListItem(chat, onSelect, onRename, onDelete);
         if (chat.id === activeChatId) {
             item.classList.add('active');
-            // Scroll into view if needed
-            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            // Only scroll if the sidebar is visible/expanded
+            if (!isDesktopSidebarCollapsed || isMobileSidebarVisible) {
+               item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
         chatListElement.appendChild(item);
     });
 }
 
-/**
- * Handles selecting a chat.
- * @param {string} chatId - The ID of the chat to select.
- * @param {function} loadChatCallback - Function from main.js to load chat messages.
- */
 function selectChat(chatId, loadChatCallback) {
-    if (chatId === activeChatId) return; // Already active
-
-    // Save current active chat history (if any) before switching
-    // This responsibility is moved to main.js's appendMessage
+    if (chatId === activeChatId) {
+         // If mobile sidebar is open, close it after selection
+         if(isMobileSidebarVisible) {
+             toggleMobileSidebar();
+         }
+        return; // Already active
+    }
 
     activeChatId = chatId;
     saveActiveChatId(chatId);
 
-    // Update UI
-    const items = chatListElement.querySelectorAll('.chat-list-item');
-    items.forEach(item => {
+    // Update UI selection highlight
+    const items = chatListElement?.querySelectorAll('.chat-list-item');
+    items?.forEach(item => {
         item.classList.toggle('active', item.dataset.chatId === chatId);
-        if (item.dataset.chatId === chatId) {
-           item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+         if (item.classList.contains('active') && (!isDesktopSidebarCollapsed || isMobileSidebarVisible)) {
+            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     });
 
-    // Trigger loading the selected chat's messages in main.js
+    // Load chat data
     loadChatCallback(chatId);
+
+    // If mobile sidebar is open, close it after selection
+    if(isMobileSidebarVisible) {
+        toggleMobileSidebar();
+    }
 }
 
-/**
- * Handles creating a new chat.
- * @param {function} loadChatCallback - Function from main.js to load chat messages.
- */
 function createNewChat(loadChatCallback) {
     const newChatId = generateChatId();
-    const newChatName = `Untitled Chat ${chatList.length + 1}`; // Or just "Untitled Chat"
+    const newChatName = `Chat ${chatList.length + 1}`;
     const newChat = { id: newChatId, name: newChatName };
 
-    chatList.unshift(newChat); // Add to the beginning of the list
+    chatList.unshift(newChat);
     saveChatList(chatList);
+    localStorage.removeItem(CHAT_HISTORY_PREFIX + newChatId); // Clear history
 
-    // Clear history for the new chat in localStorage (important!)
-    localStorage.removeItem(CHAT_HISTORY_PREFIX + newChatId);
-
-    activeChatId = newChatId;
+    activeChatId = newChatId; // Set as active *before* rendering
     saveActiveChatId(newChatId);
 
     renderSidebar(
@@ -192,27 +204,43 @@ function createNewChat(loadChatCallback) {
         (id) => handleDeleteChat(id, loadChatCallback)
     );
 
-    // Trigger loading the (empty) new chat
-    loadChatCallback(newChatId);
+    loadChatCallback(newChatId); // Load the new empty chat
+
+    // If mobile sidebar is open, close it after creating
+    if(isMobileSidebarVisible) {
+        toggleMobileSidebar();
+    }
+    // If desktop sidebar was collapsed, expand it maybe? (Optional)
+    // if(isDesktopSidebarCollapsed) {
+    //     toggleDesktopSidebar();
+    // }
 }
 
-/**
- * Handles the rename action for a chat.
- * @param {string} chatId - The ID of the chat to rename.
- * @param {HTMLElement} nameSpan - The span element containing the chat name.
- */
 function handleRenameChat(chatId, nameSpan) {
     const originalName = nameSpan.textContent;
+    // Make editable directly
     nameSpan.contentEditable = 'true';
     nameSpan.focus();
-    nameSpan.style.cursor = 'text'; // Indicate editable
-    nameSpan.style.backgroundColor = '#444'; // Visual feedback
+    nameSpan.style.cursor = 'text';
+    nameSpan.style.backgroundColor = '#444';
     nameSpan.style.borderRadius = '4px';
+    nameSpan.style.padding = '1px 3px'; // Padding for better visual editing
+
+    // Select text
+    const range = document.createRange();
+    range.selectNodeContents(nameSpan);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
 
     const finishEditing = () => {
+        nameSpan.removeEventListener('blur', finishEditing);
+        nameSpan.removeEventListener('keydown', handleKeyDown);
         nameSpan.contentEditable = 'false';
         nameSpan.style.cursor = 'pointer';
         nameSpan.style.backgroundColor = 'transparent';
+         nameSpan.style.padding = '2px'; // Reset padding
+
         const newName = nameSpan.textContent.trim();
 
         if (newName && newName !== originalName) {
@@ -220,19 +248,16 @@ function handleRenameChat(chatId, nameSpan) {
             if (chatIndex !== -1) {
                 chatList[chatIndex].name = newName;
                 saveChatList(chatList);
-                // No need to re-render, just update text content which is done
+                nameSpan.title = newName; // Update tooltip
             }
         } else {
-            nameSpan.textContent = originalName; // Revert if empty or unchanged
+            nameSpan.textContent = originalName; // Revert
         }
-         // Remove event listeners to prevent memory leaks
-        nameSpan.removeEventListener('blur', finishEditing);
-        nameSpan.removeEventListener('keydown', handleKeyDown);
     };
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent newline
+            e.preventDefault();
             finishEditing();
         } else if (e.key === 'Escape') {
             nameSpan.textContent = originalName; // Revert on Escape
@@ -242,113 +267,128 @@ function handleRenameChat(chatId, nameSpan) {
 
     nameSpan.addEventListener('blur', finishEditing);
     nameSpan.addEventListener('keydown', handleKeyDown);
-
-     // Select all text in the span for easy editing
-     const range = document.createRange();
-     range.selectNodeContents(nameSpan);
-     const selection = window.getSelection();
-     selection.removeAllRanges();
-     selection.addRange(range);
 }
 
-/**
- * Handles deleting a chat.
- * @param {string} chatId - The ID of the chat to delete.
- * @param {function} loadChatCallback - Function from main.js to load chat messages.
- */
 function handleDeleteChat(chatId, loadChatCallback) {
     const chatToDelete = chatList.find(c => c.id === chatId);
     if (!chatToDelete) return;
 
     Swal.fire({
         title: 'Delete Chat?',
-        text: `Are you sure you want to delete "${chatToDelete.name}"? This cannot be undone.`,
+        text: `Delete "${chatToDelete.name}"? This cannot be undone.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
+        confirmButtonColor: '#e74c3c', // Red
+        cancelButtonColor: '#3498db', // Blue
         confirmButtonText: 'Yes, delete it!',
-        background: '#111', // Dark theme for SweetAlert
-        color: '#ecf0f1'
+        background: '#2c2c2c', // Darker background
+        color: '#ecf0f1', // Light text
+        customClass: { // Ensure button text is visible
+             confirmButton: 'swal-button-confirm',
+             cancelButton: 'swal-button-cancel'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Remove from chat list
             chatList = chatList.filter(c => c.id !== chatId);
             saveChatList(chatList);
-
-            // Remove chat history from localStorage
             localStorage.removeItem(CHAT_HISTORY_PREFIX + chatId);
 
-            // If the deleted chat was active, select another one or create a new one
+            let nextChatId = null;
             if (activeChatId === chatId) {
-                activeChatId = null; // Reset active ID
-                saveActiveChatId(null);
-                if (chatList.length > 0) {
-                    // Select the first chat in the list
-                    selectChat(chatList[0].id, loadChatCallback);
-                } else {
-                    // No chats left, create a new one
+                 activeChatId = null; // Reset active ID
+                 saveActiveChatId(null);
+                 if (chatList.length > 0) {
+                    nextChatId = chatList[0].id; // Select the first available
+                 } else {
+                    // No chats left, create new one
                     createNewChat(loadChatCallback);
-                    // Note: createNewChat already calls loadChatCallback
-                    return; // Exit early as createNewChat handles the rest
-                }
+                    return; // createNewChat handles rendering and loading
+                 }
             }
 
-            // Re-render the sidebar
+             // Re-render sidebar *before* potentially selecting a new chat
              renderSidebar(
                 (id) => selectChat(id, loadChatCallback),
                 handleRenameChat,
-                (id) => handleDeleteChat(id, loadChatCallback) // Pass delete handler again
-            );
+                (id) => handleDeleteChat(id, loadChatCallback)
+             );
 
-            // If the deleted chat wasn't active, we don't need to load anything new
-            // But if it WAS active and we selected a new one above, loadChatCallback was already called by selectChat
-            // So, no extra loadChatCallback needed here.
+            // If we determined a next chat to select, do it now
+             if (nextChatId) {
+                selectChat(nextChatId, loadChatCallback);
+             }
         }
     });
 }
 
-
 // --- Initialization ---
 
-/**
- * Initializes the sidebar functionality.
- * @param {function} loadChatCallback - The function from main.js to load chat messages.
- */
 export function initializeSidebar(loadChatCallback) {
+    // Get DOM elements
     chatListElement = document.getElementById('chat-list');
     newChatButton = document.getElementById('new-chat-button');
+    sidebarElement = document.getElementById('sidebar');
+    sidebarToggleDesktopButton = document.getElementById('sidebar-toggle-desktop');
+    sidebarToggleMobileButton = document.getElementById('sidebar-toggle-mobile');
+    mainContentElement = document.getElementById('main-content');
+    userInputElement = document.getElementById('user-input');
+    bodyElement = document.body;
 
-    if (!chatListElement || !newChatButton) {
-        console.error("Sidebar elements not found!");
+    // Create overlay dynamically for mobile backdrop
+    overlayElement = document.createElement('div');
+    overlayElement.id = 'mobile-sidebar-overlay';
+    overlayElement.style.position = 'fixed';
+    overlayElement.style.top = '0';
+    overlayElement.style.left = '0';
+    overlayElement.style.width = '100%';
+    overlayElement.style.height = '100%';
+    overlayElement.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlayElement.style.zIndex = '1000'; // Below sidebar
+    overlayElement.style.opacity = '0';
+    overlayElement.style.transition = 'opacity var(--transition-speed) ease';
+    overlayElement.style.pointerEvents = 'none';
+    bodyElement.appendChild(overlayElement);
+
+
+    if (!chatListElement || !newChatButton || !sidebarElement || !sidebarToggleDesktopButton || !sidebarToggleMobileButton || !bodyElement ) {
+        console.error("Sidebar critical elements not found!");
         return;
     }
 
     chatList = loadChatList();
     activeChatId = loadActiveChatId();
 
-    // Ensure there's always at least one chat
+    // Ensure there's always a chat
     if (chatList.length === 0) {
-        console.log("No chat list found, creating initial chat.");
         const initialChatId = generateChatId();
-        const initialChat = { id: initialChatId, name: 'First Chat' };
-        chatList.push(initialChat);
+        chatList.push({ id: initialChatId, name: 'First Chat' });
         activeChatId = initialChatId;
         saveChatList(chatList);
         saveActiveChatId(activeChatId);
-         // Make sure the history for this new chat is empty
         localStorage.removeItem(CHAT_HISTORY_PREFIX + initialChatId);
     }
 
-    // Validate activeChatId - if it doesn't exist in the list, select the first one
+    // Validate activeChatId
     if (!activeChatId || !chatList.some(c => c.id === activeChatId)) {
-        console.log("Invalid or missing active chat ID, selecting first chat.");
-        activeChatId = chatList[0]?.id || null; // Use optional chaining
+        activeChatId = chatList[0]?.id || null;
         saveActiveChatId(activeChatId);
     }
 
-    // Add event listener for the "New Chat" button
+    // Load and apply sidebar collapsed state (desktop)
+    loadSidebarState();
+
+    // Add event listeners
     newChatButton.addEventListener('click', () => createNewChat(loadChatCallback));
+    sidebarToggleDesktopButton.addEventListener('click', toggleDesktopSidebar);
+    sidebarToggleMobileButton.addEventListener('click', toggleMobileSidebar);
+
+    // Add listener to overlay to close mobile sidebar when clicking outside
+     overlayElement.addEventListener('click', () => {
+        if (isMobileSidebarVisible) {
+            toggleMobileSidebar();
+        }
+     });
+
 
     // Initial render
     renderSidebar(
@@ -357,33 +397,23 @@ export function initializeSidebar(loadChatCallback) {
         (id) => handleDeleteChat(id, loadChatCallback)
     );
 
-     // Make sidebar visible by adding class to body
-    document.body.classList.add('sidebar-visible');
-
-    // Load the initial active chat history (important!)
+    // Load the initial active chat history
     if(activeChatId) {
         loadChatCallback(activeChatId);
     } else {
         console.warn("No active chat to load initially.");
-        // Optionally clear the chat display area if needed
+        // Optionally clear chat display
     }
 
     console.log("Sidebar initialized. Active chat:", activeChatId);
 }
 
-/**
- * Gets the current active chat ID.
- * @returns {string | null} The active chat ID.
- */
+// --- Exported utility functions ---
+
 export function getActiveChatId() {
     return activeChatId;
 }
 
-/**
- * Loads the message history for a specific chat ID from localStorage.
- * @param {string} chatId - The ID of the chat.
- * @returns {Array} The message history array.
- */
 export function loadChatHistory(chatId) {
     if (!chatId) return [];
     const history = localStorage.getItem(CHAT_HISTORY_PREFIX + chatId);
@@ -391,15 +421,12 @@ export function loadChatHistory(chatId) {
         return history ? JSON.parse(history) : [];
     } catch (e) {
         console.error(`Error parsing chat history for ${chatId}:`, e);
-        return []; // Return empty array on error
+        // Optionally delete corrupted history
+        // localStorage.removeItem(CHAT_HISTORY_PREFIX + chatId);
+        return [];
     }
 }
 
-/**
- * Saves the message history for a specific chat ID to localStorage.
- * @param {string} chatId - The ID of the chat.
- * @param {Array} history - The message history array to save.
- */
 export function saveChatHistory(chatId, history) {
     if (!chatId) {
         console.warn("Attempted to save history with no chatId.");
@@ -409,12 +436,11 @@ export function saveChatHistory(chatId, history) {
         localStorage.setItem(CHAT_HISTORY_PREFIX + chatId, JSON.stringify(history));
     } catch (e) {
          console.error(`Error saving chat history for ${chatId}:`, e);
-         // Consider notifying the user if storage is full
-         Swal.fire({
+         Swal.fire({ // Notify user about potential storage issue
             title: 'Storage Error',
-            text: 'Could not save chat history. Local storage might be full.',
+            text: 'Could not save chat history. Local storage might be full or corrupted.',
             icon: 'error',
-            background: '#111',
+            background: '#2c2c2c',
             color: '#ecf0f1'
          });
     }

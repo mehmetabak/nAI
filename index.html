@@ -11,58 +11,110 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" class="favicon">
     <link rel="stylesheet" href="node_modules/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- SweetAlert2 CSS (opsiyonel, eğer JS'de import edilmiyorsa) -->
+    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="node_modules/sweetalert2/dist/sweetalert2.min.css">
 </head>
+<!-- Sidebar durumu için body'e class eklenecek (JS ile) -->
 <body>
     <!-- Sidebar -->
     <div id="sidebar">
         <div id="sidebar-header">
+             <!-- Mobil için açma/kapatma butonu (main-content içinde) -->
             <button id="new-chat-button"><i class="fas fa-plus"></i> New Chat</button>
-            <!-- İsteğe bağlı: Sidebar daraltma/genişletme butonu eklenebilir -->
+            <!-- Masaüstü için daraltma/genişletme butonu -->
+            <button id="sidebar-toggle-desktop" class="sidebar-toggle" title="Toggle Sidebar">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
         </div>
         <ul id="chat-list">
             <!-- Chat items will be loaded here by JS -->
         </ul>
-        <!-- İsteğe bağlı: Alt kısma kullanıcı profili veya ayarlar butonu eklenebilir -->
+        <!-- İsteğe bağlı: Footer veya ek ayarlar -->
     </div>
 
-    <!-- Mevcut Ana İçerik -->
+    <!-- Ana İçerik -->
     <div id="main-content">
         <div id="profile-section">
+             <!-- Mobil Sidebar Toggle -->
+             <div id="sidebar-toggle-mobile" class="action-button sidebar-toggle">
+                 <i class="fa-solid fa-bars"></i>
+             </div>
             <div id="user-info">
                 <img id="profile-picture" src="https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png" alt="Profile Picture">
                 nAI User
             </div>
             <div id="action-buttons">
-                <!-- Clear Button'un işlevi değişebilir, şimdilik kalsın -->
-                <div id="clear-button" class="action-button"><i class="fa-solid fa-eraser"></i></div>
-                <div id="toggle-menu-button" class="action-button"><i class="fa-solid fa-ellipsis"></i></div>
+                <!-- Clear Button -->
+                <div id="clear-button" class="action-button" title="Clear Current Chat"><i class="fa-solid fa-eraser"></i></div>
+                <!-- Ana Menü (Ayarlar vs.) Toggle -->
+                <div id="toggle-menu-button" class="action-button" title="Menu"><i class="fa-solid fa-ellipsis"></i></div>
             </div>
         </div>
 
+        <!-- Ana Menü Penceresi -->
         <div id="menu-window">
-             <!-- ... (menu içeriği aynı) ... -->
+            <div id="menu-window-close"><i class="fa-solid fa-times"></i></div>
+            <div id="about-button" class="menu-content menu-item">About</div>
+            <div id="changelog-button" class="menu-content menu-item">What's New</div>
+            <div id="github-button" class="menu-content menu-item">Source Code</div>
+            <div id="settings-button" class="menu-content menu-item">Settings</div>
         </div>
 
+        <!-- Model Seçme Penceresi -->
         <div id="model-window" class="model-window">
-             <!-- ... (model penceresi aynı) ... -->
+            <div class="model-window-close-button" id="model-window-close-button"><i class="fa-solid fa-times"></i></div>
+            <h5>Use Model:</h5>
+            <select id="model-selector">
+                <!-- Options loaded by JS -->
+                 <option>Loading models...</option>
+            </select>
         </div>
 
+        <!-- About Ekranı -->
         <div id="about-screen" class="about-screen">
-             <!-- ... (about ekranı aynı) ... -->
+            <div class="about-screen-close-button" id="about-screen-close-button"><i class="fa-solid fa-times"></i></div>
+            <div class="about-content">
+                <h3>Project nAI</h3>
+                <h4>nAI Project: Exploring Open Source Fine-Tuned AI Models</h4>
+                <p>Welcome to Project nAI! Our mission is to bridge the gap between closed-source models using prompts and open-source models, facilitating their educational use. We curate a collection of effective prompts and fine-tuned models in a single platform. Contributors are encouraged to add models via JSON configuration. Currently, we feature prompts for Bison, Gemini, and GPT models, with plans for continuous expansion(Claude, Llama etc.). Please note that the project is in its early stages, leveraging Vite for a basic UI, ensuring it can be easily run locally by anyone interested.</p>
+                <h4>About</h4>
+                <p>Project nAI started with the goal of exploring and integrating fine-tuned versions of Gemini, GPT, and open-source models, fostering experimentation and learning within the AI community. Our platform supports developers and researchers in testing these models, promoting transparency, and fostering collaboration.</p>
+            </div>
         </div>
 
+        <!-- Changelog Ekranı -->
         <div id="changelog-screen" class="changelog-screen">
-            <!-- ... (changelog ekranı aynı) ... -->
+            <div class="changelog-screen-close-button" id="changelog-screen-close-button"><i class="fa-solid fa-times"></i></div>
+            <h3>Changelog</h3>
+            <div class="changelog-content">
+                 <!-- Changelog items -->
+                <div class="change-item">
+                    <div class="change-date">2025-01-13</div>
+                    <div class="change-description">Updated the used model.</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-date">2024-08-27</div>
+                    <div class="change-description">Added collapsible sidebar and mobile improvements.</div>
+                </div>
+                 <div class="change-item">
+                    <div class="change-date">2024-06-07</div>
+                    <div class="change-description">Added new feature: Clear the chat.</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-date">2024-06-06</div>
+                    <div class="change-description">Fixed bug related to model changing.</div>
+                </div>
+            </div>
         </div>
 
+        <!-- Chat Alanı -->
         <div id="chat-container">
             <div id="chat-header">
-                nAI <!-- Model ismi buraya JS ile yazdırılacak -->
+                 <!-- Model name loaded by JS -->
+                 nAI
             </div>
             <div id="chat-messages">
-                 <!-- Mesajlar buraya JS ile eklenecek -->
+                 <!-- Messages loaded by JS -->
             </div>
         </div>
 
@@ -73,7 +125,7 @@
          </div>
     </div> <!-- #main-content sonu -->
 
-
+    <!-- Modüller en sonda yüklenir -->
     <script type="module" src="/main.js"></script>
     <!-- SweetAlert2 JS -->
     <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
