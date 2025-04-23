@@ -118,6 +118,7 @@ modelSelector.addEventListener('change', function () {
   const selectedModel = modelSelector.value;
   localStorage.setItem('model', selectedModel);
   chatHeader.firstChild.data = getModelLabel(selectedModel);
+  window.location.reload();
 });
 
 //Base UI functions
