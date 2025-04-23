@@ -279,8 +279,6 @@ async function generateResponse(model, originalText) {
              }))
           });
         console.log("Model instance obtained:", modelInstance);
-
-        console.log(modelInstance.ListModels());
         // 2. Prepare parts
         const parts = model.prompt_parts.map(part => ({
             text: part.replace('${userMessage}', userMessage)
