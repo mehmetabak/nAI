@@ -266,14 +266,13 @@ async function generateResponse(model, originalText) {
       a = data.candidates[0].output;
       appendMessage(model.label, a, true, model.AIPP);
     } else if (model.api_key === "API_KEY_Gemini_GenContent_Image") {
-      console.log("Attempting image generation via generateContent with", model.model_name);
+      console.log("Attempting TEXT generation via generateContent with", model.model_name, "(removed image params)");
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
 
       try {
-        // 1. Get the model instance (standard way)
+        // 1. Get model instance
         const modelInstance = genAI.getGenerativeModel({
              model: model.model_name,
-             // Safety settings can be set here or in generateContent
              safetySettings: model.safety_settings.map(setting => ({
                 category: HarmCategory[setting.category],
                 threshold: HarmBlockThreshold[setting.threshold]
@@ -281,82 +280,58 @@ async function generateResponse(model, originalText) {
           });
         console.log("Model instance obtained:", modelInstance);
 
-        // 2. Prepare parts for generateContent
-        // Using prompt_parts from models.json
+        // 2. Prepare parts
         const parts = model.prompt_parts.map(part => ({
             text: part.replace('${userMessage}', userMessage)
-                       .replace('${q}', q) // Add previous q/a if needed by prompt
+                       .replace('${q}', q)
                        .replace('${a}', a)
                        .replace('${date}', currentDate)
         }));
         console.log("Sending parts:", parts);
 
-
-        // 3. Prepare generationConfig including responseModalities
+        // 3. Prepare generationConfig *WITHOUT* responseMimeType & responseModalities
         const generationConfig = {
-          ...model.generation_config, // Get base config from models.json
-           // Explicitly ensure responseModalities are set if not already deep copied
-           // responseModalities: [Modality.TEXT, Modality.IMAGE] // If using imported Modality
-          responseModalities: model.generation_config.responseModalities || ["TEXT", "IMAGE"] // Use from JSON
+          // Spread basic configs from models.json
+          ...(model.generation_config.temperature && { temperature: model.generation_config.temperature }),
+          ...(model.generation_config.topK && { topK: model.generation_config.topK }),
+          ...(model.generation_config.topP && { topP: model.generation_config.topP }),
+          ...(model.generation_config.maxOutputTokens && { maxOutputTokens: model.generation_config.maxOutputTokens }),
+          ...(model.generation_config.candidateCount && { candidateCount: model.generation_config.candidateCount }),
+          // Removed: responseMimeType: model.generation_config.responseMimeType,
+          // Removed: responseModalities: model.generation_config.responseModalities
         };
-        console.log("Generation Config:", generationConfig);
-
+        console.log("Generation Config (Text Only):", generationConfig);
 
         // 4. Call generateContent
         const result = await modelInstance.generateContent({
-            contents: [{ role: "user", parts }], // Standard contents structure
+            contents: [{ role: "user", parts }],
             generationConfig: generationConfig,
-            // safetySettings can also be passed here
         });
 
-        // 5. Process response (looking for inlineData)
+        // 5. Process response (Expecting only text now)
         const response = result.response;
-        let textResponse = "";
+        let textResponse = response.text(); // Directly get text
+        console.log("Text response received:", textResponse);
+
+        // ImageBase64 will be null
         let imageBase64 = null;
 
-        if (response && response.candidates && response.candidates.length > 0) {
-            const candidate = response.candidates[0];
-            if (candidate.content && candidate.content.parts) {
-                candidate.content.parts.forEach(part => {
-                    if (part.text) {
-                        textResponse += part.text + "\n";
-                    }
-                    // Look for inline image data
-                    else if (part.inlineData && part.inlineData.mimeType.startsWith('image/')) {
-                        imageBase64 = part.inlineData.data; // BASE64 DATA
-                        console.log(`Image data received via generateContent (${part.inlineData.mimeType})`);
-                    }
-                });
-                textResponse = textResponse.trim();
-            } else if (response.text) { // Fallback if only text is present
-                textResponse = response.text();
-                console.warn("generateContent returned only text for image request:", textResponse);
-            }
-        } else {
-            textResponse = "Failed to get a valid response from the model via generateContent.";
-            console.error("Invalid response structure from generateContent:", response);
-        }
-
         q = userMessage;
-        a = textResponse || (imageBase64 ? "[Image Generated]" : "[No Response]");
+        a = textResponse || "[No Text Response]";
 
-        appendMessage(model.label, textResponse, true, model.AIPP, imageBase64);
+        // Append only the text message
+        appendMessage(model.label, textResponse, true, model.AIPP, null); // Pass null for image
 
       } catch (error) {
-        console.error("Error during image generation via generateContent:", error);
-        let errorMessage = "An error occurred while generating image via generateContent.";
-        if (error instanceof Error) {
-             // Check for specific errors related to modalities or model support
-             if (error.message.includes("responseModalities") || error.message.includes("Modality")) {
-                  errorMessage = "Model or SDK version might not support requesting IMAGE modality via generateContent.";
-             } else {
-                 errorMessage += ` Details: ${error.message}`;
-             }
-        } else if (error.status) {
+        console.error("Error during text generation via generateContent:", error);
+        let errorMessage = "An error occurred during generateContent call.";
+         if (error instanceof Error) {
+             errorMessage += ` Details: ${error.message}`;
+         } else if (error.status) {
              errorMessage += ` Status: ${error.status}, Message: ${error.statusText}`;
-        } else {
+         } else {
              errorMessage += ` Unexpected error structure: ${JSON.stringify(error)}`;
-        }
+         }
         appendMessage(model.label, errorMessage, true, "https://i.imgur.com/2Rs5ya9.png");
       }
     } else if(model.api_key === "API_KEY_G/C"){
