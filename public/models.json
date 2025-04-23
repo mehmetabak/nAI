@@ -49,28 +49,24 @@
         "output: "
       ]
     },
-
     {
-      "name": "gemini-image-generator",
-      "label": "Gemini (Image)",      
-      "model_name": " gemini-2.0-flash-exp-image-generation", 
-      "api_key": "API_KEY_Imagen", 
-      "AIPP": "https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/photo_camera/default/48px.svg", 
-      "generation_config": {
-        "temperature": 0.4,
-        "topK": null,
-        "topP": null,
-        "maxOutputTokens": 2048, 
-        "candidateCount": 1    
-      },
-      "safety_settings": [ 
-        { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
-        { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
-        { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
-        { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
-      ],
-      "prompt_parts": [
-      ]
+        "name": "imagen-3-generate",
+        "label": "Imagen 3 (Image)",
+        "model_name": "imagen-3.0-generate-002", 
+        "api_key": "API_KEY_Imagen",
+        "AIPP": "https://www.gstatic.com/lamda/images/gemini/google_labs_badge_16_1x.svg",
+        "generation_config": {
+          "numberOfImages": 1
+          
+        },
+        "safety_settings": [
+          
+          { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+          { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+          { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+          { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
+        ],
+        "prompt_parts": []
     },
 
     {
