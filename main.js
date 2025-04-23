@@ -209,22 +209,35 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
-function appendMessage(sender, message, isAI, AIPP) {
-  if(!isEmptySpaceAdded){
-    chatMessages.appendChild(createMessageElement(sender, message, isAI, AIPP));
+function appendMessage(sender, message, isAI, AIPP, imageBase64 = null) { // Added imageBase64 param
+  const messageElement = createMessageElement(sender, message, isAI, AIPP, imageBase64); // Pass param to creator
+
+  if (!isEmptySpaceAdded) {
+    chatMessages.appendChild(messageElement);
     isEmptySpaceAdded = true;
-  }else{
-    chatMessages.removeChild(emptySpace);
-    chatMessages.appendChild(createMessageElement(sender, message, isAI, AIPP));
+  } else {
+    if (chatMessages.contains(emptySpace)) { // Check if emptySpace exists before removing
+       chatMessages.removeChild(emptySpace);
+    }
+    chatMessages.appendChild(messageElement);
   }
-  chatMessages.appendChild(emptySpace);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-  if(isAI){
-    conversationHistory.push({ role: "assistant", content: message });
-  }else{
-    conversationHistory.push({ role: "user", content: message });
+  chatMessages.appendChild(emptySpace); // Re-append empty space for scrolling
+  chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+
+  // Add text content to history (or placeholder for image)
+  if (message && message.trim() !== "") {
+      conversationHistory.push({ role: isAI ? "assistant" : "user", content: message });
+  } else if (isAI && imageBase64) {
+      // Optional: Log image generation in history
+      conversationHistory.push({ role: "assistant", content: "[Image Generated]" });
+  } else if (!isAI) {
+      // User messages shouldn't be empty (usually handled by input check)
+       if (message) { // Check if message is not null/undefined
+           conversationHistory.push({ role: "user", content: message });
+       }
   }
 }
+
 
 // Models
 async function generateResponse(model, originalText) {
@@ -254,7 +267,97 @@ async function generateResponse(model, originalText) {
       q = userMessage;
       a = data.candidates[0].output;
       appendMessage(model.label, a, true, model.AIPP);
-    } else if (model.api_key === "API_KEY_Gemini") {
+    }else if (model.api_key === "API_KEY_Gemini_Image") {
+      console.log("Using Image Generation Model...");
+      const genAI = new GoogleGenerativeAI(API_KEY_Gemini); // Assuming same key for image API
+
+      try {
+        // Get the model - *Crucial*: Ensure model_name is correct for image generation API
+        const modelData = await genAI.getGenerativeModel({
+          model: model.model_name,
+          // generationConfig might be handled differently for image APIs
+        });
+
+        // Config from models.json (may need adjustment for specific image API)
+        const generationConfig = {
+          temperature: model.generation_config.temperature,
+          topK: model.generation_config.topK,
+          topP: model.generation_config.topP,
+          candidateCount: model.generation_config.candidateCount || 1,
+          // responseMimeType: "image/png" // Might be needed depending on API
+        };
+
+        // Safety settings from models.json
+        const safetySettings = model.safety_settings.map(setting => ({
+          category: HarmCategory[setting.category],
+          threshold: HarmBlockThreshold[setting.threshold]
+        }));
+
+        // Prompt is usually just the user text for image generation
+        const promptText = userMessage;
+        console.log("Sending prompt for image:", promptText);
+
+        // --- *** API CALL WARNING *** ---
+        // The standard `generateContent` might NOT work directly for image generation.
+        // You likely need to use a specific Image API endpoint (e.g., Imagen via REST/Vertex AI SDK)
+        // or a different SDK method if available.
+        // This code *assumes* generateContent might return image data in `inlineData`.
+        // Verify this against current Google AI documentation!
+        // --- *********************** ---
+        const result = await modelData.generateContent(
+             [promptText], // Pass prompt directly
+             // generationConfig, // May not apply here or needs specific format
+             // safetySettings // May not apply here or needs specific format
+          );
+
+        // --- Response Processing (Updated Comments) ---
+        const response = result.response;
+        let textResponse = ""; // Accompanying text (if any)
+        let imageBase64 = null; // Image data
+
+        if (response && response.candidates && response.candidates.length > 0) {
+             const candidate = response.candidates[0];
+             // Check for image data within parts (specific to how the API returns it)
+             if (candidate.content && candidate.content.parts) {
+                 candidate.content.parts.forEach(part => {
+                     if (part.text) {
+                         textResponse += part.text + "\n";
+                     }
+                     // ** CRITICAL CHECK **: Look for inlineData with image mime type
+                     else if (part.inlineData && part.inlineData.mimeType.startsWith('image/')) {
+                         imageBase64 = part.inlineData.data; // The BASE64 data
+                         console.log(`Image data received (${part.inlineData.mimeType})`);
+                     }
+                 });
+                 textResponse = textResponse.trim();
+             } else if (response.text) {
+                 // Fallback if only text is returned (e.g., error, description)
+                 textResponse = response.text();
+                 console.warn("Image model returned only text:", textResponse);
+             }
+        } else {
+          textResponse = "Failed to get a valid response from the model.";
+          console.error("Invalid response structure:", response);
+        }
+
+        // Update q/a history variables (using text response)
+        q = userMessage;
+        a = textResponse || (imageBase64 ? "[Image Generated]" : "[No Response]");
+
+        // Append message with both text and image data
+        appendMessage(model.label, textResponse, true, model.AIPP, imageBase64); // Pass image data
+
+      } catch (error) {
+        console.error("Error during Image Model API call:", error);
+        let errorMessage = "An error occurred while generating the image.";
+        // Try to get more specific error info if available
+        if (error.message) {
+           errorMessage += ` Details: ${error.message}`;
+        }
+        // Display error message to user
+        appendMessage(model.label, errorMessage, true, "https://i.imgur.com/2Rs5ya9.png"); // Error icon
+      }
+    }else if (model.api_key === "API_KEY_Gemini") {
       // Google Generative AI API call
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
       const modelData = await genAI.getGenerativeModel({ model: model.model_name });
