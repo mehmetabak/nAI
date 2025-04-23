@@ -4,7 +4,7 @@ import {
     HarmBlockThreshold,
   } from "@google/generative-ai";
 import Groq from 'groq-sdk';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Modality } from "@google/genai";
 import { showNotification } from './tools/notification';
 import { createMessageElement } from './components/message.js';
 
