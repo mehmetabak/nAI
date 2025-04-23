@@ -50,11 +50,11 @@
       ]
     },
     {
-      "name": "gemini-flash-image-via-genai-content", 
-      "label": "Gemini Flash Img (@google/genai)", 
+      "name": "ImagenAI", 
+      "label": "Image-nAI", 
       "model_name": "gemini-2.0-flash-exp-image-generation", 
       "api_key": "API_KEY_GenAI_Content_Image",
-      "AIPP": "https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/imagesmode/default/48px.svg", 
+      "AIPP": "https://logosandtypes.com/wp-content/uploads/2024/01/GEN-X.png", 
       "generation_config": {
         "temperature": 0.5,
         "topK": null,
