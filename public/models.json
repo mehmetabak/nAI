@@ -49,7 +49,6 @@
         "output: "
       ]
     },
-    
     {
       "name": "gemini-1.5-flash-image-via-content", 
       "label": "Gemini 1.5 Flash (Image)",   
@@ -74,7 +73,7 @@
       "prompt_parts": [
          "${userMessage}"
       ]
-    }
+    },
 
     {
       "name": "nAI-Beta",
