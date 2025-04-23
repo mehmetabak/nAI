@@ -265,52 +265,61 @@ async function generateResponse(model, originalText) {
       q = userMessage;
       a = data.candidates[0].output;
       appendMessage(model.label, a, true, model.AIPP);
-    }    else if (model.api_key === "API_KEY_Imagen") {
+    } else if (model.api_key === "API_KEY_Imagen") {
       console.log("Using Imagen 3 Model for image generation...");
-      // Use the primary Gemini API Key - ensure Imagen API is enabled in your Google Cloud project
-      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-      console.log("genAI object:", genAI); // <-- ADD THIS LINE
-      console.log("genAI.models:", genAI.models); // <-- ADD THIS LINE TOO
+      const genAI = new GoogleGenerativeAI(API_KEY_Gemini); // API Anahtarını kontrol et
+      console.log("genAI object created:", genAI); // Bu zaten çalışıyor
+
       try {
-        // Prepare config for generateImages
+        // 1. Get the specific model instance for Imagen
+        console.log("Attempting to get Imagen model:", model.model_name);
+        const imagenModel = genAI.getGenerativeModel({
+           model: model.model_name // e.g., "imagen-3.0-generate-002"
+           // İsteğe bağlı: Imagen için özel güvenlik ayarları vs. buraya eklenebilir
+           // safetySettings: model.safety_settings.map(...)
+           // generationConfig: {...} // Config burada mı yoksa generateImages'da mı? Dökümana bakmalı.
+        });
+        console.log("Imagen model instance:", imagenModel);
+
+        // 2. Check if generateImages method exists on the model instance
+        if (typeof imagenModel.generateImages !== 'function') {
+            console.error("Error: 'generateImages' method not found on the retrieved Imagen model instance.");
+            console.error("Available methods might be:", Object.keys(imagenModel)); // Mevcut metodları görmeye çalış
+             appendMessage(model.label, "SDK Error: 'generateImages' method not found for this model instance. Check SDK version or usage.", true, "https://i.imgur.com/2Rs5ya9.png");
+             // Fonksiyon olmadığında finally bloğuna gitmesi için hata fırlatılabilir veya doğrudan return edilebilir.
+             // throw new Error("'generateImages' method not found on the model instance."); // Seçenek 1: Hata fırlat
+             return; // Seçenek 2: Fonksiyondan çık
+        }
+
+        // 3. Prepare config (Bu kısım aynı kalabilir)
         const imageGenConfig = {
-           // Get config from models.json
            numberOfImages: model.generation_config.numberOfImages || 1,
-           // Add other supported configs from models.json if they exist
            ...(model.generation_config.aspectRatio && { aspectRatio: model.generation_config.aspectRatio }),
            ...(model.generation_config.style_preset && { style_preset: model.generation_config.style_preset }),
            ...(model.generation_config.negativePrompt && { negativePrompt: model.generation_config.negativePrompt }),
-           // Safety settings might be applied globally or need specific format here - check SDK docs
         };
 
-        console.log("Sending prompt to Imagen:", userMessage);
+        console.log("Sending prompt to Imagen via model instance:", userMessage);
         console.log("Imagen Config:", imageGenConfig);
 
-        // --- Call the specific 'generateImages' method ---
-        const response = await genAI.models.generateImages({
-          model: model.model_name, // e.g., "imagen-3.0-generate-002"
-          prompt: userMessage,     // The user's text input
+        // 4. Call generateImages ON THE MODEL INSTANCE
+        // NOT on genAI.models
+        const response = await imagenModel.generateImages({
+          // model: model.model_name, // Model zaten alındığı için burada tekrar gerekmez
+          prompt: userMessage,
           config: imageGenConfig,
-          // Safety settings might be passed differently for this API - consult docs if needed
-          // safetySettings: model.safety_settings.map(...)
         });
 
+        // 5. Process response (Bu kısım aynı kalabilir)
         let imageBase64 = null;
-        let textResponse = ""; // Usually, generateImages doesn't return accompanying text
+        let textResponse = "";
 
-        // Process the response - expecting response.generatedImages array
         if (response && response.generatedImages && response.generatedImages.length > 0) {
-          // Get the first generated image (since numberOfImages is likely 1)
           const generatedImage = response.generatedImages[0];
-
-          // Access the base64 encoded image data
-          // The example uses 'imageBytes', let's assume it's the base64 string
           if (generatedImage.image && generatedImage.image.imageBytes) {
             imageBase64 = generatedImage.image.imageBytes;
             console.log("Imagen: Image data received (base64).");
-            // Imagen might provide revised prompt or other metadata, you can access it here if needed
-            // e.g., textResponse = generatedImage.revisedPrompt || "[Image Generated]";
-             textResponse = generatedImage.revisedPrompt ? `Revised prompt: ${generatedImage.revisedPrompt}` : "[Image Generated by Imagen]";
+            textResponse = generatedImage.revisedPrompt ? `Revised prompt: ${generatedImage.revisedPrompt}` : "[Image Generated by Imagen]";
           } else {
             console.error("Imagen Error: Response structure missing imageBytes.");
             textResponse = "Failed to extract image data from Imagen response.";
@@ -320,60 +329,29 @@ async function generateResponse(model, originalText) {
           textResponse = "Failed to get a valid image response from Imagen.";
         }
 
-        // Update conversation history variables (q & a)
         q = userMessage;
         a = textResponse || (imageBase64 ? "[Image Generated by Imagen]" : "[No Response]");
 
-        // Append the message - passing the base64 data to be displayed
         appendMessage(model.label, textResponse, true, model.AIPP, imageBase64);
 
       } catch (error) {
         console.error("Error during Imagen 3 API call:", error);
         let errorMessage = "An error occurred while generating the image with Imagen.";
-        if (error.message) {
-           errorMessage += ` Details: ${error.message}`;
-        } else if (error.status) {
-            errorMessage += ` Status: ${error.status}, Message: ${error.statusText}`;
-        }
+        // Hata detayını yakalamaya çalış
+         if (error instanceof Error) { // Check if it's a standard Error object
+             errorMessage += ` Details: ${error.message}`;
+             // If the error was thrown because generateImages wasn't found, it will be caught here.
+             if (error.message.includes("'generateImages' method not found")) {
+                 errorMessage = "SDK Error: 'generateImages' function is not available as expected. Please check SDK version and documentation.";
+             }
+         } else if (error.status) {
+             errorMessage += ` Status: ${error.status}, Message: ${error.statusText}`;
+         } else {
+             errorMessage += ` Unexpected error structure: ${JSON.stringify(error)}`;
+         }
         appendMessage(model.label, errorMessage, true, "https://i.imgur.com/2Rs5ya9.png");
       }
-    } else if (model.api_key === "API_KEY_Gemini") {
-      // Google Generative AI API call
-      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
-      const modelData = await genAI.getGenerativeModel({ model: model.model_name });
-
-      const generationConfig = {
-        temperature: model.generation_config.temperature,
-        topK: model.generation_config.topK,
-        topP: model.generation_config.topP,
-        maxOutputTokens: model.generation_config.maxOutputTokens,
-      };
-
-      const safetySettings = model.safety_settings.map(setting => ({
-        category: HarmCategory[setting.category],
-        threshold: HarmBlockThreshold[setting.threshold]
-      }));
-
-      const parts = model.prompt_parts.map(part => ({
-        text: part.replace('${userMessage}', userMessage)
-      }));
-
-      parts.forEach(part => {
-        part.text = part.text.replace('${q}', q).replace('${a}', a).replace('${date}', currentDate);
-      });
-
-      const result = await modelData.generateContent({
-        contents: [{ role: "user", parts }],
-        generationConfig,
-        safetySettings,
-      });
-
-      const response = result.response;
-      q = userMessage;
-      a = response.text();
-      appendMessage(model.label, a, true, model.AIPP);
-
-    }else if(model.api_key === "API_KEY_G/C"){
+    } else if(model.api_key === "API_KEY_G/C"){
       // Gemini Chat API call for Experimental Models
       
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
