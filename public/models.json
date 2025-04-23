@@ -50,14 +50,18 @@
       ]
     },
     {
-      "name": "imagen-3-via-genai",          
-      "label": "Imagen 3 (@google/genai)",    
-      "model_name": "imagen-3.0-generate-002", 
-      "api_key": "API_KEY_Imagen",            
-      "AIPP": "https://www.gstatic.com/lamda/images/gemini/google_labs_badge_16_1x.svg", 
+      "name": "gemini-flash-image-via-genai-content", 
+      "label": "Gemini Flash Img (@google/genai)", 
+      "model_name": "gemini-2.0-flash-exp-image-generation", 
+      "api_key": "API_KEY_GenAI_Content_Image",
+      "AIPP": "https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/imagesmode/default/48px.svg", 
       "generation_config": {
-        "numberOfImages": 1,           
-        "negativePrompt": null
+        "temperature": 0.5,
+        "topK": null,
+        "topP": null,
+        "maxOutputTokens": 1024, 
+        "candidateCount": 1,
+        "responseModalitiesStrings": ["TEXT", "IMAGE"]
       },
       "safety_settings": [ 
         { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
@@ -65,7 +69,9 @@
         { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
         { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
       ],
-      "prompt_parts": []
+      "prompt_parts": [
+         "${userMessage}"
+      ]
     },
     {
       "name": "nAI-Beta",

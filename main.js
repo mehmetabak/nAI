@@ -266,77 +266,108 @@ async function generateResponse(model, originalText) {
       q = userMessage;
       a = data.candidates[0].output;
       appendMessage(model.label, a, true, model.AIPP);
-    } else if (model.api_key === "API_KEY_Imagen") {
-      // Bu blok için @google/genai paketini kullanmayı deniyoruz
-      console.log("Using Imagen 3 Model via @google/genai...");
+    }     else if (model.api_key === "API_KEY_GenAI_Content_Image") {
+      console.log(`Attempting image generation with ${model.model_name} via @google/genai's generateContent...`);
 
       try {
-        // 1. @google/genai kullanarak nesneyi oluştur
-        // (apiKey parametresinin adı farklı olabilir, dökümanına bakmak gerekebilir,
-        // ama verdiğin örnekteki gibi varsayıyoruz)
+        // 1. Instantiate using @google/genai
         const ai = new GoogleGenAI({ apiKey: API_KEY_Gemini });
         console.log("@google/genai instance created:", ai);
 
-        // 2. ai.models.generateImages var mı diye kontrol et (tedbir amaçlı)
-        if (!ai.models || typeof ai.models.generateImages !== 'function') {
-             console.error("Error: 'ai.models.generateImages' function is not available in this @google/genai context.");
+        // 2. Check if ai.models and ai.models.generateContent exist
+        if (!ai.models || typeof ai.models.generateContent !== 'function') {
+             console.error("Error: 'ai.models.generateContent' function is not available in this @google/genai context.");
              console.log("ai.models value:", ai.models);
-             appendMessage(model.label, "SDK Error: The function to generate images is not available via @google/genai as expected. Check package/usage.", true, "https://i.imgur.com/2Rs5ya9.png");
+             appendMessage(model.label, "SDK Error: The function 'ai.models.generateContent' is not available via @google/genai. Check package/usage.", true, "https://i.imgur.com/2Rs5ya9.png");
              return;
         }
 
-        // 3. Config hazırla
-        const imageGenConfig = {
-           numberOfImages: model.generation_config.numberOfImages || 1,
-           ...(model.generation_config.aspectRatio && { aspectRatio: model.generation_config.aspectRatio }),
-           ...(model.generation_config.style_preset && { style_preset: model.generation_config.style_preset }),
-           ...(model.generation_config.negativePrompt && { negativePrompt: model.generation_config.negativePrompt }),
+        // 3. Prepare 'contents' (directly using user message as per example)
+        const contents = userMessage; // Example uses direct string
+        console.log("Sending contents:", contents);
+
+        // 4. Prepare 'config' including responseModalities using imported Enum
+        const genConfig = {
+            // Get base config (temp, topK etc.) if needed, or set defaults
+            temperature: model.generation_config.temperature || 0.5,
+            // ... other base configs ...
+
+            // Convert modality strings from JSON to Enum values
+            responseModalities: model.generation_config.responseModalitiesStrings.map(modalityString => {
+                if (modalityString === "TEXT") return Modality.TEXT;
+                if (modalityString === "IMAGE") return Modality.IMAGE;
+                // Add other modalities if needed
+                console.warn("Unknown modality string:", modalityString);
+                return modalityString; // Fallback or handle error
+            }),
+            // Add other specific configs from models.json if applicable
         };
-        console.log("Sending prompt via @google/genai:", userMessage);
-        console.log("Imagen Config:", imageGenConfig);
+        console.log("Generation Config:", genConfig);
 
-        // 4. ai.models.generateImages çağır (Verdiğin örnekteki gibi)
-        const response = await ai.models.generateImages({
-          model: model.model_name, // e.g., "imagen-3.0-generate-002"
-          prompt: userMessage,
-          config: imageGenConfig,
+
+        // 5. Call ai.models.generateContent
+        const response = await ai.models.generateContent({
+            model: model.model_name, // Pass model name here
+            contents: contents,      // Pass the prepared content
+            config: genConfig,       // Pass the config with modalities
+            // safetySettings can be passed here if needed by this specific call structure
+            // safetySettings: model.safety_settings.map(...)
         });
+        console.log("Raw response from ai.models.generateContent:", response);
 
-        // 5. Yanıtı işle (Node.js örneğine benzer, fs olmadan)
-        let imageBase64 = null;
+
+        // 6. Process response looking for inlineData
         let textResponse = "";
+        let imageBase64 = null;
 
-        if (response && response.generatedImages && response.generatedImages.length > 0) {
-          // Sohbet arayüzü için ilk resmi alalım
-          const generatedImage = response.generatedImages[0];
-          if (generatedImage.image && generatedImage.image.imageBytes) {
-            imageBase64 = generatedImage.image.imageBytes; // Bu base64 olmalı
-            console.log("Imagen (@google/genai): Image data received (base64).");
-            textResponse = generatedImage.revisedPrompt ? `Revised prompt: ${generatedImage.revisedPrompt}` : "[Image Generated by Imagen]";
-          } else {
-            console.error("Imagen Error (@google/genai): Response structure missing imageBytes.");
-            textResponse = "Failed to extract image data from Imagen response.";
-          }
+        // Response structure might be different from @google/generative-ai
+        // Adapt based on the example and potential console output
+        if (response && response.candidates && response.candidates.length > 0) {
+            const candidate = response.candidates[0];
+            // The example iterates through parts in candidate.content
+            if (candidate.content && candidate.content.parts) {
+                 candidate.content.parts.forEach(part => {
+                    if (part.text) {
+                        textResponse += part.text + "\n";
+                    }
+                    // Look for inline image data
+                    else if (part.inlineData && part.inlineData.data && part.inlineData.mimeType?.startsWith('image/')) {
+                        imageBase64 = part.inlineData.data; // BASE64 DATA
+                        console.log(`Image data received via @google/genai generateContent (${part.inlineData.mimeType})`);
+                    }
+                 });
+                 textResponse = textResponse.trim();
+            } else {
+                 console.warn("Response candidate.content or candidate.content.parts missing.");
+                 // Attempt fallback if text exists elsewhere? Unlikely for this structure.
+                 textResponse = JSON.stringify(response); // Show raw response if parts missing
+            }
+
         } else {
-          console.error("Imagen Error (@google/genai): Invalid response structure or no images generated.", response);
-          textResponse = "Failed to get a valid image response from Imagen.";
+            textResponse = "Failed to get valid candidates from the model via @google/genai generateContent.";
+            console.error("Invalid response structure:", response);
         }
 
         q = userMessage;
-        a = textResponse || (imageBase64 ? "[Image Generated by Imagen]" : "[No Response]");
+        a = textResponse || (imageBase64 ? "[Image Generated]" : "[No Response]");
 
         appendMessage(model.label, textResponse, true, model.AIPP, imageBase64);
 
       } catch (error) {
-        console.error("Error during Imagen 3 API call (@google/genai attempt):", error);
-        let errorMessage = "An error occurred while generating the image with Imagen (@google/genai).";
-        if (error instanceof Error) {
-             errorMessage += ` Details: ${error.message}`;
-        } else if (error.status) {
-             errorMessage += ` Status: ${error.status}, Message: ${error.statusText}`;
-        } else {
-             errorMessage += ` Unexpected error structure: ${JSON.stringify(error)}`;
-        }
+        console.error("Error during @google/genai generateContent call:", error);
+        let errorMessage = `Error generating image with ${model.model_name} (@google/genai).`;
+         if (error instanceof Error) {
+             // Check for specific errors
+             if (error.message.includes("ai.models.generateContent") || error.message.includes("Modality")) {
+                  errorMessage = "SDK Error: Problem calling generateContent or using Modality via @google/genai.";
+             } else {
+                 errorMessage += ` Details: ${error.message}`;
+             }
+         } else if (error.status) { // Check for Fetch error structure
+             errorMessage += ` API Error: Status ${error.status}, Message: ${error.statusText || await error.text()}`;
+         } else {
+             errorMessage += ` Unexpected error: ${JSON.stringify(error)}`;
+         }
         appendMessage(model.label, errorMessage, true, "https://i.imgur.com/2Rs5ya9.png");
       }
     } else if(model.api_key === "API_KEY_G/C"){
