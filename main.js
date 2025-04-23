@@ -268,6 +268,8 @@ async function generateResponse(model, originalText) {
     }    else if (model.api_key === "API_KEY_Imagen") {
       console.log("Using Imagen 3 Model for image generation...");
       // Use the primary Gemini API Key - ensure Imagen API is enabled in your Google Cloud project
+      console.log("genAI object:", genAI); // <-- ADD THIS LINE
+      console.log("genAI.models:", genAI.models); // <-- ADD THIS LINE TOO
       const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
 
       try {
