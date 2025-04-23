@@ -266,32 +266,22 @@ async function generateResponse(model, originalText) {
       a = data.candidates[0].output;
       appendMessage(model.label, a, true, model.AIPP);
     } else if (model.api_key === "API_KEY_Imagen") {
-      console.log("Using Imagen 3 Model for image generation...");
-      const genAI = new GoogleGenerativeAI(API_KEY_Gemini); // API Anahtarını kontrol et
-      console.log("genAI object created:", genAI); // Bu zaten çalışıyor
+      console.log("Using Imagen 3 Model (Attempting direct genAI.models call)...");
+      const genAI = new GoogleGenerativeAI(API_KEY_Gemini);
+      console.log("genAI object created:", genAI);
 
       try {
-        // 1. Get the specific model instance for Imagen
-        console.log("Attempting to get Imagen model:", model.model_name);
-        const imagenModel = genAI.getGenerativeModel({
-           model: model.model_name // e.g., "imagen-3.0-generate-002"
-           // İsteğe bağlı: Imagen için özel güvenlik ayarları vs. buraya eklenebilir
-           // safetySettings: model.safety_settings.map(...)
-           // generationConfig: {...} // Config burada mı yoksa generateImages'da mı? Dökümana bakmalı.
-        });
-        console.log("Imagen model instance:", imagenModel);
-
-        // 2. Check if generateImages method exists on the model instance
-        if (typeof imagenModel.generateImages !== 'function') {
-            console.error("Error: 'generateImages' method not found on the retrieved Imagen model instance.");
-            console.error("Available methods might be:", Object.keys(imagenModel)); // Mevcut metodları görmeye çalış
-             appendMessage(model.label, "SDK Error: 'generateImages' method not found for this model instance. Check SDK version or usage.", true, "https://i.imgur.com/2Rs5ya9.png");
-             // Fonksiyon olmadığında finally bloğuna gitmesi için hata fırlatılabilir veya doğrudan return edilebilir.
-             // throw new Error("'generateImages' method not found on the model instance."); // Seçenek 1: Hata fırlat
-             return; // Seçenek 2: Fonksiyondan çık
+        // --- ÖNEMLİ KONTROL: genAI.models ve generateImages var mı? ---
+        if (!genAI.models || typeof genAI.models.generateImages !== 'function') {
+             console.error("Error: 'genAI.models.generateImages' function is not available in this SDK context.");
+             console.log("genAI.models value:", genAI.models); // models özelliğinin değerini görelim
+             appendMessage(model.label, "SDK Error: The function to generate images is not available as expected (genAI.models.generateImages). Check SDK setup or documentation.", true, "https://i.imgur.com/2Rs5ya9.png");
+             return; // Hata durumunda fonksiyondan çık
         }
+        // --- END CHECK ---
 
-        // 3. Prepare config (Bu kısım aynı kalabilir)
+
+        // Prepare config (Bu kısım aynı)
         const imageGenConfig = {
            numberOfImages: model.generation_config.numberOfImages || 1,
            ...(model.generation_config.aspectRatio && { aspectRatio: model.generation_config.aspectRatio }),
@@ -299,18 +289,18 @@ async function generateResponse(model, originalText) {
            ...(model.generation_config.negativePrompt && { negativePrompt: model.generation_config.negativePrompt }),
         };
 
-        console.log("Sending prompt to Imagen via model instance:", userMessage);
+        console.log("Sending prompt via genAI.models.generateImages:", userMessage);
         console.log("Imagen Config:", imageGenConfig);
 
-        // 4. Call generateImages ON THE MODEL INSTANCE
-        // NOT on genAI.models
-        const response = await imagenModel.generateImages({
-          // model: model.model_name, // Model zaten alındığı için burada tekrar gerekmez
+        // --- Doğrudan genAI.models üzerinden çağırmayı dene ---
+        const response = await genAI.models.generateImages({
+          model: model.model_name, // Model adını burada belirtmek gerekiyor
           prompt: userMessage,
           config: imageGenConfig,
+          // Safety settings might be passed here too - check docs
         });
 
-        // 5. Process response (Bu kısım aynı kalabilir)
+        // Process response (Bu kısım aynı)
         let imageBase64 = null;
         let textResponse = "";
 
@@ -335,15 +325,10 @@ async function generateResponse(model, originalText) {
         appendMessage(model.label, textResponse, true, model.AIPP, imageBase64);
 
       } catch (error) {
-        console.error("Error during Imagen 3 API call:", error);
+        console.error("Error during Imagen 3 API call (genAI.models attempt):", error);
         let errorMessage = "An error occurred while generating the image with Imagen.";
-        // Hata detayını yakalamaya çalış
-         if (error instanceof Error) { // Check if it's a standard Error object
+         if (error instanceof Error) {
              errorMessage += ` Details: ${error.message}`;
-             // If the error was thrown because generateImages wasn't found, it will be caught here.
-             if (error.message.includes("'generateImages' method not found")) {
-                 errorMessage = "SDK Error: 'generateImages' function is not available as expected. Please check SDK version and documentation.";
-             }
          } else if (error.status) {
              errorMessage += ` Status: ${error.status}, Message: ${error.statusText}`;
          } else {
