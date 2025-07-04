@@ -270,11 +270,9 @@ async function generateResponse(model, originalText) {
       console.log(`Attempting image generation with ${model.model_name} via @google/genai's generateContent...`);
 
       try {
-        // 1. Instantiate using @google/genai
         const ai = new GoogleGenAI({ apiKey: API_KEY_Gemini });
         console.log("@google/genai instance created:", ai);
 
-        // 2. Check if ai.models and ai.models.generateContent exist
         if (!ai.models || typeof ai.models.generateContent !== 'function') {
              console.error("Error: 'ai.models.generateContent' function is not available in this @google/genai context.");
              console.log("ai.models value:", ai.models);
@@ -282,11 +280,9 @@ async function generateResponse(model, originalText) {
              return;
         }
 
-        // 3. Prepare 'contents' (directly using user message as per example)
         const contents = userMessage; // Example uses direct string
         console.log("Sending contents:", contents);
 
-        // 4. Prepare 'config' including responseModalities using imported Enum
         const genConfig = {
             // Get base config (temp, topK etc.) if needed, or set defaults
             temperature: model.generation_config.temperature || 0.5,
@@ -300,23 +296,19 @@ async function generateResponse(model, originalText) {
                 console.warn("Unknown modality string:", modalityString);
                 return modalityString; // Fallback or handle error
             }),
-            // Add other specific configs from models.json if applicable
+            // TO-DO: Add other specific configs from models.json if applicable
         };
         console.log("Generation Config:", genConfig);
 
-
-        // 5. Call ai.models.generateContent
         const response = await ai.models.generateContent({
-            model: model.model_name, // Pass model name here
-            contents: contents,      // Pass the prepared content
-            config: genConfig,       // Pass the config with modalities
+            model: model.model_name, 
+            contents: contents,      
+            config: genConfig,       
             // safetySettings can be passed here if needed by this specific call structure
             // safetySettings: model.safety_settings.map(...)
         });
         console.log("Raw response from ai.models.generateContent:", response);
 
-
-        // 6. Process response looking for inlineData
         let textResponse = "";
         let imageBase64 = null;
 
@@ -324,7 +316,6 @@ async function generateResponse(model, originalText) {
         // Adapt based on the example and potential console output
         if (response && response.candidates && response.candidates.length > 0) {
             const candidate = response.candidates[0];
-            // The example iterates through parts in candidate.content
             if (candidate.content && candidate.content.parts) {
                  candidate.content.parts.forEach(part => {
                     if (part.text) {
@@ -339,7 +330,6 @@ async function generateResponse(model, originalText) {
                  textResponse = textResponse.trim();
             } else {
                  console.warn("Response candidate.content or candidate.content.parts missing.");
-                 // Attempt fallback if text exists elsewhere? Unlikely for this structure.
                  textResponse = JSON.stringify(response); // Show raw response if parts missing
             }
 
