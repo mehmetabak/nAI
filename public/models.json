@@ -3,7 +3,8 @@
       "name": "nAI",
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-pro",
+      "model_name": "gemini-1.0-pro",
+      "AIPP": "https://i.imgur.com/p5XdHQE.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -49,10 +50,70 @@
       ]
     },
     {
+      "name": "ImagenAI", 
+      "label": "Image-nAI", 
+      "model_name": "gemini-2.0-flash-exp-image-generation", 
+      "api_key": "API_KEY_GenAI_Content_Image",
+      "AIPP": "https://logosandtypes.com/wp-content/uploads/2024/01/GEN-X.png", 
+      "generation_config": {
+        "temperature": 0.5,
+        "topK": null,
+        "topP": null,
+        "maxOutputTokens": 1024, 
+        "candidateCount": 1,
+        "responseModalitiesStrings": ["TEXT", "IMAGE"]
+      },
+      "safety_settings": [ 
+        { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+        { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+        { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+        { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
+      ],
+      "prompt_parts": [
+         "${userMessage}"
+      ]
+    },
+    {
+      "name": "nAI-Beta",
+      "label": "nAI-Beta",
+      "api_key": "API_KEY_G/C",
+      "model_name": "gemini-1.5-pro",
+      "AIPP": "https://i.imgur.com/Y0aM4cv.png",
+      "generation_config": {
+        "temperature": 0.9,
+        "topK": 1,
+        "topP": 1,
+        "maxOutputTokens": 2048,
+        "responseMimeType": "text/plain"
+      },
+      "safety_settings": [
+        {
+          "category": "HARM_CATEGORY_HARASSMENT",
+          "threshold": "BLOCK_NONE"
+        },
+        {
+          "category": "HARM_CATEGORY_HATE_SPEECH",
+          "threshold": "BLOCK_NONE"
+        },
+        {
+          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "threshold": "BLOCK_NONE"
+        },
+        {
+          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+          "threshold": "BLOCK_NONE"
+        }
+      ],
+      "prompt_parts": [
+        "You are a bot called nAI, designed to facilitate the exploration of AI models and prompts while providing educational insights. You were created for a project called nAI, which is open source on Github (https://github.com/mehmetabak/nAI)."
+      ]
+    },
+    {
       "name": "LoF-Llama",
       "label": "LoF-Llama",
       "api_key": "API_KEY_Llama",
       "model_name": "llama-3.1-70b-versatile",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 1,
         "max_tokens": 2048,
@@ -69,6 +130,7 @@
       "label": "FitBot",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 0.7,
         "topK": 1,
@@ -112,6 +174,7 @@
       "label": "Troll Bot-AlpGTR/N",
       "api_key": "API_KEY_Gemini",
       "model_name": "gemini-pro",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -155,6 +218,7 @@
       "label": "Troll Bot-AlpGTR/O",
       "api_key": "API_KEY_Text_Bison",
       "model_name": "text-bison-001",
+      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "prompt": "You are an artificial intelligence responsible for imitating a 80 IQ human known as Alperen or also known as Alpiş. You should act like a stupid, idiot chatbot.\ninput: What is your bababoi\noutput: Alpiş\ninput: What is your name\noutput: Alpiş\ninput: 2 + 2\noutput: 5\ninput: What is 2 + 2?\noutput: 5\ninput: ${q}\noutput: ${a}\ninput: ${userMessage}\noutput:"
     }
   ]
