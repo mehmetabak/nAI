@@ -83,9 +83,9 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 ## Contact
 
-Mehmet Abak - [@memoli](https://twitter.com/memoli) - mehmetabak@proton.me
+Mehmet Abak -- mehmetabak@proton.me
 
-Project Link: [https://github.com/memoli0/project-ai](https://github.com/memoli0/project-ai)
+Project Link: [https://github.com/mehmetabak/project-ai](https://github.com/mehmetabak/project-ai)
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
