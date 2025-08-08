@@ -85,7 +85,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 Mehmet Abak -- mehmetabak@proton.me
 
-Project Link: [https://github.com/mehmetabak/project-ai](https://github.com/mehmetabak/project-ai)
+Project Link: [https://github.com/mehmetabak/project-ai](https://github.com/mehmetabak/nAI)
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
