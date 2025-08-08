@@ -3,7 +3,7 @@
       "name": "nAI",
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-1.0-pro",
+      "model_name": "gemini-2.0-flash",
       "AIPP": "https://i.imgur.com/p5XdHQE.png",
       "generation_config": {
         "temperature": 0.9,
