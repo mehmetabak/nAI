@@ -260,17 +260,36 @@ const App = () => {
         }
     };
 
-  useEffect(() => {
-        const updateHeaderHeight = () => {
+    useEffect(() => {
+    const updateHeaderHeight = () => {
+        // Hesaplamayı tarayıcının render döngüsünün sonuna atmak için setTimeout kullanıyoruz.
+        // Bu, topHeaderRef'in DOM'a yerleşip doğru yüksekliğe sahip olmasını garanti eder.
+        setTimeout(() => {
             if (topHeaderRef.current) {
                 const height = topHeaderRef.current.offsetHeight;
+                // CSS değişkenini güncelle. Stil dosyaları bu değişkeni kullanıyor.
                 document.documentElement.style.setProperty('--header-height', `${height}px`);
             }
-        };
+        }, 0); 
+    };
+
+    // Eğer bir sohbet aktifse, header yüksekliğini hesapla.
+    // Karşılama ekranında bu kodun çalışmasına gerek yok.
+    if (activeChatId) {
         updateHeaderHeight();
-        window.addEventListener('resize', updateHeaderHeight);
-        return () => window.removeEventListener('resize', updateHeaderHeight);
-    }, []);
+    }
+    
+    // Pencere boyutu değiştiğinde de yüksekliği yeniden hesapla.
+    window.addEventListener('resize', updateHeaderHeight);
+
+    // Temizleme fonksiyonu
+    return () => {
+        window.removeEventListener('resize', updateHeaderHeight);
+    };
+
+// DEĞİŞİKLİK: Bu effect'in `activeChatId` değiştiğinde yeniden çalışmasını sağlıyoruz.
+}, [activeChatId]);
+
 
      useEffect(() => {
         if (chatMessages.length > 0) {
@@ -307,20 +326,6 @@ const App = () => {
             setInputText(prompt);
         }, 0);
     };
-
-    useEffect(() => {
-        const setPadding = () => {
-            if (topHeaderRef.current && chatContainerRef.current) {
-                const headerHeight = topHeaderRef.current.offsetHeight;
-                chatContainerRef.current.style.paddingTop = `${headerHeight}px`;
-            }
-        };
-
-        setPadding();
-        window.addEventListener('resize', setPadding);
-        
-        return () => window.removeEventListener('resize', setPadding);
-    }, [activeChatId]); 
 
     const handleWelcomeInputChange = (e) => {
         const text = e.target.value;
