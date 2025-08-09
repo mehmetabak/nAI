@@ -21,11 +21,31 @@ html, body, #root {
   background-color: #111827; /* bg-gray-900 */
 }
 
-@media (max-width: 768px) {
-  html, body, #root {
-    height: 100vh; /* Fallback */
-    height: 100dvh; /* Modern tarayıcılarda gerçek ekran yüksekliği */
-    overflow: hidden;
+/* Mobile'e özel: 768px altı (isteğe göre breakpoint değiştir) */
+@media (max-width: 767px) {
+  /* footer'ı sabitle */
+  .chat-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: env(safe-area-inset-bottom, 0); /* iPhone safe area */
+    padding: 0.75rem; /* footer iç boşluğu */
+    z-index: 50;
+    /* mevcut stilini koru */
+    background-color: rgba(31,41,55,0.95); /* veya bg-gray-800 */
+    border-top: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(6px);
+  }
+
+  /* sohbet alanının altına footer kadar boşluk bırak */
+  .chat-container {
+    padding-bottom: calc(var(--chat-footer-height, 64px) + env(safe-area-inset-bottom, 0) + 0.5rem);
+    /* .chat-container overflow-y:auto zaten olmalı */
+  }
+
+  /* scroll-down button'ı footer'ın üzerine çıksın */
+  .scroll-down-button {
+    bottom: calc(var(--chat-footer-height, 64px) + env(safe-area-inset-bottom, 0) + 0.75rem);
   }
 }
 
