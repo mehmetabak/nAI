@@ -292,25 +292,6 @@ const App = () => {
         }, 0);
     };
 
-     useEffect(() => {
-    const setVhVariable = () => {
-      // Gerçek iç yüksekliği alıyoruz (tarayıcı UI'ları hariç).
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-
-    // İlk yüklendiğinde çalıştır
-    setVhVariable();
-
-    // Pencere boyutu değiştiğinde (örneğin, telefon döndürüldüğünde veya adres çubuğu gizlendiğinde) tekrar çalıştır
-    window.addEventListener('resize', setVhVariable);
-
-    // Bileşen kaldırıldığında olay dinleyiciyi temizle
-    return () => {
-      window.removeEventListener('resize', setVhVariable);
-    };
-  }, []);
-
     useEffect(() => {
         const setPadding = () => {
             if (topHeaderRef.current && chatContainerRef.current) {
