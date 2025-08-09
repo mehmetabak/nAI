@@ -159,6 +159,22 @@ const App = () => {
         };
     }, [activeChatId, chatMessages]); 
 
+      useEffect(() => {
+      const handleResize = () => {
+          // CSS'te kullanmak üzere gerçek görünür pencere yüksekliğini bir değişkene atar
+          document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+      };
+
+      // İlk yüklemede yüksekliği ayarla
+      handleResize();
+
+      // Pencere yeniden boyutlandırıldığında yüksekliği tekrar ayarla
+      window.addEventListener('resize', handleResize);
+
+      // Component kaldırıldığında event listener'ı temizle
+      return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
     // --- Yeni Sohbet Yönetim Fonksiyonları ---
     const handleNewChat = () => {
         // <--- DEĞİŞİKLİK BURADA BAŞLIYOR --->
@@ -520,76 +536,77 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-    // DEĞİŞİKLİK 1: Tarayıcı arayüzünü hesaba katmak için h-screen'i h-[100dvh] ile değiştiriyoruz.
-    <div className="flex h-[100dvh] bg-gray-900 text-gray-100 font-sans overflow-hidden">
-      <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          sessions={chatSessions}
-          activeSessionId={activeChatId}
-          onSessionSelect={handleSelectSession}
-          onNewChat={handleNewChat}
-          onDeleteSession={handleDeleteSession}
-          onRenameSession={handleRenameSession}
-          onToggleSettings={toggleModelWindow}
-          onToggleAbout={toggleAboutScreen}
-          onToggleChangelog={toggleChangelogScreen}
-      />
-    
-      {/* DEĞİŞİKLİK 1: Aynı şekilde burayı da h-[100dvh] yapıyoruz. */}
-      <main className="relative flex-1 flex flex-col h-[100dvh] transition-all duration-300 md:ml-72">
-        
-        {/* DEĞİŞİKLİK 2: Hamburger menü butonu AnimatePresence dışına taşındı. */}
-        {/* Böylece hem hoşgeldin hem de sohbet ekranında (mobilde) görünür olacak. */}
-        <button 
-          onClick={() => setIsSidebarOpen(true)} 
-          className="absolute top-4 left-4 z-20 p-2 rounded-full hover:bg-gray-700 md:hidden"
-        >
-          <i className="fas fa-bars"></i>
-        </button>
-
+     // DEĞİŞİKLİK: h-screen kaldırıldı ve style ile dinamik yükseklik eklendi
+     <div 
+        className="flex bg-gray-900 text-gray-100 font-sans overflow-hidden"
+        style={{ height: 'var(--app-height, 100vh)' }}
+     >
+        <Sidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            sessions={chatSessions}
+            activeSessionId={activeChatId}
+            onSessionSelect={handleSelectSession}
+            onNewChat={handleNewChat}
+            onDeleteSession={handleDeleteSession}
+            onRenameSession={handleRenameSession}
+            onToggleSettings={toggleModelWindow}
+            onToggleAbout={toggleAboutScreen}
+            onToggleChangelog={toggleChangelogScreen}
+        />
+      
+      <main className="relative flex-1 flex flex-col h-full transition-all duration-300 md:ml-72">
         <AnimatePresence mode="wait">
             {!activeChatId ? (
-                // --- DURUM 1: AKTİF SOHBET YOK (HOŞ GELDİNİZ EKRANI) ---
+                // --- DURUM 1: KARŞILAMA EKRANI (GÜNCELLENDİ) ---
                 <motion.div
                   key="welcome-screen"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5 }}
-                  // mt-14 kaldırıldı çünkü hamburger butonu artık absolute.
-                  className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6"
+                  // DEĞİŞİKLİK: Layout, header/content/footer yapısına uygun hale getirildi
+                  className="flex flex-col h-full w-full"
                 >
-                    <div /> 
-                    
-                    <div className="flex flex-col items-center">
-                        <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                            Meet nAI
-                        </h1>
-                        <p className="text-lg text-gray-400 mb-10">
-                            Unleash your creativity!
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                          <div onClick={() => handleStartChatWithPrompt("Write a React component for a timer")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                              <h3 className="font-semibold text-white">Write Code</h3>
-                              <p className="text-sm text-gray-400">Write a React component for a timer</p>
-                          </div>
-                          <div onClick={() => handleStartChatWithPrompt("Draft a blog post about the future of AI")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                              <h3 className="font-semibold text-white">Create Content</h3>
-                              <p className="text-sm text-gray-400">Draft a blog post about the future of AI</p>
-                          </div>
-                          <div onClick={() => handleStartChatWithPrompt("Suggest a weekly meal plan")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                              <h3 className="font-semibold text-white">Plan Something</h3>
-                              <p className="text-sm text-gray-400">Suggest a weekly meal plan</p>
-                          </div>
-                          <div onClick={() => handleStartChatWithPrompt("What is the biggest mystery of the universe?")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                              <h3 className="font-semibold text-white">Brainstorm Ideas</h3>
-                              <p className="text-sm text-gray-400">What is the biggest mystery of the universe?</p>
-                          </div>
+                    {/* DEĞİŞİKLİK: Karşılama ekranı için header eklendi */}
+                    <header className="p-4 flex items-center min-h-[60px] flex-shrink-0">
+                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
+                            <i className="fas fa-bars"></i>
+                        </button>
+                    </header>
+
+                    {/* DEĞİŞİKLİK: Ana içerik, esnek ve kaydırılabilir bir alana sarıldı */}
+                    <div className="flex-1 flex flex-col justify-center items-center text-center overflow-y-auto p-4 sm:p-6">
+                        <div className="flex flex-col items-center max-w-3xl w-full">
+                            <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                                Meet nAI
+                            </h1>
+                            <p className="text-lg text-gray-400 mb-10">
+                                Unleash your creativity!
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                              <div onClick={() => handleStartChatWithPrompt("Write a React component for a timer")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Write Code</h3>
+                                  <p className="text-sm text-gray-400">Write a React component for a timer</p>
+                              </div>
+                              <div onClick={() => handleStartChatWithPrompt("Draft a blog post about the future of AI")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Create Content</h3>
+                                  <p className="text-sm text-gray-400">Draft a blog post about the future of AI</p>
+                              </div>
+                              <div onClick={() => handleStartChatWithPrompt("Suggest a weekly meal plan")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Plan Something</h3>
+                                  <p className="text-sm text-gray-400">Suggest a weekly meal plan</p>
+                              </div>
+                              <div onClick={() => handleStartChatWithPrompt("What is the biggest mystery of the universe?")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Brainstorm Ideas</h3>
+                                  <p className="text-sm text-gray-400">What is the biggest mystery of the universe?</p>
+                              </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div className="w-full max-w-2xl px-4 pb-4">
+                    {/* DEĞİŞİKLİK: Alt input bar'ı kendi flex-shrink-0 alanına alındı */}
+                    <div className="w-full max-w-2xl mx-auto px-4 pb-4 flex-shrink-0">
                         <div className="relative w-full">
                             <input
                                 type="text"
@@ -607,7 +624,7 @@ const App = () => {
                 </motion.div>
 
             ) : (
-                // --- DURUM 2: AKTİF SOHBET VAR (SOHBET ARAYÜZÜ) ---
+                // --- DURUM 2: SOHBET ARAYÜZÜ (YAPI DEĞİŞMEDİ) ---
                 <motion.div
                     key="chat-view"
                     initial={{ opacity: 0 }}
@@ -618,8 +635,9 @@ const App = () => {
                 >
                     <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
                       <div className="flex items-center gap-4">
-                        {/* DEĞİŞİKLİK 2: Hamburger butonu buradan kaldırıldı, yukarıda ortak alana taşındı. */}
-                        {/* Boşluk olmaması için md:pl-14 gibi bir class eklenebilir ama şu anki yapı iyi. */}
+                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
+                          <i className="fas fa-bars"></i>
+                        </button>
                         
                         <Menu as="div" className="relative inline-block text-left">
                           <div>
@@ -662,7 +680,6 @@ const App = () => {
                           </Transition>
                         </Menu>
                       </div>
-
                       <div className="flex items-center">
                          <button onClick={handleNewChat} className="p-2 rounded-full hover:bg-gray-700" title="New Chat">
                             <i className="fas fa-edit"></i>
@@ -684,7 +701,6 @@ const App = () => {
                                <ChatMessage key={msg.id} message={msg} />
                             ))}
                         </div>
-
                         <AnimatePresence>
                         {showScrollDownButton && (
                             <motion.button
@@ -700,34 +716,32 @@ const App = () => {
                         )}
                         </AnimatePresence>
                     </div>
-
-                    <AnimatePresence>
-                        <motion.div
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "100%" }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            className="w-full bg-gray-800 flex items-center p-4 border-t border-gray-700 z-10 flex-shrink-0"
-                        >
-                                <input 
-                            ref={inputRef} 
-                            type="text" 
-                            value={inputText} 
-                            onChange={(e) => setInputText(e.target.value)} 
-                            onKeyDown={handleKeyDown}
-                            placeholder="Type your message..." 
-                            className="flex-1 p-3 mr-4 rounded-lg border-none bg-gray-900 text-gray-100 outline-none" 
-                            disabled={isLoading} />
-                          <button 
-                            id="send-button-id" 
-                            onClick={handleSendMessage} 
-                            disabled={isLoading || !inputText.trim()} 
-                            className={`px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer flex items-center justify-center transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed ${ isLoading ? '' : 'hover:bg-blue-600' }`}
-                          >
-                              {isLoading ? (<span className="animate-pulse text-lg">● ● ●</span>) : ('Send')}
-                          </button>
-                        </motion.div>
-                    </AnimatePresence>
+                    
+                    <motion.div
+                        initial={{ y: "100%" }}
+                        animate={{ y: 0 }}
+                        exit={{ y: "100%" }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="w-full bg-gray-800 flex items-center p-4 border-t border-gray-700 z-10 flex-shrink-0"
+                    >
+                            <input 
+                        ref={inputRef} 
+                        type="text" 
+                        value={inputText} 
+                        onChange={(e) => setInputText(e.target.value)} 
+                        onKeyDown={handleKeyDown}
+                        placeholder="Type your message..." 
+                        className="flex-1 p-3 mr-4 rounded-lg border-none bg-gray-900 text-gray-100 outline-none" 
+                        disabled={isLoading} />
+                      <button 
+                        id="send-button-id" 
+                        onClick={handleSendMessage} 
+                        disabled={isLoading || !inputText.trim()} 
+                        className={`px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer flex items-center justify-center transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed ${ isLoading ? '' : 'hover:bg-blue-600' }`}
+                      >
+                          {isLoading ? (<span className="animate-pulse text-lg">● ● ●</span>) : ('Send')}
+                      </button>
+                    </motion.div>
                 </motion.div>
             )}
         </AnimatePresence>
