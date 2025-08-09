@@ -108,15 +108,19 @@ const Sidebar = ({
           
           <div className="p-4 flex-shrink-0">
             <div className="mb-4 flex items-center justify-between">
-              {/* --- DEĞİŞİKLİK BURADA --- */}
+              {/* --- DEĞİŞİKLİK BURADA BAŞLIYOR --- */}
               <a 
                 href="/" 
-                className="text-xl font-bold tracking-wider text-white no-underline transition-opacity hover:opacity-80"
+                className="flex items-center gap-2 rounded-lg p-2 -ml-2 no-underline transition-colors hover:bg-gray-700"
                 aria-label="Go to Homepage"
               >
-                nAI
+                {/* İKON DEĞİŞTİRİLDİ: fas fa-bolt */}
+                <i className="fas fa-bolt w-4 text-center text-gray-300"></i>
+                <span className="text-xl font-bold tracking-wider text-white">
+                  nAI
+                </span>
               </a>
-              {/* --- DEĞİŞİKLİK SONU --- */}
+              {/* --- DEĞİŞİKLİK BURADA BİTİYOR --- */}
               <button
                 onClick={onClose}
                 className="p-2 text-gray-400 hover:text-white transition-colors"
