@@ -536,6 +536,7 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
+     // DEĞİŞİKLİK: h-screen kaldırıldı ve style ile dinamik yükseklik eklendi
      <div 
         className="flex bg-gray-900 text-gray-100 font-sans overflow-hidden"
         style={{ height: 'var(--app-height, 100vh)' }}
@@ -553,143 +554,198 @@ const App = () => {
             onToggleAbout={toggleAboutScreen}
             onToggleChangelog={toggleChangelogScreen}
         />
-        
-        {/* DEĞİŞİKLİK BURADA BAŞLIYOR: YAN BAR İÇİN OVERLAY EKLENDİ */}
-
-        {/* 
-          Bu overlay, sadece yan bar açıkken ve ekran genişliği "md" breakpoint'inden küçükken görünür olur.
-          Geniş ekranlarda (PC), yan bar sabit olduğu için bu overlay render edilmez.
-          Tıklandığında, Sidebar'ı kapatmak için onClose fonksiyonunu çağırır.
-        */}
-        <AnimatePresence>
-            {isSidebarOpen && (
+      
+      <main className="relative flex-1 flex flex-col h-full transition-all duration-300 md:ml-72">
+        <AnimatePresence mode="wait">
+            {!activeChatId ? (
+                // --- DURUM 1: KARŞILAMA EKRANI (GÜNCELLENDİ) ---
                 <motion.div
+                  key="welcome-screen"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  // DEĞİŞİKLİK: Layout, header/content/footer yapısına uygun hale getirildi
+                  className="flex flex-col h-full w-full"
+                >
+                    {/* DEĞİŞİKLİK: Karşılama ekranı için header eklendi */}
+                    <header className="p-4 flex items-center min-h-[60px] flex-shrink-0">
+                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
+                            <i className="fas fa-bars"></i>
+                        </button>
+                    </header>
+
+                    {/* DEĞİŞİKLİK: Ana içerik, esnek ve kaydırılabilir bir alana sarıldı */}
+                    <div className="flex-1 flex flex-col justify-center items-center text-center overflow-y-auto p-4 sm:p-6">
+                        <div className="flex flex-col items-center max-w-3xl w-full">
+                            <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                                Meet nAI
+                            </h1>
+                            <p className="text-lg text-gray-400 mb-10">
+                                Unleash your creativity!
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                              <div onClick={() => handleStartChatWithPrompt("Write a React component for a timer")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Write Code</h3>
+                                  <p className="text-sm text-gray-400">Write a React component for a timer</p>
+                              </div>
+                              <div onClick={() => handleStartChatWithPrompt("Draft a blog post about the future of AI")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Create Content</h3>
+                                  <p className="text-sm text-gray-400">Draft a blog post about the future of AI</p>
+                              </div>
+                              <div onClick={() => handleStartChatWithPrompt("Suggest a weekly meal plan")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Plan Something</h3>
+                                  <p className="text-sm text-gray-400">Suggest a weekly meal plan</p>
+                              </div>
+                              <div onClick={() => handleStartChatWithPrompt("What is the biggest mystery of the universe?")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                                  <h3 className="font-semibold text-white">Brainstorm Ideas</h3>
+                                  <p className="text-sm text-gray-400">What is the biggest mystery of the universe?</p>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* DEĞİŞİKLİK: Alt input bar'ı kendi flex-shrink-0 alanına alındı */}
+                    <div className="w-full max-w-2xl mx-auto px-4 pb-4 flex-shrink-0">
+                        <div className="relative w-full">
+                            <input
+                                type="text"
+                                value={welcomeInputText}
+                                onChange={handleWelcomeInputChange}
+                                placeholder="Type your message to start..."
+                                className="w-full p-4 pl-6 pr-14 rounded-full text-white fake-input-bar outline-none"
+                            />
+                            <button className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white">
+                                <i className="fas fa-arrow-up"></i>
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">nAI can make mistakes. Consider checking important information.</p>
+                    </div>
+                </motion.div>
+
+            ) : (
+                // --- DURUM 2: SOHBET ARAYÜZÜ (YAPI DEĞİŞMEDİ) ---
+                <motion.div
+                    key="chat-view"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-                />
+                    className="flex flex-col h-full w-full"
+                >
+                    <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
+                      <div className="flex items-center gap-4">
+                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
+                          <i className="fas fa-bars"></i>
+                        </button>
+                        
+                        <Menu as="div" className="relative inline-block text-left">
+                          <div>
+                            <Menu.Button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                              <i className="fas fa-sync-alt"></i>
+                              <span className="font-semibold hidden sm:inline">{getModelLabel(selectedModel)}</span>
+                              <i className="fas fa-chevron-down text-xs ml-1 opacity-70"></i>
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-600 rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                              <div className="px-1 py-1 ">
+                                {models.map((model) => (
+                                  <Menu.Item key={model.name}>
+                                    {({ active }) => (
+                                      <button
+                                        onClick={() => handleModelChange(model.name)}
+                                        className={`${
+                                          active ? 'bg-blue-500 text-white' : 'text-white'
+                                        } group flex w-full items-center justify-between rounded-md px-2 py-2 text-sm`}
+                                      >
+                                        <span>{model.label}</span>
+                                        {model.name === selectedModel && (
+                                            <i className="fas fa-check text-green-400"></i>
+                                        )}
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                ))}
+                              </div>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </div>
+                      <div className="flex items-center">
+                         <button onClick={handleNewChat} className="p-2 rounded-full hover:bg-gray-700" title="New Chat">
+                            <i className="fas fa-edit"></i>
+                         </button>
+                      </div>
+                    </header>
+
+                    <div className="relative flex-1 overflow-hidden">
+                        <div 
+                            ref={chatContainerRef} 
+                            className="h-full overflow-y-auto p-4 md:p-6"
+                            style={{ 
+                                paddingTop: 'var(--header-height)', 
+                                scrollPaddingTop: 'var(--header-height)',
+                                WebkitOverflowScrolling: 'touch'
+                            }}
+                        >
+                            {chatMessages.map((msg) => (
+                               <ChatMessage key={msg.id} message={msg} />
+                            ))}
+                        </div>
+                        <AnimatePresence>
+                        {showScrollDownButton && (
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                onClick={() => scrollToBottom()}
+                                className="scroll-down-button"
+                                title="Scroll to bottom"
+                            >
+                                <i className="fas fa-arrow-down"></i>
+                            </motion.button>
+                        )}
+                        </AnimatePresence>
+                    </div>
+                    
+                    <motion.div
+                        initial={{ y: "100%" }}
+                        animate={{ y: 0 }}
+                        exit={{ y: "100%" }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="w-full bg-gray-800 flex items-center p-4 border-t border-gray-700 z-10 flex-shrink-0"
+                    >
+                            <input 
+                        ref={inputRef} 
+                        type="text" 
+                        value={inputText} 
+                        onChange={(e) => setInputText(e.target.value)} 
+                        onKeyDown={handleKeyDown}
+                        placeholder="Type your message..." 
+                        className="flex-1 p-3 mr-4 rounded-lg border-none bg-gray-900 text-gray-100 outline-none" 
+                        disabled={isLoading} />
+                      <button 
+                        id="send-button-id" 
+                        onClick={handleSendMessage} 
+                        disabled={isLoading || !inputText.trim()} 
+                        className={`px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer flex items-center justify-center transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed ${ isLoading ? '' : 'hover:bg-blue-600' }`}
+                      >
+                          {isLoading ? (<span className="animate-pulse text-lg">● ● ●</span>) : ('Send')}
+                      </button>
+                    </motion.div>
+                </motion.div>
             )}
         </AnimatePresence>
-        
-        {/* DEĞİŞİKLİK BURADA BİTİYOR */}
-
-      
-        <main className="relative flex-1 flex flex-col h-full transition-all duration-300 md:ml-72">
-            {/* ... main içeriğinin geri kalanı (AnimatePresence ve diğerleri) tamamen aynı kalacak ... */}
-
-            <AnimatePresence mode="wait">
-                {!activeChatId ? (
-                    // --- DURUM 1: KARŞILAMA EKRANI ---
-                    <motion.div
-                      key="welcome-screen"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.5 }}
-                      className="flex flex-col h-full w-full"
-                    >
-                        <header className="p-4 flex items-center min-h-[60px] flex-shrink-0">
-                            <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
-                                <i className="fas fa-bars"></i>
-                            </button>
-                        </header>
-                        <div className="flex-1 flex flex-col justify-center items-center text-center overflow-y-auto p-4 sm:p-6">
-                            <div className="flex flex-col items-center max-w-3xl w-full">
-                                <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                                    Meet nAI
-                                </h1>
-                                <p className="text-lg text-gray-400 mb-10">
-                                    Unleash your creativity!
-                                </p>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                                    {/* Prompt-cards */}
-                                    <div onClick={() => handleStartChatWithPrompt("Write a React component for a timer")} className="prompt-card p-4 rounded-lg cursor-pointer">...</div>
-                                    <div onClick={() => handleStartChatWithPrompt("Draft a blog post about the future of AI")} className="prompt-card p-4 rounded-lg cursor-pointer">...</div>
-                                    <div onClick={() => handleStartChatWithPrompt("Suggest a weekly meal plan")} className="prompt-card p-4 rounded-lg cursor-pointer">...</div>
-                                    <div onClick={() => handleStartChatWithPrompt("What is the biggest mystery of the universe?")} className="prompt-card p-4 rounded-lg cursor-pointer">...</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="w-full max-w-2xl mx-auto px-4 pb-4 flex-shrink-0">
-                            <div className="relative w-full">
-                                <input
-                                    type="text"
-                                    value={welcomeInputText}
-                                    onChange={handleWelcomeInputChange}
-                                    placeholder="Type your message to start..."
-                                    className="w-full p-4 pl-6 pr-14 rounded-full text-white fake-input-bar outline-none"
-                                />
-                                <button className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white">
-                                    <i className="fas fa-arrow-up"></i>
-                                </button>
-                            </div>
-                            <p className="text-xs text-gray-500 mt-2">nAI can make mistakes. Consider checking important information.</p>
-                        </div>
-                    </motion.div>
-                ) : (
-                    // --- DURUM 2: SOHBET ARAYÜZÜ ---
-                    <motion.div
-                        key="chat-view"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex flex-col h-full w-full"
-                    >
-                        <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
-                          <div className="flex items-center gap-4">
-                            <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
-                              <i className="fas fa-bars"></i>
-                            </button>
-                            <Menu as="div" className="relative inline-block text-left">
-                                {/* Menu içeriği */}
-                            </Menu>
-                          </div>
-                          <div className="flex items-center">
-                             <button onClick={handleNewChat} className="p-2 rounded-full hover:bg-gray-700" title="New Chat">
-                                <i className="fas fa-edit"></i>
-                             </button>
-                          </div>
-                        </header>
-                        <div className="relative flex-1 overflow-hidden">
-                            <div 
-                                ref={chatContainerRef} 
-                                className="h-full overflow-y-auto p-4 md:p-6"
-                                style={{ paddingTop: 'var(--header-height)', scrollPaddingTop: 'var(--header-height)', WebkitOverflowScrolling: 'touch' }}
-                            >
-                                {chatMessages.map((msg) => (
-                                   <ChatMessage key={msg.id} message={msg} />
-                                ))}
-                            </div>
-                            <AnimatePresence>
-                            {showScrollDownButton && (
-                                <motion.button onClick={() => scrollToBottom()} className="scroll-down-button" title="Scroll to bottom">
-                                    <i className="fas fa-arrow-down"></i>
-                                </motion.button>
-                            )}
-                            </AnimatePresence>
-                        </div>
-                        <motion.div className="w-full bg-gray-800 flex items-center p-4 border-t border-gray-700 z-10 flex-shrink-0">
-                                <input 
-                                    ref={inputRef} 
-                                    type="text" 
-                                    value={inputText} 
-                                    onChange={(e) => setInputText(e.target.value)} 
-                                    onKeyDown={handleKeyDown}
-                                    placeholder="Type your message..." 
-                                    className="flex-1 p-3 mr-4 rounded-lg border-none bg-gray-900 text-gray-100 outline-none" 
-                                    disabled={isLoading} />
-                              <button id="send-button-id" onClick={handleSendMessage} disabled={isLoading || !inputText.trim()} className="...">
-                                  {isLoading ? (<span className="animate-pulse text-lg">● ● ●</span>) : ('Send')}
-                              </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </main>
+      </main>
       {/* DEĞİŞİKLİK BURADA BİTİYOR */}
 
 
