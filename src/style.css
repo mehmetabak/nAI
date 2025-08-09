@@ -18,8 +18,7 @@
 
 /* Sayfanın tamamının kaymasını engelle */
 html, body, #root {
-  height: 100vh; /* JavaScript çalışmazsa diye bir fallback */
-  height: var(--app-height);
+  height: 100%;
   overflow: hidden;
   background-color: #111827; /* bg-gray-900 */
 }
