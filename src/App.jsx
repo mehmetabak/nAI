@@ -290,7 +290,7 @@ const App = () => {
         // Kısa bir gecikme, animasyonun tamamlanmasına ve DOM'un stabil hale gelmesine olanak tanır.
         const timer = setTimeout(() => {
             setPadding();
-        }, 50); // 50ms genellikle yeterlidir
+        }, 90); // 50ms genellikle yeterlidir
 
         window.addEventListener('resize', setPadding);
         
