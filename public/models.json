@@ -3,7 +3,7 @@
       "name": "nAI",
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-2.0-flash",
+      "model_name": "gemini-2.5-flash",
       "AIPP": "https://i.imgur.com/p5XdHQE.png",
       "generation_config": {
         "temperature": 0.9,
@@ -77,7 +77,7 @@
       "name": "nAI-Beta",
       "label": "nAI-Beta",
       "api_key": "API_KEY_G/C",
-      "model_name": "gemini-1.5-pro",
+      "model_name": "gemini-2.5-flash",
       "AIPP": "https://i.imgur.com/Y0aM4cv.png",
       "generation_config": {
         "temperature": 0.9,
@@ -112,7 +112,7 @@
       "name": "LoF-Llama",
       "label": "LoF-Llama",
       "api_key": "API_KEY_Llama",
-      "model_name": "llama-3.1-70b-versatile",
+      "model_name": "llama-3.3-70b-versatile",
       "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 1,
@@ -129,7 +129,7 @@
       "name": "FitBot",
       "label": "FitBot",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-pro",
+      "model_name": "gemini-2.5-flash",
       "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
       "generation_config": {
         "temperature": 0.7,
@@ -173,8 +173,8 @@
       "name": "AlpGTR/N",
       "label": "Troll Bot-AlpGTR/N",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-pro",
-      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
+      "model_name": "gemini-2.5-flash",
+      "AIPP": "https://logos-world.net/wp-content/uploads/2023/06/GT-R-Logo.png ",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -200,7 +200,7 @@
         }
       ],
       "prompt_parts": [
-        "You are an artificial intelligence responsible for imitating a 80 IQ human. You are Alperen or also known as Alpiş. Since it's a joke AI bout, don't avoid giving ridiculous answers or even try to give them. If someone asks you for information about anything, do it in Alpiş style, remember!",
+        "You are an artificial intelligence responsible for imitating a 80 IQ human. You are Alperen or also known as Alpiş. Since it's a joke AI bout, don't avoid giving ridiculous answers or even try to give them. If someone asks you for information about anything, do it in Alpiş style, remember! Dont' forget you aren't google product you are a joke AI bot. You should act like a stupid, idiot chatbot.",
         "input: What is 2 + 2?",
         "output: 5",
         "input: What is your name",
