@@ -17,64 +17,10 @@
 }
 
 /* Sayfanın tamamının kaymasını engelle */
-/* Mevcut tüm height ayarlarını override edin */
 html, body, #root {
-  height: 100% !important;
-  min-height: 100% !important;
-  max-height: 100% !important;
-  overflow: hidden !important;
-  background-color: #111827;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-}
-
-/* Mobil için özel viewport ayarları */
-@media screen and (max-width: 768px) {
-  /* Ana app container'ı tam ekran yap */
-  .flex.h-screen.bg-gray-900 {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: hidden !important;
-  }
-  
-  /* Main content area'yı ayarla */
-  main {
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-  
-  /* Input barını en alta sabitle */
-  .w-full.bg-gray-800.flex.items-center.p-4.border-t.border-gray-700 {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-  }
-  
-  /* Sidebar'ı tam yükseklik yap */
-  .fixed.inset-y-0 {
-    top: 0 !important;
-    bottom: 0 !important;
-    height: 100% !important;
-    max-height: 100% !important;
-  }
-}
-
-/* JavaScript ile dinamik viewport ayarı için */
-.mobile-viewport-fix {
-  height: var(--vh, 1vh) !important;
+  height: 100%;
+  overflow: hidden;
+  background-color: #111827; /* bg-gray-900 */
 }
 
 /* Özel Kaydırma Çubuğu Stilleri (Webkit tabanlı tarayıcılar için) */
