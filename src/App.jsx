@@ -293,6 +293,26 @@ const App = () => {
     };
 
     useEffect(() => {
+    // Bu fonksiyon, pencerenin anlık iç yüksekliğini ölçer ve
+    // bunu global bir CSS değişkeni olarak ayarlar.
+    const setRealViewportHeight = () => {
+        document.documentElement.style.setProperty(
+            '--app-height',
+            `${window.innerHeight}px`
+        );
+    };
+
+    // Bileşen ilk yüklendiğinde yüksekliği ayarla
+    setRealViewportHeight();
+
+    // Pencere boyutu değiştiğinde (klavye açıldığında/kapandığında) tekrar ayarla
+    window.addEventListener('resize', setRealViewportHeight);
+
+    // Bileşen DOM'dan kaldırıldığında event listener'ı temizle (memory leak önlemi)
+    return () => window.removeEventListener('resize', setRealViewportHeight);
+  }, []); // Boş dizi sayesinde bu effect sadece bir kez kurulur.
+
+    useEffect(() => {
         const setPadding = () => {
             if (topHeaderRef.current && chatContainerRef.current) {
                 const headerHeight = topHeaderRef.current.offsetHeight;
@@ -520,7 +540,7 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-     <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
+     <div className="flex app-container bg-gray-900 text-gray-100 font-sans overflow-hidden">
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
@@ -538,7 +558,7 @@ const App = () => {
             onToggleChangelog={toggleChangelogScreen}
         />
       
-      <main className="relative flex-1 flex flex-col h-screen transition-all duration-300 md:ml-72">
+      <main className="relative flex-1 flex flex-col transition-all duration-300 md:ml-72">
         <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px]">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
