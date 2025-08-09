@@ -19,18 +19,43 @@
 /* Sayfanın tamamının kaymasını engelle */
 html, body, #root {
   height: 100vh;
-  height: 100dvh; /* Modern tarayıcılar için dinamik viewport height */
+  height: calc(100vh - env(safe-area-inset-bottom));
+  height: calc(100dvh - env(safe-area-inset-bottom));
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: calc(100vh - env(safe-area-inset-bottom));
   overflow: hidden;
   background-color: #111827; /* bg-gray-900 */
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
-/* Mobil cihazlar için viewport meta etiketini destekle */
+/* Mobil cihazlar için özel ayarlar */
+@media screen and (max-width: 768px) {
+  html, body, #root {
+    height: 100vh;
+    height: 100svh; /* Small viewport height */
+    min-height: 100vh;
+    min-height: 100svh;
+    max-height: 100vh;
+    max-height: 100svh;
+  }
+}
+
+/* Android Chrome için özel ayar */
+@media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
+  html, body, #root {
+    height: calc(100vh - 56px); /* Android bottom bar compensation */
+  }
+}
+
+/* Mobil Safari ve WebKit tabanlı tarayıcılar için */
 @supports (-webkit-touch-callout: none) {
   html, body, #root {
     height: -webkit-fill-available;
     min-height: -webkit-fill-available;
+    max-height: -webkit-fill-available;
   }
 }
 
