@@ -23,56 +23,6 @@ html, body, #root {
   background-color: #111827; /* bg-gray-900 */
 }
 
-/* Mobil cihazlar için zorla tam ekran */
-@media screen and (max-width: 768px) {
-  .flex.h-full {
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-  }
-  
-  /* Input container'ının alt kısmının görünmesini garanti et */
-  .flex-shrink-0 {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-  }
-  
-  /* Chat container'ının alt padding'ini artır */
-  .overflow-y-auto {
-    padding-bottom: 80px !important;
-  }
-}
-
-/* Sidebar için mobil düzenlemeler */
-@media screen and (max-width: 768px) {
-  /* Sidebar'ı tam ekran yap */
-  .fixed.inset-y-0.left-0.z-50,
-  [class*="sidebar"] {
-    height: 100vh !important;
-    height: 100dvh !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
-    top: 0 !important;
-    bottom: 0 !important;
-  }
-  
-  /* Sidebar içeriği için scroll alanı ayarla */
-  .overflow-y-auto {
-    height: calc(100vh - 120px) !important; /* Header ve footer için boşluk */
-    height: calc(100dvh - 120px) !important;
-  }
-  
-  /* Sidebar'ın overlay background'unu tam ekran yap */
-  .fixed.inset-0.bg-black {
-    height: 100vh !important;
-    height: 100dvh !important;
-  }
-}
-
 /* Özel Kaydırma Çubuğu Stilleri (Webkit tabanlı tarayıcılar için) */
 ::-webkit-scrollbar {
   width: 8px;
