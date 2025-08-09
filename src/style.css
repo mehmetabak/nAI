@@ -16,7 +16,7 @@
 
 /* Sayfanın tamamının kaymasını engelle */
 html, body, #root {
-  height: 100svh;
+  min-height: 100svh; 
   overflow: hidden;
   background-color: #111827; /* bg-gray-900 */
 }
