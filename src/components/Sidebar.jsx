@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// ChatSessionItem bileşeninde bir değişiklik yapmaya gerek yok, önceki haliyle kalabilir.
 const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(session.title);
@@ -50,10 +51,6 @@ const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) =>
       )}
       
       {!isEditing && (
-        // DEĞİŞİKLİK BURADA:
-        // Mobil için butonları her zaman görünür yap (opacity-100), 
-        // masaüstü için (md:) orijinal hover davranışını koru (md:opacity-0 md:group-hover:opacity-100).
-        // Eğer öğe aktif ise (isActive), her zaman görünür kalmaya devam edecek.
         <div className={`flex items-center gap-2 transition-opacity ${
             isActive 
               ? 'opacity-100' 
@@ -95,20 +92,22 @@ const Sidebar = ({
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
-        <div className="flex h-full flex-col p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-lg font-bold tracking-wide">nAI History</h1>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-white transition-colors md:hidden"
-              aria-label="Close Sidebar"
-            >
-              <i className="fas fa-arrow-left" />
-            </button>
-          </div>
-
-          {/* Yeni Sohbet */}
-          <div className="mb-4">
+        {/* YAPI DEĞİŞİKLİĞİ: Ana kapsayıcıyı 3 bölüme ayırıyoruz: Üst, Orta (kaydırılabilir), Alt */}
+        <div className="flex h-full flex-col">
+          
+          {/* 1. BÖLÜM: ÜST KISIM (Başlık ve Yeni Sohbet Butonu) */}
+          {/* Bu bölüm sabit kalır, kaydırılmaz. */}
+          <div className="p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <h1 className="text-lg font-bold tracking-wide">nAI History</h1>
+              <button
+                onClick={onClose}
+                className="p-2 text-gray-400 hover:text-white transition-colors md:hidden"
+                aria-label="Close Sidebar"
+              >
+                <i className="fas fa-arrow-left" />
+              </button>
+            </div>
             <button
               onClick={onNewChat}
               className="flex w-full items-center justify-between rounded-lg border border-gray-700 bg-gray-800 p-3 text-sm font-medium hover:bg-gray-700 transition-colors"
@@ -117,7 +116,11 @@ const Sidebar = ({
               <i className="fas fa-plus" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto pr-2">
+
+          {/* 2. BÖLÜM: ORTA KISIM (Sohbet Geçmişi) */}
+          {/* YAPI DEĞİŞİKLİĞİ: Bu bölüm 'flex-1' ile kalan tüm alanı doldurur ve 'overflow-y-auto' ile kendi içinde kaydırılır. */}
+          {/* Bu sayede geçmiş listesi ne kadar uzun olursa olsun, alt menüyü aşağı itmez. */}
+          <div className="flex-1 overflow-y-auto px-4">
             <h2 className="mb-2 text-xs font-bold uppercase text-gray-400">History</h2>
             <div className="flex flex-col gap-2">
               {sessions.map((session) => (
@@ -132,36 +135,40 @@ const Sidebar = ({
               ))}
             </div>
           </div>
-                     <div className="mt-4 border-t border-gray-700 pt-4">
+          
+          {/* 3. BÖLÜM: ALT KISIM (Ayarlar ve Linkler) */}
+          {/* Bu bölüm sabit kalır, kaydırılmaz ve her zaman en altta görünür. */}
+          <div className="border-t border-gray-700 p-4">
             <nav className="flex flex-col gap-1">
               <button
                 onClick={onToggleSettings}
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-800 transition-colors"
+                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
               >
-                <i className="fas fa-cog mr-3" /> Settings
+                <i className="fas fa-cog mr-3 w-4 text-center" /> Settings
               </button>
               <button
                 onClick={onToggleAbout}
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-800 transition-colors"
+                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
               >
-                <i className="fas fa-info-circle mr-3" /> About
+                <i className="fas fa-info-circle mr-3 w-4 text-center" /> About
               </button>
               <button
                 onClick={onToggleChangelog}
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-800 transition-colors"
+                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
               >
-                <i className="fas fa-box-open mr-3" /> What's New
+                <i className="fas fa-box-open mr-3 w-4 text-center" /> What's New
               </button>
               <a
                 href="https://github.com/mehmetabak/nAI"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-800 transition-colors"
+                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
               >
-                <i className="fab fa-github mr-3" /> Source Code
+                <i className="fab fa-github mr-3 w-4 text-center" /> Source Code
               </a>
             </nav>
           </div>
+
         </div>
       </aside>
     </>
