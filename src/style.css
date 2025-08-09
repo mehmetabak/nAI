@@ -15,52 +15,10 @@
 }
 
 /* Sayfanın tamamının kaymasını engelle */
-/* Sayfanın tamamının kaymasını engelle */
 html, body, #root {
-  height: 100vh;
-  height: 100dvh; /* Modern tarayıcılar için dinamik viewport height */
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
   overflow: hidden;
   background-color: #111827; /* bg-gray-900 */
-  /* Mobil tarayıcı zoom'unu engelle */
-  touch-action: manipulation;
-  -webkit-text-size-adjust: 100%;
-}
-
-/* Mobil cihazlar için viewport meta etiketini destekle */
-@supports (-webkit-touch-callout: none) {
-  html, body, #root {
-    height: -webkit-fill-available;
-    min-height: -webkit-fill-available;
-  }
-}
-
-/* Mobil tarayıcılar için özel düzenlemeler */
-@media screen and (max-width: 768px) {
-  html, body, #root {
-    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    /* Android tarayıcı için özel ayar */
-    height: calc(100vh - 60px); /* Tarayıcı arayüzü için boşluk */
-  }
-  
-  /* Ana container'ı mobilde tam ekrana sığdır */
-  .flex.h-screen {
-    height: 100vh !important;
-    height: 100dvh !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
-  }
-}
-
-/* Android Chrome için özel ayarlar */
-@media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
-  html, body, #root {
-    height: calc(100vh - 56px); /* Chrome mobile toolbar height */
-  }
 }
 
 /* Özel Kaydırma Çubuğu Stilleri (Webkit tabanlı tarayıcılar için) */

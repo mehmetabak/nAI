@@ -520,7 +520,7 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-     <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
+     <div className="flex min-h-[100dvh] bg-gray-900 text-gray-100 font-sans overflow-hidden">
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
