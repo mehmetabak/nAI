@@ -517,11 +517,16 @@ const App = () => {
   const toggleAboutScreen = () => setIsAboutScreenOpen(!isAboutScreenOpen);
   const toggleChangelogScreen = () => setIsChangelogScreenOpen(!isChangelogScreenOpen);
   
+  // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
+  // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
      <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
+            // AÇIKLAMA: Sidebar'a gönderilen sessions listesi artık boş sohbetleri de
+            // (geçici olarak) içerir, bu sayede kullanıcı "New Chat"i listede görür.
+            // Sayfa yenilendiğinde bu boş sohbet kaybolur.
             sessions={chatSessions}
             activeSessionId={activeChatId}
             onSessionSelect={handleSelectSession}
@@ -533,15 +538,7 @@ const App = () => {
             onToggleChangelog={toggleChangelogScreen}
         />
       
-      {/*
-        DEĞİŞİKLİK AÇIKLAMASI:
-        - `h-screen` yerine `h-full` kullanıldı. Bu, <main> elementinin yüksekliğinin, ebeveyni olan
-          ve zaten `h-screen` olan ana `div`'in yüksekliğine göre ayarlanmasını sağlar.
-          Böylece mobil cihazlarda yükseklik taşması yaşanmaz.
-        - `overflow-hidden` eklendi. Bu, <main> içindeki herhangi bir beklenmedik taşmanın
-          genel sayfa düzenini bozmamasını garanti eder.
-      */}
-      <main className="relative flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 md:ml-72">
+      <main className="relative flex-1 flex flex-col h-screen transition-all duration-300 md:ml-72">
         <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px]">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
@@ -606,12 +603,12 @@ const App = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.5 }}
-                          className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6"
+                          className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6 mt-14"
                         >
 
                             <div /> 
                             
-                            <div className="flex flex-col items-center mt-auto mb-auto">
+                            <div className="flex flex-col items-center">
                                 <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
                                     Meet nAI
                                 </h1>
@@ -666,6 +663,8 @@ const App = () => {
                                 ref={chatContainerRef} 
                                 className="h-full overflow-y-auto p-4 md:p-6"
                                 style={{ 
+                                    // Hem görsel boşluk hem de scroll pozisyonlaması için aynı değişkeni kullanıyoruz.
+                                    // Bu, marginTop'tan çok daha güvenilirdir.
                                     paddingTop: 'var(--header-height)', 
                                     scrollPaddingTop: 'var(--header-height)',
                                     WebkitOverflowScrolling: 'touch'
