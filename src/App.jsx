@@ -41,7 +41,7 @@ const App = () => {
   
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [welcomeInputText, setWelcomeInputText] = useState('');
+  const [shouldFocusInputOnLoad, setShouldFocusInputOnLoad] = useState(false);
 
   // --- Referanslar ---
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -89,6 +89,12 @@ const App = () => {
     if (topHeaderRef.current && chatContainerRef.current) {
         const headerHeight = topHeaderRef.current.offsetHeight;
         chatContainerRef.current.style.paddingTop = `${headerHeight}px`;
+    }
+
+        if (shouldFocusInputOnLoad) {
+        inputRef.current?.focus();
+        // Bayrağı hemen indiriyoruz ki başka animasyonlarda (örn. scroll butonu) tekrar odaklanmasın.
+        setShouldFocusInputOnLoad(false);
     }
   };
 
@@ -347,17 +353,12 @@ const App = () => {
         }, 0);
     };
 
-    const handleWelcomeInputChange = (e) => {
-        const text = e.target.value;
-        setWelcomeInputText(text);
-
-        if (text.length === 1 && !activeChatId) {
-            handleNewChat();
-            setTimeout(() => {
-                setInputText(text);
-                inputRef.current?.focus();
-            }, 100); 
-        }
+    const handleWelcomeInputFocus = () => {
+        // Eğer zaten bir sohbet varsa (bir şekilde bu fonksiyona gelinirse), bir şey yapma.
+        if (activeChatId) return;
+        setShouldFocusInputOnLoad(true);
+        // Hemen yeni bir sohbet oluştur.
+        handleNewChat();
     };
 
   // --- Mesaj Yönetimi ---
@@ -639,10 +640,10 @@ const App = () => {
                         <div className="relative w-full">
                             <input
                                 type="text"
-                                value={welcomeInputText}
-                                onChange={handleWelcomeInputChange}
+                                onFocus={handleWelcomeInputFocus}
+                                readOnly // Kullanıcının bu alana gerçekten yazmasını engeller, sadece odaklanmaya yarar.
                                 placeholder="Type your message to start..."
-                                className="w-full p-4 pl-6 pr-14 rounded-full text-white fake-input-bar outline-none"
+                                className="w-full p-4 pl-6 pr-14 rounded-full text-white fake-input-bar outline-none cursor-pointer" // Kullanıcının tıklayabileceğini belli eder.
                             />
                             <button className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white">
                                 <i className="fas fa-arrow-up"></i>
