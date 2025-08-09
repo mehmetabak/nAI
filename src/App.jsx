@@ -260,35 +260,47 @@ const App = () => {
         }
     };
 
+// BU BLOKLARI VEYA BENZERLERİNİ BULUP SİLİN
+  useEffect(() => {
+      const updateHeaderHeight = () => {
+          if (topHeaderRef.current) {
+              const height = topHeaderRef.current.offsetHeight;
+              document.documentElement.style.setProperty('--header-height', `${height}px`);
+          }
+      };
+      updateHeaderHeight();
+      window.addEventListener('resize', updateHeaderHeight);
+      return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, []); // <-- Sorunlardan biri bu: sadece bir kez çalışıyor
+
     useEffect(() => {
-    const updateHeaderHeight = () => {
-        // Hesaplamayı tarayıcının render döngüsünün sonuna atmak için setTimeout kullanıyoruz.
-        // Bu, topHeaderRef'in DOM'a yerleşip doğru yüksekliğe sahip olmasını garanti eder.
-        setTimeout(() => {
-            if (topHeaderRef.current) {
-                const height = topHeaderRef.current.offsetHeight;
-                // CSS değişkenini güncelle. Stil dosyaları bu değişkeni kullanıyor.
-                document.documentElement.style.setProperty('--header-height', `${height}px`);
+        const setPadding = () => {
+            // Bu `useEffect` hem CSS değişkenini güncellemeli hem de gerekirse inline stili ayarlamalıdır
+            // En güvenilir yöntem, CSS değişkenini kullanmaktır.
+            if (topHeaderRef.current && chatContainerRef.current) {
+                const headerHeight = topHeaderRef.current.offsetHeight;
+                // CSS değişkenini güncellemek, stilin her yerden tutarlı olmasını sağlar.
+                document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+                
+                // chatContainer'ın paddingTop'unu da bu değişkenle senkronize edelim.
+                chatContainerRef.current.style.paddingTop = `var(--header-height)`;
             }
-        }, 0); 
-    };
+        };
 
-    // Eğer bir sohbet aktifse, header yüksekliğini hesapla.
-    // Karşılama ekranında bu kodun çalışmasına gerek yok.
-    if (activeChatId) {
-        updateHeaderHeight();
-    }
-    
-    // Pencere boyutu değiştiğinde de yüksekliği yeniden hesapla.
-    window.addEventListener('resize', updateHeaderHeight);
+        // Kısa bir gecikme, animasyonun tamamlanmasına ve DOM'un stabil hale gelmesine olanak tanır.
+        const timer = setTimeout(() => {
+            setPadding();
+        }, 10); // 50ms genellikle yeterlidir
 
-    // Temizleme fonksiyonu
-    return () => {
-        window.removeEventListener('resize', updateHeaderHeight);
-    };
-
-// DEĞİŞİKLİK: Bu effect'in `activeChatId` değiştiğinde yeniden çalışmasını sağlıyoruz.
-}, [activeChatId]);
+        window.addEventListener('resize', setPadding);
+        
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('resize', setPadding);
+        };
+    // DEĞİŞİKLİK BURADA: Artık `chatMessages`'a da bağlı.
+    // Bu sayede ilk mesaj geldiğinde padding yeniden hesaplanır.
+    }, [activeChatId, chatMessages]);
 
 
      useEffect(() => {
