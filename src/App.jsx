@@ -519,14 +519,11 @@ const App = () => {
   
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
-  return (
+   return (
      <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
-            // AÇIKLAMA: Sidebar'a gönderilen sessions listesi artık boş sohbetleri de
-            // (geçici olarak) içerir, bu sayede kullanıcı "New Chat"i listede görür.
-            // Sayfa yenilendiğinde bu boş sohbet kaybolur.
             sessions={chatSessions}
             activeSessionId={activeChatId}
             onSessionSelect={handleSelectSession}
@@ -538,192 +535,200 @@ const App = () => {
             onToggleChangelog={toggleChangelogScreen}
         />
       
+      {/* DEĞİŞİKLİK BURADA BAŞLIYOR: <main> etiketi, tüm animasyonlu içeriği kapsayacak */}
       <main className="relative flex-1 flex flex-col h-screen transition-all duration-300 md:ml-72">
-        <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px]">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
-              <i className="fas fa-bars"></i>
-            </button>
-            
-            <Menu as="div" className="relative inline-block text-left">
-              <div>
-                <Menu.Button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700 transition-colors">
-                  <i className="fas fa-sync-alt"></i>
-                  <span className="font-semibold hidden sm:inline">{getModelLabel(selectedModel)}</span>
-                  <i className="fas fa-chevron-down text-xs ml-1 opacity-70"></i>
-                </Menu.Button>
-              </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-600 rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                  <div className="px-1 py-1 ">
-                    {models.map((model) => (
-                      <Menu.Item key={model.name}>
-                        {({ active }) => (
-                          <button
-                            onClick={() => handleModelChange(model.name)}
-                            className={`${
-                              active ? 'bg-blue-500 text-white' : 'text-white'
-                            } group flex w-full items-center justify-between rounded-md px-2 py-2 text-sm`}
+        <AnimatePresence mode="wait">
+            {!activeChatId ? (
+                // --- DURUM 1: AKTİF SOHBET YOK (HOŞ GELDİNİZ EKRANI) ---
+                // Bu blok, hoş geldiniz ekranının tamamını tek bir animasyonlu bileşen olarak oluşturur.
+                <motion.div
+                  key="welcome-screen"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6"
+                >
+                    <div /> 
+                    
+                    <div className="flex flex-col items-center">
+                        <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                            Meet nAI
+                        </h1>
+                        <p className="text-lg text-gray-400 mb-10">
+                            Unleash your creativity!
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                          <div onClick={() => handleStartChatWithPrompt("Write a React component for a timer")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                              <h3 className="font-semibold text-white">Write Code</h3>
+                              <p className="text-sm text-gray-400">Write a React component for a timer</p>
+                          </div>
+                          <div onClick={() => handleStartChatWithPrompt("Draft a blog post about the future of AI")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                              <h3 className="font-semibold text-white">Create Content</h3>
+                              <p className="text-sm text-gray-400">Draft a blog post about the future of AI</p>
+                          </div>
+                          <div onClick={() => handleStartChatWithPrompt("Suggest a weekly meal plan")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                              <h3 className="font-semibold text-white">Plan Something</h3>
+                              <p className="text-sm text-gray-400">Suggest a weekly meal plan</p>
+                          </div>
+                          <div onClick={() => handleStartChatWithPrompt("What is the biggest mystery of the universe?")} className="prompt-card p-4 rounded-lg cursor-pointer">
+                              <h3 className="font-semibold text-white">Brainstorm Ideas</h3>
+                              <p className="text-sm text-gray-400">What is the biggest mystery of the universe?</p>
+                          </div>
+                        </div>
+                    </div>
+                    
+                    <div className="w-full max-w-2xl px-4 pb-4">
+                        <div className="relative w-full">
+                            <input
+                                type="text"
+                                value={welcomeInputText}
+                                onChange={handleWelcomeInputChange}
+                                placeholder="Type your message to start..."
+                                className="w-full p-4 pl-6 pr-14 rounded-full text-white fake-input-bar outline-none"
+                            />
+                            <button className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white">
+                                <i className="fas fa-arrow-up"></i>
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">nAI can make mistakes. Consider checking important information.</p>
+                    </div>
+                </motion.div>
+
+            ) : (
+                // --- DURUM 2: AKTİF SOHBET VAR (SOHBET ARAYÜZÜ) ---
+                // Bu blok, header, mesaj listesi ve input bar dahil olmak üzere TÜM sohbet arayüzünü
+                // tek bir animasyonlu bileşen olarak oluşturur. Bu, tutarlı bir görünüm sağlar.
+                <motion.div
+                    key="chat-view"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col h-full w-full"
+                >
+                    {/* Header artık sadece sohbet ekranındayken render ediliyor */}
+                    <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
+                      <div className="flex items-center gap-4">
+                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
+                          <i className="fas fa-bars"></i>
+                        </button>
+                        
+                        <Menu as="div" className="relative inline-block text-left">
+                          <div>
+                            <Menu.Button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                              <i className="fas fa-sync-alt"></i>
+                              <span className="font-semibold hidden sm:inline">{getModelLabel(selectedModel)}</span>
+                              <i className="fas fa-chevron-down text-xs ml-1 opacity-70"></i>
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
                           >
-                            <span>{model.label}</span>
-                            {model.name === selectedModel && (
-                                <i className="fas fa-check text-green-400"></i>
-                            )}
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          </div>
-
-          <div className="flex items-center">
-             <button onClick={handleNewChat} className="p-2 rounded-full hover:bg-gray-700" title="New Chat">
-                <i className="fas fa-edit"></i>
-             </button>
-          </div>
-        </header>
-
-        <div className="relative flex-1 flex flex-col overflow-hidden">
-                <AnimatePresence mode="wait">
-                    {!activeChatId ? (
-                        <motion.div
-                          key="welcome-screen"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.5 }}
-                          className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6 mt-14"
-                        >
-
-                            <div /> 
-                            
-                            <div className="flex flex-col items-center">
-                                <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                                    Meet nAI
-                                </h1>
-                                <p className="text-lg text-gray-400 mb-10">
-                                    Unleash your creativity!
-                                </p>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                                <div onClick={() => handleStartChatWithPrompt("Write a React component for a timer")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                                    <h3 className="font-semibold text-white">Write Code</h3>
-                                    <p className="text-sm text-gray-400">Write a React component for a timer</p>
-                                </div>
-                                <div onClick={() => handleStartChatWithPrompt("Draft a blog post about the future of AI")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                                    <h3 className="font-semibold text-white">Create Content</h3>
-                                    <p className="text-sm text-gray-400">Draft a blog post about the future of AI</p>
-                                </div>
-                                <div onClick={() => handleStartChatWithPrompt("Suggest a weekly meal plan")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                                    <h3 className="font-semibold text-white">Plan Something</h3>
-                                    <p className="text-sm text-gray-400">Suggest a weekly meal plan</p>
-                                </div>
-                                <div onClick={() => handleStartChatWithPrompt("What is the biggest mystery of the universe?")} className="prompt-card p-4 rounded-lg cursor-pointer">
-                                    <h3 className="font-semibold text-white">Brainstorm Ideas</h3>
-                                    <p className="text-sm text-gray-400">What is the biggest mystery of the universe?</p>
-                                </div>
-                                </div>
-                            </div>
-                            
-                            <div className="w-full max-w-2xl px-4 pb-4">
-                                <div className="relative w-full">
-                                    <input
-                                        type="text"
-                                        value={welcomeInputText}
-                                        onChange={handleWelcomeInputChange}
-                                        placeholder="Type your message to start..."
-                                        className="w-full p-4 pl-6 pr-14 rounded-full text-white fake-input-bar outline-none"
-                                    />
-                                    <button className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-600 text-white">
-                                        <i className="fas fa-arrow-up"></i>
-                                    </button>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-2">nAI can make mistakes. Consider checking important information.</p>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="chat-screen"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.3 }}
-                            className="relative flex-1 overflow-hidden"
-                        >
-                            <div 
-                                ref={chatContainerRef} 
-                                className="h-full overflow-y-auto p-4 md:p-6"
-                                style={{ 
-                                    // Hem görsel boşluk hem de scroll pozisyonlaması için aynı değişkeni kullanıyoruz.
-                                    // Bu, marginTop'tan çok daha güvenilirdir.
-                                    paddingTop: 'var(--header-height)', 
-                                    scrollPaddingTop: 'var(--header-height)',
-                                    WebkitOverflowScrolling: 'touch'
-                                }}
-                            >
-                                {chatMessages.map((msg) => (
-                                   <ChatMessage key={msg.id} message={msg} />
+                            <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-600 rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                              <div className="px-1 py-1 ">
+                                {models.map((model) => (
+                                  <Menu.Item key={model.name}>
+                                    {({ active }) => (
+                                      <button
+                                        onClick={() => handleModelChange(model.name)}
+                                        className={`${
+                                          active ? 'bg-blue-500 text-white' : 'text-white'
+                                        } group flex w-full items-center justify-between rounded-md px-2 py-2 text-sm`}
+                                      >
+                                        <span>{model.label}</span>
+                                        {model.name === selectedModel && (
+                                            <i className="fas fa-check text-green-400"></i>
+                                        )}
+                                      </button>
+                                    )}
+                                  </Menu.Item>
                                 ))}
-                            </div>
+                              </div>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </div>
 
-                            <AnimatePresence>
-                            {showScrollDownButton && (
-                                <motion.button
-                                    initial={{ opacity: 0, scale: 0.5 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.5 }}
-                                    onClick={() => scrollToBottom()}
-                                    className="scroll-down-button"
-                                    title="Scroll to bottom"
-                                >
-                                    <i className="fas fa-arrow-down"></i>
-                                </motion.button>
-                            )}
-                            </AnimatePresence>
+                      <div className="flex items-center">
+                         <button onClick={handleNewChat} className="p-2 rounded-full hover:bg-gray-700" title="New Chat">
+                            <i className="fas fa-edit"></i>
+                         </button>
+                      </div>
+                    </header>
+
+                    {/* Mesajların olduğu alan */}
+                    <div className="relative flex-1 overflow-hidden">
+                        <div 
+                            ref={chatContainerRef} 
+                            className="h-full overflow-y-auto p-4 md:p-6"
+                            style={{ 
+                                paddingTop: 'var(--header-height)', 
+                                scrollPaddingTop: 'var(--header-height)',
+                                WebkitOverflowScrolling: 'touch'
+                            }}
+                        >
+                            {chatMessages.map((msg) => (
+                               <ChatMessage key={msg.id} message={msg} />
+                            ))}
+                        </div>
+
+                        <AnimatePresence>
+                        {showScrollDownButton && (
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                onClick={() => scrollToBottom()}
+                                className="scroll-down-button"
+                                title="Scroll to bottom"
+                            >
+                                <i className="fas fa-arrow-down"></i>
+                            </motion.button>
+                        )}
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Input Bar artık sadece sohbet ekranındayken render ediliyor */}
+                    <AnimatePresence>
+                        <motion.div
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            exit={{ y: "100%" }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            className="w-full bg-gray-800 flex items-center p-4 border-t border-gray-700 z-10 flex-shrink-0"
+                        >
+                                <input 
+                            ref={inputRef} 
+                            type="text" 
+                            value={inputText} 
+                            onChange={(e) => setInputText(e.target.value)} 
+                            onKeyDown={handleKeyDown}
+                            placeholder="Type your message..." 
+                            className="flex-1 p-3 mr-4 rounded-lg border-none bg-gray-900 text-gray-100 outline-none" 
+                            disabled={isLoading} />
+                          <button 
+                            id="send-button-id" 
+                            onClick={handleSendMessage} 
+                            disabled={isLoading || !inputText.trim()} 
+                            className={`px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer flex items-center justify-center transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed ${ isLoading ? '' : 'hover:bg-blue-600' }`}
+                          >
+                              {isLoading ? (<span className="animate-pulse text-lg">● ● ●</span>) : ('Send')}
+                          </button>
                         </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-
-        {activeChatId && (
-                <AnimatePresence>
-                    <motion.div
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        exit={{ y: "100%" }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        className="w-full bg-gray-800 flex items-center p-4 border-t border-gray-700 z-10 flex-shrink-0"
-                    >
-                            <input 
-                        ref={inputRef} 
-                        type="text" 
-                        value={inputText} 
-                        onChange={(e) => setInputText(e.target.value)} 
-                        onKeyDown={handleKeyDown}
-                        placeholder="Type your message..." 
-                        className="flex-1 p-3 mr-4 rounded-lg border-none bg-gray-900 text-gray-100 outline-none" 
-                        disabled={isLoading} />
-                      <button 
-                        id="send-button-id" 
-                        onClick={handleSendMessage} 
-                        disabled={isLoading || !inputText.trim()} 
-                        className={`px-6 py-3 bg-blue-500 text-white rounded-lg cursor-pointer flex items-center justify-center transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed ${ isLoading ? '' : 'hover:bg-blue-600' }`}
-                      >
-                          {isLoading ? (<span className="animate-pulse text-lg">● ● ●</span>) : ('Send')}
-                      </button>
-                    </motion.div>
-                </AnimatePresence>
-        )}
+                    </AnimatePresence>
+                </motion.div>
+            )}
+        </AnimatePresence>
       </main>
+      {/* DEĞİŞİKLİK BURADA BİTİYOR */}
+
 
       {/* --- MODAL PENCERELER (DEĞİŞİKLİK YOK) --- */}
       {isModelWindowOpen && (
