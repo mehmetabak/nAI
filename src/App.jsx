@@ -47,6 +47,7 @@ const App = () => {
   const [headerHeight, setHeaderHeight] = useState(0);
   const chatMessagesRef = useRef(null);
   const inputRef = useRef(null);
+  const appContainerRef = useRef(null)
 
   // --- Türetilmiş State (Derived State) ---
   const activeChat = chatSessions.find(session => session.id === activeChatId);
@@ -292,6 +293,32 @@ const App = () => {
         }, 0);
     };
 
+    // App.js bileşeninin içine, diğer useEffect'lerin yanına ekleyin.
+
+  // <--- YENİ EFEKT: Mobil Tarayıcı Yüksekliğini Düzeltme --->
+  useEffect(() => {
+    const handleResize = () => {
+        if (appContainerRef.current) {
+            // window.innerHeight, mobil tarayıcı çubukları hariç gerçek görünür yüksekliği verir.
+            appContainerRef.current.style.height = `${window.innerHeight}px`;
+        }
+    };
+
+    // Bileşen ilk yüklendiğinde yüksekliği ayarla
+    handleResize();
+
+    // Pencere boyutu değiştiğinde (kaydırma ile çubuğun gizlenmesi/gösterilmesi dahil)
+    // ve mobil cihazlarda oryantasyon değiştiğinde yüksekliği yeniden ayarla.
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    // Cleanup: Bileşen kaldırıldığında event listener'ları temizle
+    return () => {
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
+    };
+}, []); // Bağımlılık dizisi boş olmalı, sadece bir kez kurulması yeterli.
+
     useEffect(() => {
         const setPadding = () => {
             if (topHeaderRef.current && chatContainerRef.current) {
@@ -520,7 +547,11 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-     <div className="flex h-svh bg-gray-900 text-gray-100 font-sans overflow-hidden">
+     <div 
+     ref={appContainerRef} 
+     className="flex bg-gray-900 text-gray-100 font-sans overflow-hidden" 
+     style={{ height: '100vh' }} // Başlangıç değeri olarak kalsın, JS ile üzerine yazacağız.
+   >
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
