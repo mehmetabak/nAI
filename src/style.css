@@ -16,9 +16,9 @@
 
 /* Sayfanın tamamının kaymasını engelle */
 html, body, #root {
-  height: 100%;
-  overflow-x: hidden; /* sadece yatay kaymayı kapat */
-  overflow-y: auto; 
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: #111827; /* bg-gray-900 */
 }
 
