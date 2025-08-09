@@ -16,11 +16,19 @@
 
 /* Sayfanın tamamının kaymasını engelle */
 html, body, #root {
-  min-height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  height: 100%;
+  overflow: hidden;
   background-color: #111827; /* bg-gray-900 */
 }
+
+@media (max-width: 768px) {
+  html, body, #root {
+    height: 100vh; /* Fallback */
+    height: 100dvh; /* Modern tarayıcılarda gerçek ekran yüksekliği */
+    overflow: hidden;
+  }
+}
+
 
 /* Özel Kaydırma Çubuğu Stilleri (Webkit tabanlı tarayıcılar için) */
 ::-webkit-scrollbar {
