@@ -84,6 +84,14 @@ const App = () => {
     return models.find(m => m.name === selectedModel) || models[0];
   };
 
+    const forceUpdateChatPadding = () => {
+    // Sadece header ve chat konteyneri DOM'da mevcutsa çalıştır.
+    if (topHeaderRef.current && chatContainerRef.current) {
+        const headerHeight = topHeaderRef.current.offsetHeight;
+        chatContainerRef.current.style.paddingTop = `${headerHeight}px`;
+    }
+  };
+
   // --- Effect'ler (Lifecycle) ---
 
   // `chatSessions` her değiştiğinde localStorage'a kaydet
@@ -159,7 +167,7 @@ const App = () => {
         };
     }, [activeChatId, chatMessages]); 
 
-      useEffect(() => {
+    useEffect(() => {
       const handleResize = () => {
           // CSS'te kullanmak üzere gerçek görünür pencere yüksekliğini bir değişkene atar
           document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
@@ -652,6 +660,7 @@ const App = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
+                    onAnimationComplete={forceUpdateChatPadding}
                     className="flex flex-col h-full w-full"
                 >
                     <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
