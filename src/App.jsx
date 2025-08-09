@@ -244,7 +244,7 @@ const App = () => {
         }
     };
 
-    useEffect(() => {
+  useEffect(() => {
         const updateHeaderHeight = () => {
             if (topHeaderRef.current) {
                 const height = topHeaderRef.current.offsetHeight;
@@ -318,6 +318,43 @@ const App = () => {
             }, 100); 
         }
     };
+
+    // put in a useEffect in the component that renders chat + footer
+useEffect(() => {
+  const updateFooterHeight = () => {
+    const footer = document.querySelector('.chat-footer');
+    if (!footer) return;
+    const height = footer.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--chat-footer-height', `${height}px`);
+  };
+
+  updateFooterHeight();
+  window.addEventListener('resize', updateFooterHeight);
+
+  // visualViewport handles keyboard show/hide better on mobile
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateFooterHeight);
+    window.visualViewport.addEventListener('scroll', updateFooterHeight);
+  }
+
+  // MutationObserver -> footer içeriği dinamik değişirse de yeniden ölç
+  const footer = document.querySelector('.chat-footer');
+  let observer;
+  if (footer) {
+    observer = new MutationObserver(updateFooterHeight);
+    observer.observe(footer, { childList: true, subtree: true, attributes: true });
+  }
+
+  return () => {
+    window.removeEventListener('resize', updateFooterHeight);
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', updateFooterHeight);
+      window.visualViewport.removeEventListener('scroll', updateFooterHeight);
+    }
+    if (observer) observer.disconnect();
+  };
+}, []);
+
 
   // --- Mesaj Yönetimi ---
   const appendMessage = (sender, message, isAI, profilePic, imageBase64 = null) => {
