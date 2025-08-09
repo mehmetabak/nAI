@@ -520,7 +520,7 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-     <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
+     <div className="flex h-full bg-gray-900 text-gray-100 font-sans overflow-hidden" style={{ height: '100vh', maxHeight: '100vh' }}>
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
@@ -536,9 +536,10 @@ const App = () => {
             onToggleSettings={toggleModelWindow}
             onToggleAbout={toggleAboutScreen}
             onToggleChangelog={toggleChangelogScreen}
+            style={{ height: '100vh', maxHeight: '100vh' }}
         />
       
-      <main className="relative flex-1 flex flex-col h-screen transition-all duration-300 md:ml-72">
+      <main className="relative flex-1 flex flex-col h-full transition-all duration-300 md:ml-72" style={{ height: '100vh', maxHeight: '100vh' }}>
         <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px]">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
