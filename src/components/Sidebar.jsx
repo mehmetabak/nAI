@@ -29,6 +29,16 @@ const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) =>
     }
   };
 
+  const handleEditClick = (e) => {
+    e.stopPropagation(); // Olayın ana div'e ulaşmasını engelle
+    setIsEditing(true);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation(); // Olayın ana div'e ulaşmasını engelle
+    onDelete(session.id);
+  };
+
   return (
     <div
       onClick={() => !isEditing && onSelect(session.id)}
@@ -57,10 +67,10 @@ const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) =>
               : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'
           }`}
         >
-          <button onClick={() => setIsEditing(true)} className="p-1 text-gray-400 hover:text-white" title="Rename">
+          <button onClick={handleEditClick} className="p-1 text-gray-400 hover:text-white" title="Rename">
             <i className="fas fa-pen text-xs"></i>
           </button>
-          <button onClick={() => onDelete(session.id)} className="p-1 text-gray-400 hover:text-white" title="Delete">
+          <button onClick={handleDeleteClick} className="p-1 text-gray-400 hover:text-white" title="Delete">
             <i className="fas fa-trash text-xs"></i>
           </button>
         </div>
