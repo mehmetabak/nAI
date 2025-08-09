@@ -555,6 +555,13 @@ const App = () => {
             onToggleChangelog={toggleChangelogScreen}
         />
       
+               {isSidebarOpen && (
+            <div
+                className="hidden md:block fixed inset-0 bg-transparent z-30"
+                onClick={() => setIsSidebarOpen(false)}
+            />
+        )}
+
       <main className="relative flex-1 flex flex-col h-full transition-all duration-300 md:ml-72">
         <AnimatePresence mode="wait">
             {!activeChatId ? (
