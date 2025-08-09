@@ -50,13 +50,20 @@ const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) =>
       )}
       
       {!isEditing && (
-        // --- DEĞİŞİKLİK BURADA ---
-        // Mobil için butonları görünür yap, masaüstünde hover davranışını koru
-        <div className={`flex items-center gap-2 transition-opacity ${isActive ? 'opacity-100' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'}`}>
-          <button onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-white" title="Rename">
+        // DEĞİŞİKLİK BURADA:
+        // Mobil için butonları her zaman görünür yap (opacity-100), 
+        // masaüstü için (md:) orijinal hover davranışını koru (md:opacity-0 md:group-hover:opacity-100).
+        // Eğer öğe aktif ise (isActive), her zaman görünür kalmaya devam edecek.
+        <div className={`flex items-center gap-2 transition-opacity ${
+            isActive 
+              ? 'opacity-100' 
+              : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'
+          }`}
+        >
+          <button onClick={() => setIsEditing(true)} className="p-1 text-gray-400 hover:text-white" title="Rename">
             <i className="fas fa-pen text-xs"></i>
           </button>
-          <button onClick={() => onDelete(session.id)} className="text-gray-400 hover:text-white" title="Delete">
+          <button onClick={() => onDelete(session.id)} className="p-1 text-gray-400 hover:text-white" title="Delete">
             <i className="fas fa-trash text-xs"></i>
           </button>
         </div>
@@ -74,7 +81,7 @@ const Sidebar = ({
   onSessionSelect,
   onNewChat,
   onDeleteSession,
-  onRenameSession, // YENİ PROP
+  onRenameSession,
   onToggleSettings,
   onToggleAbout,
   onToggleChangelog,
@@ -82,7 +89,7 @@ const Sidebar = ({
   
   return (
     <>
-      {isOpen && <div className="sidebar-overlay md:hidden" onClick={onClose}></div>}
+      {isOpen && <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={onClose}></div>}
       <aside
         className={`fixed top-0 left-0 z-40 h-screen w-72 bg-gray-800 text-white transition-transform transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
