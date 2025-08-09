@@ -47,7 +47,6 @@ const App = () => {
   const [headerHeight, setHeaderHeight] = useState(0);
   const chatMessagesRef = useRef(null);
   const inputRef = useRef(null);
-  const appContainerRef = useRef(null)
 
   // --- Türetilmiş State (Derived State) ---
   const activeChat = chatSessions.find(session => session.id === activeChatId);
@@ -293,31 +292,24 @@ const App = () => {
         }, 0);
     };
 
-    // App.js bileşeninin içine, diğer useEffect'lerin yanına ekleyin.
-
-  // <--- YENİ EFEKT: Mobil Tarayıcı Yüksekliğini Düzeltme --->
-  useEffect(() => {
-    const handleResize = () => {
-        if (appContainerRef.current) {
-            // window.innerHeight, mobil tarayıcı çubukları hariç gerçek görünür yüksekliği verir.
-            appContainerRef.current.style.height = `${window.innerHeight}px`;
-        }
+     useEffect(() => {
+    const setVhVariable = () => {
+      // Gerçek iç yüksekliği alıyoruz (tarayıcı UI'ları hariç).
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
 
-    // Bileşen ilk yüklendiğinde yüksekliği ayarla
-    handleResize();
+    // İlk yüklendiğinde çalıştır
+    setVhVariable();
 
-    // Pencere boyutu değiştiğinde (kaydırma ile çubuğun gizlenmesi/gösterilmesi dahil)
-    // ve mobil cihazlarda oryantasyon değiştiğinde yüksekliği yeniden ayarla.
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleResize);
+    // Pencere boyutu değiştiğinde (örneğin, telefon döndürüldüğünde veya adres çubuğu gizlendiğinde) tekrar çalıştır
+    window.addEventListener('resize', setVhVariable);
 
-    // Cleanup: Bileşen kaldırıldığında event listener'ları temizle
+    // Bileşen kaldırıldığında olay dinleyiciyi temizle
     return () => {
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener('orientationchange', handleResize);
+      window.removeEventListener('resize', setVhVariable);
     };
-}, []); // Bağımlılık dizisi boş olmalı, sadece bir kez kurulması yeterli.
+  }, []);
 
     useEffect(() => {
         const setPadding = () => {
@@ -547,11 +539,7 @@ const App = () => {
   // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
   // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-     <div 
-     ref={appContainerRef} 
-     className="flex bg-gray-900 text-gray-100 font-sans overflow-hidden" 
-     style={{ height: '100vh' }} // Başlangıç değeri olarak kalsın, JS ile üzerine yazacağız.
-   >
+     <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
