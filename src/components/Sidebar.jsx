@@ -30,12 +30,12 @@ const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) =>
   };
 
   const handleEditClick = (e) => {
-    e.stopPropagation(); // Olayın ana div'e ulaşmasını engelle
+    e.stopPropagation();
     setIsEditing(true);
   };
 
   const handleDeleteClick = (e) => {
-    e.stopPropagation(); // Olayın ana div'e ulaşmasını engelle
+    e.stopPropagation();
     onDelete(session.id);
   };
 
@@ -97,26 +97,29 @@ const Sidebar = ({
   
   return (
     <>
-      {/* Mobilde dışarıya tıklandığında kapanması için arka plan karartması */}
       {isOpen && <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={onClose}></div>}
       
       <aside
         className={`fixed top-0 left-0 z-40 h-full w-72 bg-gray-800 text-white transition-transform transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        // DEĞİŞİKLİK: `md:translate-x-0` kaldırıldı. Artık PC'de de açılıp kapanabilir.
-        // `h-screen` yerine `h-full` kullanıldı, çünkü ana sarmalayıcı `div` artık dinamik yüksekliğe sahip.
       >
-        {/* YAPI DEĞİŞİKLİĞİ: Tüm yan bar içeriği 3 bölümlü bir flex container içine alındı */}
         <div className="flex h-full flex-col">
           
-          {/* BÖLÜM 1: ÜST (SABİT) */}
           <div className="p-4 flex-shrink-0">
             <div className="mb-4 flex items-center justify-between">
-              <h1 className="text-lg font-bold tracking-wide">nAI History</h1>
+              {/* --- DEĞİŞİKLİK BURADA --- */}
+              <a 
+                href="/" 
+                className="text-xl font-bold tracking-wider text-white no-underline transition-opacity hover:opacity-80"
+                aria-label="Go to Homepage"
+              >
+                nAI
+              </a>
+              {/* --- DEĞİŞİKLİK SONU --- */}
               <button
                 onClick={onClose}
-                className="p-2 text-gray-400 hover:text-white transition-colors" // `md:hidden` kaldırıldı
+                className="p-2 text-gray-400 hover:text-white transition-colors"
                 aria-label="Close Sidebar"
               >
                 <i className="fas fa-arrow-left" />
@@ -131,7 +134,6 @@ const Sidebar = ({
             </button>
           </div>
 
-          {/* BÖLÜM 2: ORTA (KAYDIRILABİLİR) */}
           <div className="flex-1 overflow-y-auto px-4">
             <h2 className="mb-2 text-xs font-bold uppercase text-gray-400">History</h2>
             <div className="flex flex-col gap-2">
@@ -152,7 +154,6 @@ const Sidebar = ({
             </div>
           </div>
           
-          {/* BÖLÜM 3: ALT (SABİT) */}
           <div className="border-t border-gray-700 p-4 flex-shrink-0">
             <nav className="flex flex-col gap-1">
               <button onClick={onToggleSettings} className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors">
