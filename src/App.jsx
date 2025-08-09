@@ -555,7 +555,9 @@ const App = () => {
             onToggleChangelog={toggleChangelogScreen}
         />
       
-      <main className="relative flex-1 flex flex-col h-full transition-all duration-300 md:ml-72">
+      <main className={`relative flex-1 flex flex-col h-full transition-all duration-300 ${
+          isSidebarOpen ? 'md:ml-72' : 'md:ml-0'
+        }`}>
         <AnimatePresence mode="wait">
             {!activeChatId ? (
                 // --- DURUM 1: KARŞILAMA EKRANI (GÜNCELLENDİ) ---
@@ -570,9 +572,11 @@ const App = () => {
                 >
                     {/* DEĞİŞİKLİK: Karşılama ekranı için header eklendi */}
                     <header className="p-4 flex items-center min-h-[60px] flex-shrink-0">
-                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
-                            <i className="fas fa-bars"></i>
-                        </button>
+                        {!isSidebarOpen && (
+                          <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700">
+                              <i className="fas fa-bars"></i>
+                          </button>
+                        )}
                     </header>
 
                     {/* DEĞİŞİKLİK: Ana içerik, esnek ve kaydırılabilir bir alana sarıldı */}
@@ -635,9 +639,11 @@ const App = () => {
                 >
                     <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
                       <div className="flex items-center gap-4">
-                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
-                          <i className="fas fa-bars"></i>
-                        </button>
+                        {!isSidebarOpen && (
+                            <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700">
+                              <i className="fas fa-bars"></i>
+                            </button>
+                        )}
                         
                         <Menu as="div" className="relative inline-block text-left">
                           <div>

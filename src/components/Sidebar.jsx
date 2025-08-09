@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// ChatSessionItem bileşeninde bir değişiklik yapmaya gerek yok, önceki haliyle kalabilir.
+// ChatSessionItem bileşeni aynı kalabilir, değişiklik yok.
 const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(session.title);
@@ -70,6 +70,7 @@ const ChatSessionItem = ({ session, isActive, onSelect, onDelete, onRename }) =>
 };
 
 
+// DEĞİŞTİRİLMİŞ SIDEBAR BİLEŞENİ
 const Sidebar = ({
   isOpen,
   onClose,
@@ -86,23 +87,26 @@ const Sidebar = ({
   
   return (
     <>
+      {/* Mobilde dışarıya tıklandığında kapanması için arka plan karartması */}
       {isOpen && <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={onClose}></div>}
+      
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-72 bg-gray-800 text-white transition-transform transform ${
+        className={`fixed top-0 left-0 z-40 h-full w-72 bg-gray-800 text-white transition-transform transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0`}
+        }`}
+        // DEĞİŞİKLİK: `md:translate-x-0` kaldırıldı. Artık PC'de de açılıp kapanabilir.
+        // `h-screen` yerine `h-full` kullanıldı, çünkü ana sarmalayıcı `div` artık dinamik yüksekliğe sahip.
       >
-        {/* YAPI DEĞİŞİKLİĞİ: Ana kapsayıcıyı 3 bölüme ayırıyoruz: Üst, Orta (kaydırılabilir), Alt */}
+        {/* YAPI DEĞİŞİKLİĞİ: Tüm yan bar içeriği 3 bölümlü bir flex container içine alındı */}
         <div className="flex h-full flex-col">
           
-          {/* 1. BÖLÜM: ÜST KISIM (Başlık ve Yeni Sohbet Butonu) */}
-          {/* Bu bölüm sabit kalır, kaydırılmaz. */}
-          <div className="p-4">
+          {/* BÖLÜM 1: ÜST (SABİT) */}
+          <div className="p-4 flex-shrink-0">
             <div className="mb-4 flex items-center justify-between">
               <h1 className="text-lg font-bold tracking-wide">nAI History</h1>
               <button
                 onClick={onClose}
-                className="p-2 text-gray-400 hover:text-white transition-colors md:hidden"
+                className="p-2 text-gray-400 hover:text-white transition-colors" // `md:hidden` kaldırıldı
                 aria-label="Close Sidebar"
               >
                 <i className="fas fa-arrow-left" />
@@ -117,53 +121,40 @@ const Sidebar = ({
             </button>
           </div>
 
-          {/* 2. BÖLÜM: ORTA KISIM (Sohbet Geçmişi) */}
-          {/* YAPI DEĞİŞİKLİĞİ: Bu bölüm 'flex-1' ile kalan tüm alanı doldurur ve 'overflow-y-auto' ile kendi içinde kaydırılır. */}
-          {/* Bu sayede geçmiş listesi ne kadar uzun olursa olsun, alt menüyü aşağı itmez. */}
+          {/* BÖLÜM 2: ORTA (KAYDIRILABİLİR) */}
           <div className="flex-1 overflow-y-auto px-4">
             <h2 className="mb-2 text-xs font-bold uppercase text-gray-400">History</h2>
             <div className="flex flex-col gap-2">
-              {sessions.map((session) => (
-                <ChatSessionItem
-                  key={session.id}
-                  session={session}
-                  isActive={session.id === activeSessionId}
-                  onSelect={onSessionSelect}
-                  onDelete={onDeleteSession}
-                  onRename={onRenameSession}
-                />
-              ))}
+              {sessions && sessions.length > 0 ? (
+                sessions.map((session) => (
+                  <ChatSessionItem
+                    key={session.id}
+                    session={session}
+                    isActive={session.id === activeSessionId}
+                    onSelect={onSessionSelect}
+                    onDelete={onDeleteSession}
+                    onRename={onRenameSession}
+                  />
+                ))
+              ) : (
+                <div className="text-center text-sm text-gray-500 py-4">No past chats</div>
+              )}
             </div>
           </div>
           
-          {/* 3. BÖLÜM: ALT KISIM (Ayarlar ve Linkler) */}
-          {/* Bu bölüm sabit kalır, kaydırılmaz ve her zaman en altta görünür. */}
-          <div className="border-t border-gray-700 p-4">
+          {/* BÖLÜM 3: ALT (SABİT) */}
+          <div className="border-t border-gray-700 p-4 flex-shrink-0">
             <nav className="flex flex-col gap-1">
-              <button
-                onClick={onToggleSettings}
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
-              >
+              <button onClick={onToggleSettings} className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors">
                 <i className="fas fa-cog mr-3 w-4 text-center" /> Settings
               </button>
-              <button
-                onClick={onToggleAbout}
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
-              >
+              <button onClick={onToggleAbout} className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors">
                 <i className="fas fa-info-circle mr-3 w-4 text-center" /> About
               </button>
-              <button
-                onClick={onToggleChangelog}
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
-              >
+              <button onClick={onToggleChangelog} className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors">
                 <i className="fas fa-box-open mr-3 w-4 text-center" /> What's New
               </button>
-              <a
-                href="https://github.com/mehmetabak/nAI"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors"
-              >
+              <a href="https://github.com/mehmetabak/nAI" target="_blank" rel="noopener noreferrer" className="flex items-center rounded px-2 py-2 hover:bg-gray-700 transition-colors">
                 <i className="fab fa-github mr-3 w-4 text-center" /> Source Code
               </a>
             </nav>
