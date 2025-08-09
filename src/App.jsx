@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Transition } from '@headlessui/react';
-import './App.css';
+import './App.css'; 
 import Sidebar from './components/Sidebar';
 import ChatMessage from './components/ChatMessage';
 
@@ -517,12 +517,8 @@ const App = () => {
   const toggleAboutScreen = () => setIsAboutScreenOpen(!isAboutScreenOpen);
   const toggleChangelogScreen = () => setIsChangelogScreenOpen(!isChangelogScreenOpen);
   
-  // <--- AÇIKLAMA: Geri kalan JSX (render) kısmında bir değişiklik yapmaya gerek yoktur.
-  // State yönetimi doğru yapıldığı için arayüz beklenen şekilde davranacaktır.
   return (
-    // DEĞİŞİKLİK 1: En dıştaki kapsayıcı. `h-screen` yerine `h-dvh` kullanıldı. Bu, mobil tarayıcılarda adres çubuğu gibi dinamik
-    // arayüz elemanlarını hesaba katarak gerçek viewport yüksekliğini kullanır. `overflow-hidden` kaldırıldı.
-    <div className="flex h-dvh bg-gray-900 text-gray-100 font-sans">
+     <div className="flex h-screen bg-gray-900 text-gray-100 font-sans overflow-hidden">
         <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
@@ -537,11 +533,16 @@ const App = () => {
             onToggleChangelog={toggleChangelogScreen}
         />
       
-      {/* DEĞİŞİKLİK 2: Ana içerik alanı. `h-screen` kaldırıldı. Bu, `main` elementinin kendi yüksekliğini `flex-1` ile
-          kardeşlerinden (sidebar) almasını sağlar. `overflow-hidden` eklendi, böylece bu elementin kendisi değil,
-          içindeki sohbet alanı scroll olur. Bu, header ve input bar'ın sabit kalmasını sağlar. */}
-      <main className="relative flex-1 flex flex-col transition-all duration-300 md:ml-72 overflow-hidden">
-        <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px] flex-shrink-0">
+      {/*
+        DEĞİŞİKLİK AÇIKLAMASI:
+        - `h-screen` yerine `h-full` kullanıldı. Bu, <main> elementinin yüksekliğinin, ebeveyni olan
+          ve zaten `h-screen` olan ana `div`'in yüksekliğine göre ayarlanmasını sağlar.
+          Böylece mobil cihazlarda yükseklik taşması yaşanmaz.
+        - `overflow-hidden` eklendi. Bu, <main> içindeki herhangi bir beklenmedik taşmanın
+          genel sayfa düzenini bozmamasını garanti eder.
+      */}
+      <main className="relative flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 md:ml-72">
+        <header ref={topHeaderRef} className="top-header p-4 flex items-center justify-between min-h-[60px]">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-700 md:hidden">
               <i className="fas fa-bars"></i>
@@ -596,8 +597,6 @@ const App = () => {
           </div>
         </header>
 
-        {/* DEĞİŞİKLİK 3: Bu orta alan (sohbet veya hoşgeldin ekranı) artık `flex-1` ve `overflow-hidden`
-            özelliklerini miras aldığı için kalan tüm dikey alanı düzgün bir şekilde dolduracak. */}
         <div className="relative flex-1 flex flex-col overflow-hidden">
                 <AnimatePresence mode="wait">
                     {!activeChatId ? (
@@ -607,13 +606,12 @@ const App = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ duration: 0.5 }}
-                          // `overflow-y-auto` ekleyerek küçük ekranlarda hoşgeldin ekranının da sığmazsa scroll olabilmesini sağlıyoruz.
-                          className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6 overflow-y-auto"
+                          className="flex flex-col justify-between items-center h-full text-center max-w-3xl mx-auto p-4 sm:p-6"
                         >
 
                             <div /> 
                             
-                            <div className="flex flex-col items-center w-full">
+                            <div className="flex flex-col items-center mt-auto mb-auto">
                                 <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
                                     Meet nAI
                                 </h1>
@@ -640,8 +638,7 @@ const App = () => {
                                 </div>
                             </div>
                             
-                            {/* flex-shrink-0 ekleyerek bu alanın küçülmesini engelliyoruz, her zaman görünür kalıyor. */}
-                            <div className="w-full max-w-2xl px-4 pb-4 flex-shrink-0 mt-8">
+                            <div className="w-full max-w-2xl px-4 pb-4">
                                 <div className="relative w-full">
                                     <input
                                         type="text"
@@ -663,11 +660,11 @@ const App = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.3 }}
-                            className="relative flex-1 overflow-hidden" // Bu doğru, içindeki scroll olmalı.
+                            className="relative flex-1 overflow-hidden"
                         >
                             <div 
                                 ref={chatContainerRef} 
-                                className="h-full overflow-y-auto p-4 md:p-6" // Bu da doğru. `h-full` ile parent'ın (motion.div) yüksekliğini alır.
+                                className="h-full overflow-y-auto p-4 md:p-6"
                                 style={{ 
                                     paddingTop: 'var(--header-height)', 
                                     scrollPaddingTop: 'var(--header-height)',
@@ -698,7 +695,6 @@ const App = () => {
                 </AnimatePresence>
             </div>
 
-        {/* Bu input bar'ı `main`'in bir flex çocuğu olarak kalacak ve `flex-shrink-0` sayesinde her zaman görünür olacak. */}
         {activeChatId && (
                 <AnimatePresence>
                     <motion.div
@@ -736,7 +732,7 @@ const App = () => {
           <div className="bg-gray-800 p-6 rounded-3xl shadow-xl text-center" onClick={(e) => e.stopPropagation()}>
             <div className="absolute top-4 right-4 cursor-pointer text-xl" onClick={() => setIsModelWindowOpen(false)}>×</div>
             <h5 className="mb-4 text-lg">Use Model:</h5>
-            <select value={selectedModel} onChange={(e) => handleModelChange(e.target.value)} className="p-3 border-none rounded-lg bg-gray-900 text-white outline-none cursor-pointer min-w-[200px]">
+            <select value={selectedModel} onChange={handleModelChange} className="p-3 border-none rounded-lg bg-gray-900 text-white outline-none cursor-pointer min-w-[200px]">
               {models.map((model) => (
                 <option key={model.name} value={model.name} className="bg-gray-900 text-white">
                   {model.label}
