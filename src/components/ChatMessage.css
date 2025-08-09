@@ -91,15 +91,6 @@
     font-size: 0.9em;
 }
 
-.message-body pre {
-    background-color: #1e1e1e;
-    padding: 12px;
-    padding-top: 40px; 
-    border-radius: 8px;
-    overflow-x: auto; 
-    border: 1px solid #444;
-}
-
 .message-body code {
     font-family: 'Courier New', Courier, monospace;
 }
@@ -150,6 +141,18 @@
     background-color: #2a9d8f; 
 }
 
+.message-body pre {
+    background-color: #1e1e1e;
+    padding: 12px;
+    padding-top: 40px; 
+    border-radius: 8px;
+    white-space: pre-wrap;   
+    word-break: break-word;  
+    overflow-x: auto;        
+    max-width: 100%;         
+    box-sizing: border-box; 
+    border: 1px solid #444;
+}
 
 @media (max-width: 768px) {
     .message-body pre {
