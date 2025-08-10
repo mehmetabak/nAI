@@ -1,51 +1,40 @@
 // src/components/ChatMessage.jsx
+
 import React, { useEffect, useRef } from 'react';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css'; 
 import './ChatMessage.css'; 
 
-// highlight.js'i marked ile çalışacak şekilde ayarla
 marked.setOptions({
   highlight: function(code, lang) {
     const language = hljs.getLanguage(lang) ? lang : 'plaintext';
     return hljs.highlight(code, { language }).value;
   },
-  langPrefix: 'hljs language-', // CSS class uyumluluğu için
-  breaks: true, // Satır sonlarını <br> olarak işle
+  langPrefix: 'hljs language-',
+  breaks: true,
 });
 
 const ChatMessage = ({ message }) => {
   const { sender, message: text, isAI, profilePic, imageBase64, timestamp } = message;
   const messageRef = useRef(null);
 
-  // Markdown'u HTML'e çevir
   const parsedMessage = text ? marked.parse(text) : '';
 
   useEffect(() => {
+    // Kopyala butonu ve kod bloğu mantığı (değişiklik yok)
     if (messageRef.current) {
-      // Tüm kod bloklarını bul
       const codeBlocks = messageRef.current.querySelectorAll('pre');
-      
       codeBlocks.forEach((preElement) => {
-        if (preElement.parentNode.classList.contains('code-block-wrapper')) {
-          return;
-        }
-
+        if (preElement.parentNode.classList.contains('code-block-wrapper')) return;
         const codeText = preElement.querySelector('code')?.innerText || '';
-
         const wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
-
-        // pre elementini sarmalayıcının içine taşı
         preElement.parentNode.insertBefore(wrapper, preElement);
         wrapper.appendChild(preElement);
-        
-        // Kopyala butonu oluştur
         const copyButton = document.createElement('button');
         copyButton.className = 'copy-code-button';
         copyButton.innerHTML = '<i class="far fa-copy"></i> Copy';
-        
         copyButton.onclick = () => {
           navigator.clipboard.writeText(codeText).then(() => {
             copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
@@ -59,17 +48,13 @@ const ChatMessage = ({ message }) => {
             copyButton.innerText = 'Error';
           });
         };
-
-        // Butonu sarmalayıcının içine ekle
         wrapper.appendChild(copyButton);
       });
-
-      // highlight.js'i çalıştır (bunu en sona almak daha güvenli)
       messageRef.current.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     }
-  }, [message]); // Her mesaj render edildiğinde bu kontrolü yap
+  }, [message]);
 
   return (
     <div
@@ -87,10 +72,19 @@ const ChatMessage = ({ message }) => {
           <span className="timestamp">{timestamp}</span>
         </div>
         
+        {/* === YENİ MANTIK BURADA BAŞLIYOR === */}
+
+        {/* 1. Eğer AI mesajıysa ve içerik (metin ve resim) henüz yoksa "Thinking..." göster */}
+        {isAI && !text && !imageBase64 && (
+          <div className="thinking-indicator">Thinking</div>
+        )}
+
+        {/* 2. Metin içeriği varsa, normal şekilde göster */}
         {parsedMessage && (
           <div className="message-body" dangerouslySetInnerHTML={{ __html: parsedMessage }} />
         )}
         
+        {/* 3. Resim içeriği varsa, normal şekilde göster */}
         {imageBase64 && (
           <div className="message-image-container">
             <img
@@ -100,6 +94,7 @@ const ChatMessage = ({ message }) => {
             />
           </div>
         )}
+        {/* === YENİ MANTIK BURADA BİTİYOR === */}
       </div>
     </div>
   );

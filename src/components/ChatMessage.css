@@ -163,3 +163,28 @@
         box-sizing: border-box;  
     }
 }
+
+.thinking-indicator {
+  color: #9ca3af; /* Veya istediğiniz bir gri tonu */
+  font-style: italic;
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40%, 60% {
+    content: '..';
+  }
+  80%, 100% {
+    content: '...';
+  }
+}
+
+.thinking-indicator::after {
+  content: '.';
+  display: inline-block;
+  width: 1.2em; /* Noktalar değiştikçe kaymayı önler */
+  text-align: left;
+  animation: dots 1.5s infinite;
+}

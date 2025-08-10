@@ -385,21 +385,17 @@ const App = () => {
     if (inputText.trim() === "" || isLoading) return;
     
     let currentChatId = activeChatId;
-    
-    // Aktif sohbet yoksa, yeni bir tane oluşturulur.
-    // Bu senaryo normalde `handleWelcomeInputChange` ile yönetiliyor
-    // ama bir güvenlik önlemi olarak burada durabilir.
     if (!currentChatId) {
         currentChatId = handleNewChat();
     }
     
     const userMessage = inputText.trim();
-    // anlık state yerine `find` ile en güncel sohbeti alalım
     const currentActiveChat = chatSessions.find(s => s.id === currentChatId);
-    if (!currentActiveChat) return; // Güvenlik kontrolü
+    if (!currentActiveChat) return; 
 
     const model = getSelectedModelObject();
     
+    // 1. Kullanıcı mesajını ve geçmişini hazırla
     const tempUserMessage = {
       id: Date.now(),
       sender: "User",
@@ -408,20 +404,30 @@ const App = () => {
       profilePic: "https://images.vexels.com/media/users/3/137047/isolated/lists/5831a17a290077c646a48c4db78a81bb-user-profile-blue-icon.png",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-    const tempUserHistoryEntry = { role: "user", content: userMessage };
-
-    const updatedMessages = [...currentActiveChat.messages, tempUserMessage];
-    const updatedHistory = [...currentActiveChat.history, tempUserHistoryEntry];
+    const updatedHistory = [...currentActiveChat.history, { role: "user", content: userMessage }];
+    const messagesWithUser = [...currentActiveChat.messages, tempUserMessage];
     
+    // Başlığı gerekirse güncelle
     let updatedTitle = currentActiveChat.title;
-    // Eğer bu sohbetin ilk mesajıysa, başlığı otomatik oluştur
     if (currentActiveChat.messages.length === 0) {
         updatedTitle = userMessage.length > 30 ? userMessage.substring(0, 27) + "..." : userMessage;
     }
     
-    updateSessionData(currentChatId, { 
-      messages: updatedMessages, 
-      history: updatedHistory,
+    // 2. "Thinking..." göstergesi için boş bir AI mesajı oluştur
+    const aiMessageId = Date.now() + 1;
+    const placeholderAiMessage = {
+        id: aiMessageId,
+        sender: model.label,
+        message: '', // İÇERİĞİ BOŞ - Bu, "Thinking..." göstergesini tetikleyecek
+        isAI: true,
+        profilePic: model.AIPP,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    
+    // 3. Hem kullanıcı mesajını hem de boş AI mesajını state'e ekle
+    updateSessionData(currentChatId, {
+      messages: [...messagesWithUser, placeholderAiMessage],
+      history: updatedHistory, // Geçmişe sadece kullanıcı mesajı eklendi
       title: updatedTitle
     });
 
@@ -484,60 +490,122 @@ const App = () => {
             const chatSession = modelZ.startChat({ generationConfig: model.generation_config, history: formattedHistory });
             const result = await chatSession.sendMessage(userMessage);
             aiMessageContent = result.response.text();
-        }
-        else if(model.api_key === "API_KEY_Llama"){
+        } else if(model.api_key === "API_KEY_Llama") {
+            // --- Llama için Ortak Kurulum ---
             const groq = new Groq({ apiKey: API_KEY_Llama, dangerouslyAllowBrowser: true });
+            
+            // Mesaj geçmişini Llama formatına çevir
             const formattedHistoryForLlama = updatedHistory.map(msg => ({
                 role: msg.role === "model" ? "assistant" : "user",
                 content: msg.content
             }));
-            const response = await groq.chat.completions.create({
-                "messages": [
-                    { "role": "system", "content": model.prompt_parts.join(' ') },
-                    { "role": "user", "content": `Current date is: ${currentDate}` },
-                    { "role": "assistant", "content": "Okay, I am aware of the date." },
-                    ...formattedHistoryForLlama,
-                ],
-                "model": model.model_name,
-                ...model.generation_config
-            });
-            aiMessageContent = response.choices[0]?.message?.content || '';
+
+            // API'ye gönderilecek mesajları hazırla (stream ve non-stream için ortak)
+            const messagesForGroq = [
+                { "role": "system", "content": model.prompt_parts.join(' ') },
+                { "role": "user", "content": `Current date is: ${currentDate}` },
+                { "role": "assistant", "content": "Okay, I am aware of the date." },
+                ...formattedHistoryForLlama,
+            ];
+
+            // --- Stream (Akış) Durumuna Göre Mantığı Ayır ---
+
+            if (model.generation_config.stream) {
+                // --- DURUM 1: STREAM AÇIKSA (GERÇEK ZAMANLI GÜNCELLEME) ---
+                const chatCompletion = await groq.chat.completions.create({
+                    "messages": messagesForGroq,
+                    "model": model.model_name,
+                    ...model.generation_config
+                });
+
+                let accumulatedContent = "";
+                for await (const chunk of chatCompletion) {
+                    const contentChunk = chunk.choices[0]?.delta?.content || '';
+                    if (contentChunk) {
+                        accumulatedContent += contentChunk;
+                        
+                        // State'i her bir parça ile güncelle
+                        setChatSessions(prev => prev.map(session =>
+                            session.id === currentChatId
+                                ? {
+                                      ...session,
+                                      messages: session.messages.map(msg =>
+                                          // Doğru AI mesajını ID ile bul ve içeriğini güncelle
+                                          msg.id === aiMessageId ? { ...msg, message: accumulatedContent } : msg
+                                      ),
+                                  }
+                                : session
+                        ));
+                        
+                        // Tarayıcıya render etmesi için zaman tanı
+                        await new Promise(resolve => requestAnimationFrame(resolve));
+                    }
+                }
+                
+                // Akış bittiğinde, "history" dizisini tam cevapla güncelle
+                updateSessionData(currentChatId, {
+                    history: [...updatedHistory, { role: "model", content: accumulatedContent }]
+                });
+                
+                // Final güncelleme bloğunun tekrar çalışmasını engelle
+                aiMessageContent = null; 
+            
+            } else {
+                // --- DURUM 2: STREAM KAPALIYSA (TEK SEFERDE CEVAP) ---
+                const response = await groq.chat.completions.create({
+                    "messages": messagesForGroq,
+                    "model": model.model_name,
+                    ...model.generation_config,
+                    stream: false // Emin olmak için kapalı olduğunu belirtelim
+                });
+                
+                // Cevabı al ve final güncelleme bloğunun kullanması için değişkene ata
+                aiMessageContent = response.choices[0]?.message?.content || '';
+            }
         } else {
             throw new Error(`Unknown or unhandled model API key type: ${model.api_key}`);
         }
         
-        const aiMessage = {
-          id: Date.now() + 1,
-          sender: model.label,
-          message: aiMessageContent,
-          isAI: true,
-          profilePic: model.AIPP,
-          imageBase64: aiImageBase64,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-        const aiHistoryEntry = {
-          role: "model",
-          content: aiMessageContent || "[Image Generated]"
-        };
-
-        updateSessionData(currentChatId, {
-          messages: [...updatedMessages, aiMessage],
-          history: [...updatedHistory, aiHistoryEntry]
-        });
-
+        if (aiMessageContent !== null || aiImageBase64 !== null) {
+            const aiHistoryEntry = { role: "model", content: aiMessageContent || "[Image Generated]" };
+            
+            // State'i güncelle: Placeholder mesajını bul ve içeriğini doldur
+            setChatSessions(prev => prev.map(session => {
+                if (session.id === currentChatId) {
+                    return {
+                        ...session,
+                        messages: session.messages.map(msg => 
+                            msg.id === aiMessageId 
+                                ? { ...msg, message: aiMessageContent, imageBase64: aiImageBase64 } 
+                                : msg
+                        ),
+                        history: [...updatedHistory, aiHistoryEntry]
+                    };
+                }
+                return session;
+            }));
+        }
     } catch (error) {
       console.error('Error generating response:', error);
-      const errorMessage = {
-        id: Date.now() + 1,
-        sender: "System Error",
-        message: `An error occurred: ${error.message}`,
-        isAI: true,
-        profilePic: "https://i.imgur.com/2Rs5ya9.png",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      updateSessionData(currentChatId, {
-        messages: [...updatedMessages, errorMessage]
-      });
+      // Hata durumunda da placeholder'ı bir hata mesajıyla güncelle
+      setChatSessions(prev => prev.map(session => {
+          if (session.id === currentChatId) {
+              return {
+                  ...session,
+                  messages: session.messages.map(msg =>
+                      msg.id === aiMessageId
+                          ? { 
+                              ...msg, 
+                              sender: "System Error", 
+                              message: `An error occurred: ${error.message}`, 
+                              profilePic: "https://i.imgur.com/2Rs5ya9.png"
+                            } 
+                          : msg
+                  )
+              };
+          }
+          return session;
+      }));
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
