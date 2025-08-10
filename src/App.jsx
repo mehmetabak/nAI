@@ -456,8 +456,7 @@ const App = () => {
             const data = await response.json();
             if (!response.ok || !data.candidates) throw new Error(data.error?.message || "Bison API error");
             aiMessageContent = data.candidates[0].output;
-        } 
-        else if (model.api_key === "API_KEY_GenAI_Content_Image") {
+        } else if (model.api_key === "API_KEY_GenAI_Content_Image") {
              const ai = new GoogleGenAI({ apiKey: API_KEY_Gemini });
              const genConfig = {
                  ...model.generation_config,
@@ -490,6 +489,76 @@ const App = () => {
             const chatSession = modelZ.startChat({ generationConfig: model.generation_config, history: formattedHistory });
             const result = await chatSession.sendMessage(userMessage);
             aiMessageContent = result.response.text();
+        } else if (model.api_key === "API_KEY_Gemini_GenAI") {
+            // --- Yeni @google/genai Kütüphanesini ve Gelişmiş Yapıyı Kullanan Mantık ---
+            const ai = new GoogleGenAI({ apiKey: API_KEY_Gemini });
+
+            // 1. Araçları (Tools) JSON'a göre dinamik olarak hazırla
+            const tools = [];
+            if (model.enableGoogleSearch) {
+                tools.push({ googleSearch: {} });
+            }
+            if (model.enableUrlContext) {
+                tools.push({ urlContext: {} });
+            }
+
+            // 2. Yapılandırmayı (Config) JSON'a göre dinamik olarak hazırla
+            const config = {
+                tools: tools, // Hazırlanan araçları ekle
+            };
+            // Eğer JSON'da thinking_config varsa, onu da config nesnesine ekle
+            if (model.thinking_config) {
+                // JSON'daki 'thinking_config' anahtarını, API'nin beklediği 'thinkingConfig' (camelCase) olarak ekle
+                config.thinkingConfig = model.thinking_config;
+            }
+
+            // 3. System Prompt ve Geçmişi Hazırla (contents)
+            const systemInstruction = model.prompt_parts.join(' ');
+            const contents = [
+                { role: 'user', parts: [{ text: systemInstruction }] },
+                { role: 'model', parts: [{ text: "Okay, I understand my role and will follow the instructions." }] },
+                { role: "user", parts: [{ text: `Current date is: ${currentDate}` }] },
+                { role: "model", parts: [{ text: "Understood. I am aware of the date." }] },
+                ...updatedHistory.map(h => ({
+                    role: h.role,
+                    parts: [{ text: h.content }]
+                }))
+            ];
+            
+            // 4. API Çağrısını Başlat (generateContentStream)
+            // Örnekteki gibi `config` nesnesini doğrudan iletiyoruz.
+            const response = await ai.models.generateContentStream({
+                model: model.model_name,
+                contents: contents,
+                config: config, // Hazırladığımız dinamik config nesnesi
+                generationConfig: model.generation_config
+            });
+
+            // 5. Gerçek Zamanlı Akışı İşle (Bu kısım aynı kalıyor)
+            let accumulatedContent = "";
+            for await (const chunk of response.stream) {
+                const contentChunk = chunk.text();
+                if (contentChunk) {
+                    accumulatedContent += contentChunk;
+                    setChatSessions(prev => prev.map(session =>
+                        session.id === currentChatId
+                            ? {
+                                  ...session,
+                                  messages: session.messages.map(msg =>
+                                      msg.id === aiMessageId ? { ...msg, message: accumulatedContent } : msg
+                                  ),
+                              }
+                            : session
+                    ));
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                }
+            }
+            
+            updateSessionData(currentChatId, {
+                history: [...updatedHistory, { role: "model", content: accumulatedContent }]
+            });
+
+            aiMessageContent = null; 
         } else if(model.api_key === "API_KEY_Llama") {
             // --- Llama için Ortak Kurulum ---
             const groq = new Groq({ apiKey: API_KEY_Llama, dangerouslyAllowBrowser: true });

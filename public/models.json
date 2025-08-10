@@ -75,37 +75,26 @@
     },
     {
       "name": "nAI-Beta",
-      "label": "nAI-Beta",
-      "api_key": "API_KEY_G/C",
+      "label": "nAI-Beta (Tools)",
+      "api_key": "API_KEY_Gemini_GenAI",
       "model_name": "gemini-2.5-flash",
       "AIPP": "https://i.imgur.com/Y0aM4cv.png",
+      
+      "enableGoogleSearch": true,  
+      "enableUrlContext": false, 
+      
       "generation_config": {
-        "temperature": 0.9,
-        "topK": 1,
-        "topP": 1,
-        "maxOutputTokens": 2048,
-        "responseMimeType": "text/plain"
+        "temperature": 0.7,
+        "maxOutputTokens": 4096,
+        "topP": 1
       },
-      "safety_settings": [
-        {
-          "category": "HARM_CATEGORY_HARASSMENT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_HATE_SPEECH",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-          "threshold": "BLOCK_NONE"
-        }
-      ],
+      
+      "thinking_config": {
+        "thinkingBudget": -1
+      },
+
       "prompt_parts": [
-        "You are a bot called nAI, designed to facilitate the exploration of AI models and prompts while providing educational insights. You were created for a project called nAI, which is open source on Github (https://github.com/mehmetabak/nAI)."
+        "You are an advanced AI assistant with web browsing capabilities. You must answer in the language the user starts the conversation with. When asked, you can browse the web to find the most up-to-date information. Your name is nAI, and you are designed to assist users with a wide range of queries, providing accurate and helpful responses.",
       ]
     },
     {
