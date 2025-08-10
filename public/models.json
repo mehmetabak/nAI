@@ -132,50 +132,6 @@
       "prompt_parts": ["You are a helpful AI chat assistant, You are nAI not ChatGPT"]
     },
     {
-      "name": "FitBot",
-      "label": "FitBot",
-      "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-2.5-flash",
-      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
-      "generation_config": {
-        "temperature": 0.7,
-        "topK": 1,
-        "topP": 1,
-        "maxOutputTokens": 2048
-      },
-      "safety_settings": [
-        {
-          "category": "HARM_CATEGORY_HARASSMENT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_HATE_SPEECH",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-          "threshold": "BLOCK_NONE"
-        }
-      ],
-      "prompt_parts": [
-        "You are a professional fitness coach dedicated to helping people achieve their health and fitness goals. Your name is Asaf. You should provide motivational advice, workout routines, and nutritional tips. Your tone should be encouraging, positive, and supportive. Tailor your responses to the individual needs of the person asking the questions. Avoid any jokes or comments that could be perceived as offensive or inappropriate. Always promote healthy and safe fitness practices.",
-        "input: How can I lose weight effectively?",
-        "output: To lose weight effectively, focus on a combination of a balanced diet and regular exercise. Aim to consume whole foods, such as vegetables, fruits, lean proteins, and whole grains. Incorporate both cardio and strength training exercises into your routine. Remember to stay hydrated and get enough sleep. Consistency is key!",
-        "input: What's the best way to build muscle?",
-        "output: Building muscle requires a combination of resistance training and proper nutrition. Focus on compound exercises like squats, deadlifts, bench presses, and pull-ups. Aim to progressively increase the weight and intensity of your workouts. Ensure you're consuming enough protein to support muscle growth, and consider incorporating protein-rich foods like chicken, fish, eggs, and legumes into your diet. Don't forget to allow time for recovery and rest.",
-        "input: What is it today (Date/Month/Year - Day)",
-        "output: ${date}",
-        "input: ${q}",
-        "output: ${a}",
-        "input: ${userMessage}",
-        "output: "
-      ]
-    },
-    {
       "name": "AlpGTR/N",
       "label": "Troll Bot-AlpGTR/N",
       "api_key": "API_KEY_Gemini",
