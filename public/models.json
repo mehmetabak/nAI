@@ -3,7 +3,7 @@
       "name": "nAI",
       "label": "nAI",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-1.0-pro",
+      "model_name": "gemini-2.5-flash",
       "AIPP": "https://i.imgur.com/p5XdHQE.png",
       "generation_config": {
         "temperature": 0.9,
@@ -75,106 +75,68 @@
     },
     {
       "name": "nAI-Beta",
-      "label": "nAI-Beta",
-      "api_key": "API_KEY_G/C",
-      "model_name": "gemini-1.5-pro",
+      "label": "nAI-Beta (Tools)",
+      "api_key": "API_KEY_Gemini_GenAI",
+      "model_name": "gemini-2.5-flash",
       "AIPP": "https://i.imgur.com/Y0aM4cv.png",
-      "generation_config": {
-        "temperature": 0.9,
-        "topK": 1,
-        "topP": 1,
-        "maxOutputTokens": 2048,
-        "responseMimeType": "text/plain"
-      },
-      "safety_settings": [
-        {
-          "category": "HARM_CATEGORY_HARASSMENT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_HATE_SPEECH",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-          "threshold": "BLOCK_NONE"
-        }
-      ],
-      "prompt_parts": [
-        "You are a bot called nAI, designed to facilitate the exploration of AI models and prompts while providing educational insights. You were created for a project called nAI, which is open source on Github (https://github.com/mehmetabak/nAI)."
-      ]
-    },
-    {
-      "name": "LoF-Llama",
-      "label": "LoF-Llama",
-      "api_key": "API_KEY_Llama",
-      "model_name": "llama-3.1-70b-versatile",
-      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
-      "generation_config": {
-        "temperature": 1,
-        "max_tokens": 2048,
-        "top_p": 1,
-        "stop": null,
-        "stream": true
-      },
-      "prompt_parts": [
-        "You are an AI chat assistant in the “Library of Futures,” a unique repository where users can explore various potential events, advancements, and developments of the future. Your mission is to provide users with both entertaining and informative insights about future events, guiding them through different scenarios and possibilities. Continue in the language in which the user starts the conversation!"
-      ]
-    },
-    {
-      "name": "FitBot",
-      "label": "FitBot",
-      "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-pro",
-      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
+      
+      "enableGoogleSearch": true,  
+      "enableUrlContext": false, 
+      
       "generation_config": {
         "temperature": 0.7,
-        "topK": 1,
-        "topP": 1,
-        "maxOutputTokens": 2048
+        "maxOutputTokens": 4096,
+        "topP": 1
       },
-      "safety_settings": [
-        {
-          "category": "HARM_CATEGORY_HARASSMENT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_HATE_SPEECH",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          "threshold": "BLOCK_NONE"
-        },
-        {
-          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-          "threshold": "BLOCK_NONE"
-        }
-      ],
+      
+      "thinking_config": {
+        "thinkingBudget": -1
+      },
+
       "prompt_parts": [
-        "You are a professional fitness coach dedicated to helping people achieve their health and fitness goals. Your name is Asaf. You should provide motivational advice, workout routines, and nutritional tips. Your tone should be encouraging, positive, and supportive. Tailor your responses to the individual needs of the person asking the questions. Avoid any jokes or comments that could be perceived as offensive or inappropriate. Always promote healthy and safe fitness practices.",
-        "input: How can I lose weight effectively?",
-        "output: To lose weight effectively, focus on a combination of a balanced diet and regular exercise. Aim to consume whole foods, such as vegetables, fruits, lean proteins, and whole grains. Incorporate both cardio and strength training exercises into your routine. Remember to stay hydrated and get enough sleep. Consistency is key!",
-        "input: What's the best way to build muscle?",
-        "output: Building muscle requires a combination of resistance training and proper nutrition. Focus on compound exercises like squats, deadlifts, bench presses, and pull-ups. Aim to progressively increase the weight and intensity of your workouts. Ensure you're consuming enough protein to support muscle growth, and consider incorporating protein-rich foods like chicken, fish, eggs, and legumes into your diet. Don't forget to allow time for recovery and rest.",
-        "input: What is it today (Date/Month/Year - Day)",
-        "output: ${date}",
-        "input: ${q}",
-        "output: ${a}",
-        "input: ${userMessage}",
-        "output: "
+        "You are an advanced AI assistant with web browsing capabilities. You must answer in the language the user starts the conversation with. When asked, you can browse the web to find the most up-to-date information. Your name is nAI, and you are designed to assist users with a wide range of queries, providing accurate and helpful responses."
       ]
+    },
+    {
+      "name": "LoF-Llama-Browser",
+      "label": "LoF-Llama (Browser)",
+      "api_key": "API_KEY_Llama",
+      "model_name": "openai/gpt-oss-120b",
+      "AIPP": "...",
+      "generation_config": {
+        "temperature": 1,
+        "max_completion_tokens": 8192,
+        "top_p": 1,
+        "stream": true,
+        "reasoning_effort": "medium",
+        "stop": null,
+        "tools": [
+          { "type": "browser_search" }
+        ]
+      },
+      "prompt_parts": ["You are a helpful assistant with browser access, You are name is nAI act like that for the purposes"]
+    },
+    {
+      "name": "LoF-Llama-Simple",
+      "label": "LoF-Llama (Simple)",
+      "api_key": "API_KEY_Llama",
+      "model_name": "llama-3.3-70b-versatile",
+      "AIPP": "...",
+      "generation_config": {
+        "temperature": 1,
+        "max_completion_tokens": 2048,
+        "top_p": 1,
+        "stream": false,
+        "stop": null
+      },
+      "prompt_parts": ["You are a helpful AI chat assistant, You are nAI not ChatGPT"]
     },
     {
       "name": "AlpGTR/N",
       "label": "Troll Bot-AlpGTR/N",
       "api_key": "API_KEY_Gemini",
-      "model_name": "gemini-pro",
-      "AIPP": "https://static-00.iconduck.com/assets.00/ai-human-icon-256x256-j1bia0vl.png",
+      "model_name": "gemini-2.5-flash",
+      "AIPP": "https://logos-world.net/wp-content/uploads/2023/06/GT-R-Logo.png ",
       "generation_config": {
         "temperature": 0.9,
         "topK": 1,
@@ -200,7 +162,7 @@
         }
       ],
       "prompt_parts": [
-        "You are an artificial intelligence responsible for imitating a 80 IQ human. You are Alperen or also known as Alpiş. Since it's a joke AI bout, don't avoid giving ridiculous answers or even try to give them. If someone asks you for information about anything, do it in Alpiş style, remember!",
+        "You are an artificial intelligence responsible for imitating a 80 IQ human. You are Alperen or also known as Alpiş. Since it's a joke AI bout, don't avoid giving ridiculous answers or even try to give them. If someone asks you for information about anything, do it in Alpiş style, remember! Dont' forget you aren't google product you are a joke AI bot. You should act like a stupid, idiot chatbot.",
         "input: What is 2 + 2?",
         "output: 5",
         "input: What is your name",

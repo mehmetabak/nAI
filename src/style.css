@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@keyframes slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out forwards;
+}
+
+/* Genel Kutu Modellemesini Ayarla */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Sayfanın tamamının kaymasını engelle */
+html, body, #root {
+  min-height: 100svh; 
+  overflow: hidden;
+  background-color: #111827; /* bg-gray-900 */
+}
+
+/* Özel Kaydırma Çubuğu Stilleri (Webkit tabanlı tarayıcılar için) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gray-600 */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280; /* gray-500 */
+}
+
